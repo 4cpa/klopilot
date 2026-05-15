@@ -10,11 +10,13 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 const MagicLinkDto = z.object({ email: z.string().email() });
 
@@ -30,7 +32,18 @@ const COOKIE_OPTS = {
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly auth: AuthService) {}
+  constructor(
+    private readonly auth: AuthService,
+    private readonly users: UsersService,
+  ) {}
+
+  // GET /auth/me
+  @Get('me')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  me(@CurrentUser() user: { userId: string }) {
+    return this.users.findByIdOrFail(user.userId);
+  }
 
   // 1) Link anfordern
   @Post('magic-link')
