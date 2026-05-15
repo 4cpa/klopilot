@@ -1,22 +1,83 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  Query,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
+import { AuthService } from './auth.service';
 
 const MagicLinkDto = z.object({ email: z.string().email() });
+
+const REFRESH_COOKIE = 'klo_refresh';
+const COOKIE_OPTS = {
+  httpOnly: true,
+  sameSite: 'lax' as const,
+  path: '/auth',
+  maxAge: 7 * 24 * 3600,
+  secure: process.env.NODE_ENV === 'production',
+};
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
+  constructor(private readonly auth: AuthService) {}
+
+  // 1) Link anfordern
   @Post('magic-link')
+  @HttpCode(202)
   async requestMagicLink(@Body() body: unknown) {
     const { email } = MagicLinkDto.parse(body);
-    // TODO P1: send magic link email via Mailhog
-    return { message: 'Magic Link wurde versendet', email };
+    await this.auth.requestMagicLink(email);
+    return { message: 'Magic Link wurde versendet' };
   }
 
-  @Get('oauth/:provider')
-  oauthRedirect(@Param('provider') provider: string) {
-    // TODO P1: redirect to OAuth provider
-    return { provider };
+  // 2) Link bestätigen → Tokens ausgeben
+  @Get('verify')
+  async verify(
+    @Query('token') token: string,
+    @Res({ passthrough: true }) reply: FastifyReply,
+  ) {
+    if (!token) throw new UnauthorizedException('Kein Token angegeben');
+    const { accessToken, refreshToken } = await this.auth.verifyMagicLink(token);
+    reply.setCookie(REFRESH_COOKIE, refreshToken, COOKIE_OPTS);
+    return { accessToken };
+  }
+
+  // 3) Access-Token erneuern
+  @Post('refresh')
+  @HttpCode(200)
+  async refresh(
+    @Req() req: FastifyRequest,
+    @Res({ passthrough: true }) reply: FastifyReply,
+  ) {
+    const oldRefresh = (req.cookies as Record<string, string>)?.[REFRESH_COOKIE];
+    if (!oldRefresh) throw new UnauthorizedException('Kein Refresh-Token');
+    const { accessToken, refreshToken } = await this.auth.rotate(oldRefresh);
+    reply.setCookie(REFRESH_COOKIE, refreshToken, COOKIE_OPTS);
+    return { accessToken };
+  }
+
+  // 4) Logout
+  @Post('logout')
+  @HttpCode(204)
+  @UseGuards(AuthGuard('jwt'))
+  @ApiCookieAuth(REFRESH_COOKIE)
+  async logout(
+    @Req() req: FastifyRequest,
+    @Res({ passthrough: true }) reply: FastifyReply,
+  ) {
+    const token = (req.cookies as Record<string, string>)?.[REFRESH_COOKIE];
+    await this.auth.logout(token);
+    reply.clearCookie(REFRESH_COOKIE, { path: '/auth' });
   }
 }

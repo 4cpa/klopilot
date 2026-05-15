@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
@@ -21,5 +22,16 @@ export class UsersService {
 
   findByHandle(handle: string) {
     return this.prisma.user.findUnique({ where: { handle } });
+  }
+
+  async findOrCreate(email: string) {
+    const existing = await this.findByEmail(email);
+    if (existing) return existing;
+
+    // Eindeutiger Handle aus zufälligen Bytes — z.B. "u3f8a1c2d"
+    const handle = `u${crypto.randomBytes(4).toString('hex')}`;
+    return this.prisma.user.create({
+      data: { email, handle, role: 'user' },
+    });
   }
 }
