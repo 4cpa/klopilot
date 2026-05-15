@@ -23,35 +23,51 @@ CREATE TRIGGER trg_toilet_geom
 CREATE INDEX IF NOT EXISTS idx_toilets_geom ON toilets USING GIST (geom);
 
 -- 4) Check-Constraints: flowers UND flies dürfen nicht gleichzeitig > 0 sein
+-- Spaltennamen sind camelCase weil Prisma kein @map verwendet
 ALTER TABLE ratings
   ADD CONSTRAINT chk_xor_accessibility
-    CHECK (NOT (flowers_accessibility > 0 AND flies_accessibility > 0)),
+    CHECK (NOT ("flowersAccessibility" > 0 AND "fliesAccessibility" > 0)),
   ADD CONSTRAINT chk_xor_cleanliness
-    CHECK (NOT (flowers_cleanliness > 0 AND flies_cleanliness > 0)),
+    CHECK (NOT ("flowersCleanliness" > 0 AND "fliesCleanliness" > 0)),
   ADD CONSTRAINT chk_xor_hygiene
-    CHECK (NOT (flowers_hygiene > 0 AND flies_hygiene > 0)),
+    CHECK (NOT ("flowersHygiene" > 0 AND "fliesHygiene" > 0)),
   ADD CONSTRAINT chk_xor_style
-    CHECK (NOT (flowers_style > 0 AND flies_style > 0)),
+    CHECK (NOT ("flowersStyle" > 0 AND "fliesStyle" > 0)),
   ADD CONSTRAINT chk_xor_amenities
-    CHECK (NOT (flowers_amenities > 0 AND flies_amenities > 0)),
+    CHECK (NOT ("flowersAmenities" > 0 AND "fliesAmenities" > 0)),
   ADD CONSTRAINT chk_xor_safety
-    CHECK (NOT (flowers_safety > 0 AND flies_safety > 0)),
+    CHECK (NOT ("flowersSafety" > 0 AND "fliesSafety" > 0)),
   ADD CONSTRAINT chk_xor_inclusivity
-    CHECK (NOT (flowers_inclusivity > 0 AND flies_inclusivity > 0)),
+    CHECK (NOT ("flowersInclusivity" > 0 AND "fliesInclusivity" > 0)),
   ADD CONSTRAINT chk_xor_cost
-    CHECK (NOT (flowers_cost > 0 AND flies_cost > 0)),
+    CHECK (NOT ("flowersCost" > 0 AND "fliesCost" > 0)),
   ADD CONSTRAINT chk_xor_wait
-    CHECK (NOT (flowers_wait > 0 AND flies_wait > 0)),
+    CHECK (NOT ("flowersWait" > 0 AND "fliesWait" > 0)),
   ADD CONSTRAINT chk_xor_kids
-    CHECK (NOT (flowers_kids > 0 AND flies_kids > 0));
+    CHECK (NOT ("flowersKids" > 0 AND "fliesKids" > 0));
 
 -- 5) Range-Checks 0..5
 ALTER TABLE ratings
-  ADD CONSTRAINT chk_range_flowers_accessibility CHECK (flowers_accessibility BETWEEN 0 AND 5),
-  ADD CONSTRAINT chk_range_flies_accessibility   CHECK (flies_accessibility   BETWEEN 0 AND 5),
-  ADD CONSTRAINT chk_range_flowers_cleanliness   CHECK (flowers_cleanliness   BETWEEN 0 AND 5),
-  ADD CONSTRAINT chk_range_flies_cleanliness     CHECK (flies_cleanliness     BETWEEN 0 AND 5);
--- (für Kürze restliche Range-Checks analog ergänzen)
+  ADD CONSTRAINT chk_range_flowers_accessibility CHECK ("flowersAccessibility" BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flies_accessibility   CHECK ("fliesAccessibility"   BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flowers_cleanliness   CHECK ("flowersCleanliness"   BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flies_cleanliness     CHECK ("fliesCleanliness"     BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flowers_hygiene       CHECK ("flowersHygiene"       BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flies_hygiene         CHECK ("fliesHygiene"         BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flowers_style         CHECK ("flowersStyle"         BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flies_style           CHECK ("fliesStyle"           BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flowers_amenities     CHECK ("flowersAmenities"     BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flies_amenities       CHECK ("fliesAmenities"       BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flowers_safety        CHECK ("flowersSafety"        BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flies_safety          CHECK ("fliesSafety"          BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flowers_inclusivity   CHECK ("flowersInclusivity"   BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flies_inclusivity     CHECK ("fliesInclusivity"     BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flowers_cost          CHECK ("flowersCost"          BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flies_cost            CHECK ("fliesCost"            BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flowers_wait          CHECK ("flowersWait"          BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flies_wait            CHECK ("fliesWait"            BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flowers_kids          CHECK ("flowersKids"          BETWEEN 0 AND 5),
+  ADD CONSTRAINT chk_range_flies_kids            CHECK ("fliesKids"            BETWEEN 0 AND 5);
 
 -- 6) Trigger: Privat-Toiletten-Adresse vor Speicherung auf 100m-Raster runden
 CREATE OR REPLACE FUNCTION blur_private_location() RETURNS TRIGGER AS $$
