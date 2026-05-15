@@ -1,0 +1,84 @@
+version: "3.9"
+
+# klopilot.ch — lokales Entwicklungs-Setup
+# Start:  docker compose -f infra/docker-compose.yml up -d
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: klopilot-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: klopilot
+      POSTGRES_USER: klopilot
+      POSTGRES_PASSWORD: klopilot_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U klopilot -d klopilot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: klopilot-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: klopilot-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: klopilot
+      MINIO_ROOT_PASSWORD: klopilot_dev_min
+    ports:
+      - "9000:9000"  # API
+      - "9001:9001"  # Console (UI)
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.10
+    container_name: klopilot-meili
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: klopilot_dev_meili
+      MEILI_ENV: development
+    ports:
+      - "7700:7700"
+    volumes:
+      - meili_data:/meili_data
+
+  mailhog:
+    # Lokales Mail-Testing für Magic-Link-Flow
+    image: mailhog/mailhog:latest
+    container_name: klopilot-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web-UI
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  meili_data:

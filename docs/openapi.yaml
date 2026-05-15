@@ -1,0 +1,286 @@
+openapi: 3.0.3
+info:
+  title: klopilot.ch API
+  description: Community-Plattform für Toilettenbewertungen. Frei nutzbar, anonymes Lesen erlaubt.
+  version: 0.1.0
+  contact:
+    name: klopilot.ch
+    url: https://klopilot.ch
+servers:
+  - url: http://localhost:3001
+    description: lokal
+  - url: https://api.klopilot.ch
+    description: Produktion
+
+tags:
+  - name: auth
+  - name: toilets
+  - name: ratings
+  - name: media
+  - name: search
+
+paths:
+  /auth/magic-link:
+    post:
+      tags: [auth]
+      summary: Magic-Link-Login anfordern
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        '202': { description: Mail versendet }
+
+  /auth/oauth/{provider}:
+    get:
+      tags: [auth]
+      summary: OAuth-Redirect (google | apple)
+      parameters:
+        - in: path
+          name: provider
+          required: true
+          schema: { type: string, enum: [google, apple] }
+      responses:
+        '302': { description: Redirect zum Provider }
+
+  /toilets:
+    get:
+      tags: [toilets]
+      summary: Toiletten in einem Umkreis suchen
+      parameters:
+        - in: query
+          name: lng
+          required: true
+          schema: { type: number, format: double }
+        - in: query
+          name: lat
+          required: true
+          schema: { type: number, format: double }
+        - in: query
+          name: radius
+          description: Radius in Metern (max 5000)
+          schema: { type: integer, default: 1000, maximum: 5000 }
+        - in: query
+          name: category
+          schema:
+            type: array
+            items: { $ref: '#/components/schemas/ToiletCategory' }
+        - in: query
+          name: minScore
+          schema: { type: number, format: float }
+        - in: query
+          name: openNow
+          schema: { type: boolean }
+      responses:
+        '200':
+          description: Liste gefundener Toiletten (ohne `private`)
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Toilet' }
+
+    post:
+      tags: [toilets]
+      summary: Neue Toilette anlegen
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ToiletInput' }
+      responses:
+        '201':
+          description: Erstellt
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Toilet' }
+
+  /toilets/{id}:
+    get:
+      tags: [toilets]
+      summary: Detailansicht einer Toilette
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ToiletDetail' }
+        '404': { description: Nicht gefunden }
+
+  /toilets/{id}/ratings:
+    post:
+      tags: [ratings]
+      summary: Bewertung abgeben (eine pro User pro Toilette, editierbar)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RatingInput' }
+      responses:
+        '201':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Rating' }
+        '422':
+          description: Validierung fehlgeschlagen (z.B. Blümchen UND Fliegen > 0)
+
+  /media/upload:
+    post:
+      tags: [media]
+      summary: Foto hochladen (EXIF wird serverseitig entfernt)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file, toiletId]
+              properties:
+                file: { type: string, format: binary }
+                toiletId: { type: string, format: uuid }
+                ratingId: { type: string, format: uuid }
+      responses:
+        '201':
+          description: Hochgeladen, Status `pending` bis Moderation
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Photo' }
+
+  /search:
+    get:
+      tags: [search]
+      summary: Volltextsuche (Meilisearch)
+      parameters:
+        - in: query
+          name: q
+          required: true
+          schema: { type: string }
+        - in: query
+          name: lng
+          schema: { type: number }
+        - in: query
+          name: lat
+          schema: { type: number }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Toilet' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ToiletCategory:
+      type: string
+      enum: [public, nette_toilette, gastronomy, transport, mall, event, private]
+
+    Visibility:
+      type: string
+      enum: [public, nette_toilette, private]
+
+    Toilet:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        category: { $ref: '#/components/schemas/ToiletCategory' }
+        visibility: { $ref: '#/components/schemas/Visibility' }
+        longitude: { type: number }
+        latitude: { type: number }
+        address: { type: string }
+        score:
+          type: object
+          properties:
+            flowers: { type: number }
+            flies: { type: number }
+            net: { type: number }
+            count: { type: integer }
+        verified: { type: boolean }
+
+    ToiletInput:
+      type: object
+      required: [name, category, longitude, latitude]
+      properties:
+        name: { type: string, minLength: 2, maxLength: 120 }
+        category: { $ref: '#/components/schemas/ToiletCategory' }
+        longitude: { type: number, minimum: -180, maximum: 180 }
+        latitude: { type: number, minimum: -90, maximum: 90 }
+        address: { type: string }
+        feeChf: { type: number, minimum: 0 }
+        openingHours: { type: object }
+        accessibility: { type: object }
+        visibility: { $ref: '#/components/schemas/Visibility' }
+
+    ToiletDetail:
+      allOf:
+        - $ref: '#/components/schemas/Toilet'
+        - type: object
+          properties:
+            ratings:
+              type: array
+              items: { $ref: '#/components/schemas/Rating' }
+            photos:
+              type: array
+              items: { $ref: '#/components/schemas/Photo' }
+
+    Rating:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        toiletId: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        scores:
+          type: object
+          description: Pro Kriterium { flowers, flies }, Werte 0..5
+          additionalProperties:
+            type: object
+            properties:
+              flowers: { type: integer, minimum: 0, maximum: 5 }
+              flies: { type: integer, minimum: 0, maximum: 5 }
+        comment: { type: string }
+        language: { type: string }
+        createdAt: { type: string, format: date-time }
+
+    RatingInput:
+      type: object
+      properties:
+        scores:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              flowers: { type: integer, minimum: 0, maximum: 5 }
+              flies: { type: integer, minimum: 0, maximum: 5 }
+        comment: { type: string, maxLength: 2000 }
+        language: { type: string, default: de }
+
+    Photo:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        url: { type: string, format: uri }
+        moderationStatus: { type: string, enum: [pending, approved, rejected] }

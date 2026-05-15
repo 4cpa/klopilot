@@ -1,0 +1,207 @@
+// klopilot.ch — Prisma Schema
+// PostgreSQL + PostGIS. PostGIS-Spalten werden via raw SQL Migration ergänzt
+// (Prisma hat keinen nativen geography-Typ).
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis, pg_trgm, unaccent, uuidOssp(map: "uuid-ossp")]
+}
+
+// ─── Enums ─────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  anon
+  user
+  verified
+  moderator
+  admin
+}
+
+enum ToiletCategory {
+  public
+  nette_toilette
+  gastronomy
+  transport
+  mall
+  event
+  private
+}
+
+enum Visibility {
+  public
+  nette_toilette
+  private
+}
+
+enum ToiletStatus {
+  active
+  hidden
+  removed
+}
+
+enum ModerationStatus {
+  pending
+  approved
+  rejected
+}
+
+enum ReportStatus {
+  open
+  reviewing
+  resolved
+  dismissed
+}
+
+enum ReportTargetType {
+  toilet
+  rating
+  photo
+  user
+}
+
+// ─── Models ────────────────────────────────────────────────────────────────
+
+model User {
+  id          String    @id @default(uuid()) @db.Uuid
+  handle      String    @unique
+  email       String?   @unique
+  passwordHash String?
+  role        UserRole  @default(user)
+  locale      String    @default("de")
+  createdAt   DateTime  @default(now())
+  verifiedAt  DateTime?
+
+  toiletsCreated Toilet[]         @relation("CreatedBy")
+  toiletsOwned   Toilet[]         @relation("Owner")
+  ratings        Rating[]
+  photos         Photo[]
+  reports        Report[]
+  invites        PrivateInvite[]  @relation("Invitee")
+  invitesGranted PrivateInvite[]  @relation("Granter")
+
+  @@index([handle])
+  @@map("users")
+}
+
+model Toilet {
+  id           String         @id @default(uuid()) @db.Uuid
+  name         String
+  category     ToiletCategory
+  address      String?
+  // Geo-Spalten werden in einer SQL-Migration als geography(Point, 4326) angelegt
+  // longitude / latitude als Spiegel-Spalten für einfache Reads
+  longitude    Float
+  latitude     Float
+  visibility   Visibility     @default(public)
+  ownerId      String?        @db.Uuid
+  owner        User?          @relation("Owner", fields: [ownerId], references: [id])
+  openingHours Json?
+  feeChf       Decimal?       @db.Decimal(6, 2)
+  accessibility Json?
+  createdById  String         @db.Uuid
+  createdBy    User           @relation("CreatedBy", fields: [createdById], references: [id])
+  verified     Boolean        @default(false)
+  status       ToiletStatus   @default(active)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  ratings       Rating[]
+  photos        Photo[]
+  invites       PrivateInvite[]
+
+  @@index([category])
+  @@index([visibility])
+  @@index([status])
+  @@map("toilets")
+}
+
+model Rating {
+  id        String   @id @default(uuid()) @db.Uuid
+  toiletId  String   @db.Uuid
+  toilet    Toilet   @relation(fields: [toiletId], references: [id], onDelete: Cascade)
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  // Pro Kriterium: flowers ODER flies, nie beides > 0 (DB-Check-Constraint)
+  flowersAccessibility Int @default(0)
+  fliesAccessibility   Int @default(0)
+  flowersCleanliness   Int @default(0)
+  fliesCleanliness     Int @default(0)
+  flowersHygiene       Int @default(0)
+  fliesHygiene         Int @default(0)
+  flowersStyle         Int @default(0)
+  fliesStyle           Int @default(0)
+  flowersAmenities     Int @default(0)
+  fliesAmenities       Int @default(0)
+  flowersSafety        Int @default(0)
+  fliesSafety          Int @default(0)
+  flowersInclusivity   Int @default(0)
+  fliesInclusivity     Int @default(0)
+  flowersCost          Int @default(0)
+  fliesCost            Int @default(0)
+  flowersWait          Int @default(0)
+  fliesWait            Int @default(0)
+  flowersKids          Int @default(0)
+  fliesKids            Int @default(0)
+
+  comment      String?
+  language     String   @default("de")
+  helpfulCount Int      @default(0)
+
+  photos Photo[]
+
+  @@unique([toiletId, userId])
+  @@index([toiletId])
+  @@map("ratings")
+}
+
+model Photo {
+  id               String           @id @default(uuid()) @db.Uuid
+  toiletId         String           @db.Uuid
+  toilet           Toilet           @relation(fields: [toiletId], references: [id], onDelete: Cascade)
+  ratingId         String?          @db.Uuid
+  rating           Rating?          @relation(fields: [ratingId], references: [id])
+  userId           String           @db.Uuid
+  user             User             @relation(fields: [userId], references: [id])
+  s3Key            String
+  moderationStatus ModerationStatus @default(pending)
+  createdAt        DateTime         @default(now())
+
+  @@index([toiletId])
+  @@index([moderationStatus])
+  @@map("photos")
+}
+
+model Report {
+  id         String           @id @default(uuid()) @db.Uuid
+  targetType ReportTargetType
+  targetId   String           @db.Uuid
+  reason     String
+  reporterId String           @db.Uuid
+  reporter   User             @relation(fields: [reporterId], references: [id])
+  status     ReportStatus     @default(open)
+  createdAt  DateTime         @default(now())
+
+  @@index([status])
+  @@map("reports")
+}
+
+model PrivateInvite {
+  toiletId      String   @db.Uuid
+  toilet        Toilet   @relation(fields: [toiletId], references: [id], onDelete: Cascade)
+  inviteeUserId String   @db.Uuid
+  invitee       User     @relation("Invitee", fields: [inviteeUserId], references: [id])
+  grantedById   String   @db.Uuid
+  granter       User     @relation("Granter", fields: [grantedById], references: [id])
+  grantedAt     DateTime @default(now())
+
+  @@id([toiletId, inviteeUserId])
+  @@map("private_invites")
+}

@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+.next/
+.expo/
+out/
+build/
+
+# Turborepo
+.turbo/
+
+# Test coverage
+coverage/
+
+# Environment — NEVER commit real secrets
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/settings.json
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Prisma
+apps/api/prisma/migrations/
+
+# Mobile
+*.orig.*
+web-build/
