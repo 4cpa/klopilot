@@ -84,8 +84,16 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
 
   return (
     <div ref={containerRef} className="relative flex-1 min-w-0 max-w-md">
-      {/* Input — kein Rahmen, kein Hintergrund; nahtlos in AppBar-Gradient */}
-      <div className="flex items-center gap-2 px-1 py-1.5">
+      {/* Input — Pill-Rahmen nur um Suchfeld, nicht um gesamte AppBar */}
+      <div
+        className="flex items-center gap-2 rounded-full px-3 py-1.5 transition-all w-full"
+        style={{
+          background: 'var(--paper)',
+          boxShadow: open
+            ? '0 0 0 2px rgba(255,107,53,.40), 0 4px 16px rgba(15,23,42,.14)'
+            : '0 2px 10px rgba(15,23,42,.18)',
+        }}
+      >
         <span className="text-base" aria-hidden>
           {loading ? '⏳' : '🔍'}
         </span>

@@ -240,101 +240,107 @@ function KarteInner() {
         visibleCount={visibleToilets.length}
       />
 
-      {/* Kartenstil-Wechsler */}
-      {(() => {
-        const STYLES: { id: MapStyleId; label: string; icon: string }[] = [
-          { id: 'satellite', label: 'Satellit', icon: '🛰️' },
-          { id: 'streets', label: 'Strassen', icon: '🗺️' },
-          { id: 'outdoor', label: 'Outdoor', icon: '🌿' },
-        ];
-        return (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 'max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px))',
-              left: 16,
-              zIndex: 20,
-              display: 'flex',
-              borderRadius: 12,
-              overflow: 'hidden',
-              border: '1.5px solid var(--line)',
-              boxShadow: '0 2px 12px rgba(15,23,42,0.12)',
-            }}
-          >
-            {STYLES.map(({ id, label, icon }) => (
-              <button
-                key={id}
-                type="button"
-                title={label}
-                aria-pressed={mapStyle === id}
-                onClick={() => setMapStyle(id)}
-                style={{
-                  padding: '7px 11px',
-                  background: mapStyle === id ? 'var(--brand-primary)' : 'var(--paper)',
-                  color: mapStyle === id ? '#fff' : 'var(--muted)',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  transition: 'all 0.15s',
-                  borderRight: id !== 'outdoor' ? '1px solid var(--line)' : 'none',
-                }}
-              >
-                <span style={{ fontSize: 14 }}>{icon}</span>
-                <span className="hidden sm:inline">{label}</span>
-              </button>
-            ))}
-          </div>
-        );
-      })()}
-
-      {/* Heatmap toggle — rechts neben Stil-Wechsler */}
-      <button
-        type="button"
-        onClick={handleHeatmapToggle}
-        title={showHeatmap ? 'Heatmap ausblenden' : 'Heatmap einblenden'}
+      {/* Kartenstil-Wechsler + Heatmap — gemeinsamer Container unten-links,
+          genug Abstand zur MapLibre-Attribution (bottom ≥ 56 px) */}
+      <div
         style={{
           position: 'absolute',
-          bottom: 'max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px))',
-          left: 200,
+          bottom: 'max(56px, calc(env(safe-area-inset-bottom, 0px) + 48px))',
+          left: 12,
           zIndex: 20,
           display: 'flex',
+          gap: 8,
           alignItems: 'center',
-          gap: 6,
-          padding: '9px 14px',
-          borderRadius: 12,
-          border: showHeatmap ? '1.5px solid var(--brand-primary)' : '1.5px solid var(--line)',
-          background: showHeatmap ? 'var(--brand-primary)' : 'var(--paper)',
-          color: showHeatmap ? '#fff' : 'var(--ink)',
-          fontSize: 13,
-          fontWeight: 700,
-          cursor: 'pointer',
-          boxShadow: '0 2px 12px rgba(15,23,42,0.12)',
-          transition: 'all 0.18s',
-          opacity: heatmapLoading ? 0.7 : 1,
         }}
       >
-        {heatmapLoading ? (
-          <span
-            style={{
-              display: 'inline-block',
-              width: 16,
-              height: 16,
-              borderRadius: '50%',
-              border: '2px solid currentColor',
-              borderTopColor: 'transparent',
-              animation: 'spin 0.7s linear infinite',
-            }}
-          />
-        ) : (
-          '🔥'
-        )}
-        Heatmap
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      </button>
+        {/* Kartenstil-Wechsler */}
+        <div
+          style={{
+            display: 'flex',
+            borderRadius: 12,
+            overflow: 'hidden',
+            border: '1.5px solid var(--line)',
+            boxShadow: '0 2px 12px rgba(15,23,42,0.12)',
+          }}
+        >
+          {(
+            [
+              { id: 'satellite', label: 'Satellit', icon: '🛰️' },
+              { id: 'streets', label: 'Strassen', icon: '🗺️' },
+              { id: 'outdoor', label: 'Outdoor', icon: '🌿' },
+            ] as { id: MapStyleId; label: string; icon: string }[]
+          ).map(({ id, label, icon }) => (
+            <button
+              key={id}
+              type="button"
+              title={label}
+              aria-pressed={mapStyle === id}
+              onClick={() => setMapStyle(id)}
+              style={{
+                padding: '7px 10px',
+                background: mapStyle === id ? 'var(--brand-primary)' : 'var(--paper)',
+                color: mapStyle === id ? '#fff' : 'var(--muted)',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 13,
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                transition: 'all 0.15s',
+                borderRight: id !== 'outdoor' ? '1px solid var(--line)' : 'none',
+              }}
+            >
+              <span style={{ fontSize: 15 }}>{icon}</span>
+              <span className="hidden sm:inline" style={{ fontSize: 12 }}>
+                {label}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Heatmap toggle */}
+        <button
+          type="button"
+          onClick={handleHeatmapToggle}
+          title={showHeatmap ? 'Heatmap ausblenden' : 'Heatmap einblenden'}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 5,
+            padding: '8px 12px',
+            borderRadius: 12,
+            border: showHeatmap ? '1.5px solid var(--brand-primary)' : '1.5px solid var(--line)',
+            background: showHeatmap ? 'var(--brand-primary)' : 'var(--paper)',
+            color: showHeatmap ? '#fff' : 'var(--ink)',
+            fontSize: 13,
+            fontWeight: 700,
+            cursor: 'pointer',
+            boxShadow: '0 2px 12px rgba(15,23,42,0.12)',
+            transition: 'all 0.18s',
+            opacity: heatmapLoading ? 0.7 : 1,
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {heatmapLoading ? (
+            <span
+              style={{
+                display: 'inline-block',
+                width: 16,
+                height: 16,
+                borderRadius: '50%',
+                border: '2px solid currentColor',
+                borderTopColor: 'transparent',
+                animation: 'spin 0.7s linear infinite',
+              }}
+            />
+          ) : (
+            '🔥'
+          )}
+          Heatmap
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </button>
+      </div>
 
       {/* Sheets */}
       {activeSheet === 'detail' && (

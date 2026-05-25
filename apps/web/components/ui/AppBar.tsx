@@ -35,15 +35,16 @@ export function AppBar({
 
   return (
     <header
-      className="absolute top-0 left-0 right-0 z-20 px-4 py-2.5 flex items-center gap-3"
-      style={{
-        background: 'linear-gradient(to bottom, var(--paper) 60%, transparent)',
-      }}
+      className="absolute top-0 left-0 right-0 z-20 px-3 py-2.5 flex items-center gap-2"
+      style={{ background: 'transparent' }}
     >
       {/* Logo */}
       <div className="flex items-center gap-2 flex-shrink-0">
         <Logo size={32} />
-        <span className="font-display font-semibold text-lg text-[var(--ink)] hidden sm:block">
+        <span
+          className="font-display font-semibold text-lg hidden sm:block"
+          style={{ color: 'var(--ink)', textShadow: '0 1px 4px rgba(255,255,255,0.8)' }}
+        >
           klopilot
         </span>
       </div>
