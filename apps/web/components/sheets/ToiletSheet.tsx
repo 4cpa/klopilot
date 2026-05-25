@@ -9,6 +9,7 @@ interface Props {
   toiletId: string | null;
   onClose: () => void;
   onRate: (toiletId: string) => void;
+  onDeleted?: () => void;
 }
 
 type Detail = Toilet & {
@@ -348,7 +349,7 @@ function AccessBadge({ emoji, label }: { emoji: string; label: string }) {
 }
 
 /* ── ToiletSheet ──────────────────────────────────────────────────────────── */
-export function ToiletSheet({ toiletId, onClose, onRate }: Props) {
+export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [detail, setDetail] = useState<Detail | null>(null);
@@ -357,6 +358,8 @@ export function ToiletSheet({ toiletId, onClose, onRate }: Props) {
   const [copied, setCopied] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadErr, setUploadErr] = useState<string | null>(null);
+  const [deleteErr, setDeleteErr] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const sheetRef = useRef<HTMLElement>(null);
   const fileInputId = useId();
 
@@ -431,6 +434,27 @@ export function ToiletSheet({ toiletId, onClose, onRate }: Props) {
     },
     [toiletId],
   );
+
+  const handleDeleteToilet = useCallback(async () => {
+    if (!detail) return;
+    if (
+      !confirm(
+        `Toilette "${detail.name}" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.`,
+      )
+    )
+      return;
+    setDeleting(true);
+    setDeleteErr(null);
+    try {
+      await toiletsApi.delete(detail.id);
+      onClose();
+      onDeleted?.();
+    } catch (err) {
+      setDeleteErr(err instanceof Error ? err.message : 'Löschen fehlgeschlagen');
+    } finally {
+      setDeleting(false);
+    }
+  }, [detail, onClose, onDeleted]);
 
   const handleNavigate = useCallback(() => {
     if (!detail) return;
@@ -969,6 +993,38 @@ export function ToiletSheet({ toiletId, onClose, onRate }: Props) {
                   <p style={{ fontSize: 12, color: 'var(--brand-berry)', margin: 0 }}>
                     ⚠ {uploadErr}
                   </p>
+                )}
+
+                {/* Toilette löschen — nur für Ersteller oder Admin/Moderator */}
+                {(detail.createdById === user?.id ||
+                  ['admin', 'moderator'].includes(user?.role ?? '')) && (
+                  <>
+                    <button
+                      type="button"
+                      disabled={deleting}
+                      onClick={handleDeleteToilet}
+                      style={{
+                        width: '100%',
+                        padding: '11px',
+                        borderRadius: 12,
+                        background: 'transparent',
+                        border: '1.5px solid var(--brand-berry)',
+                        fontSize: 13,
+                        fontWeight: 700,
+                        color: 'var(--brand-berry)',
+                        cursor: deleting ? 'not-allowed' : 'pointer',
+                        opacity: deleting ? 0.6 : 1,
+                        marginTop: 4,
+                      }}
+                    >
+                      {deleting ? '…' : '🗑 Toilette löschen'}
+                    </button>
+                    {deleteErr && (
+                      <p style={{ fontSize: 12, color: 'var(--brand-berry)', margin: 0 }}>
+                        ⚠ {deleteErr}
+                      </p>
+                    )}
+                  </>
                 )}
               </div>
             ) : (

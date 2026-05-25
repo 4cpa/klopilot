@@ -76,11 +76,13 @@ function KarteInner() {
       .catch(() => {});
   }, []);
 
-  // ── Karten-Klick: Standort für neue Toilette setzen ──────────────────────
+  // ── Karten-Klick: Standort für neue Toilette setzen / direkt hinzufügen ──
   const handleMapClick = useCallback(
     (lng: number, lat: number) => {
-      if (activeSheet !== 'add') return; // nur im AddToilet-Modus aktiv
+      // Im Detail/Rate/Login-Modus Klicks ignorieren
+      if (activeSheet === 'detail' || activeSheet === 'rate' || activeSheet === 'login') return;
       setPendingLocation({ lng, lat });
+      if (activeSheet !== 'add') setActiveSheet('add');
     },
     [activeSheet],
   );
@@ -163,6 +165,10 @@ function KarteInner() {
     setActiveSheet('add');
   }, []);
 
+  const handleToiletDeleted = useCallback(() => {
+    reload();
+  }, [reload]);
+
   return (
     <main className="relative h-screen w-screen overflow-hidden">
       {/* Cursor-Hinweis im Marker-Drop-Modus */}
@@ -196,7 +202,7 @@ function KarteInner() {
         zoom={DEFAULT_ZOOM}
         onSelect={handleSelect}
         onMoveEnd={handleMoveEnd}
-        onMapClick={activeSheet === 'add' ? handleMapClick : undefined}
+        onMapClick={handleMapClick}
         showHeatmap={showHeatmap}
         heatmapPoints={heatmapPoints}
       />
@@ -263,7 +269,12 @@ function KarteInner() {
 
       {/* Sheets */}
       {activeSheet === 'detail' && (
-        <ToiletSheet toiletId={selectedId} onClose={handleClose} onRate={handleRate} />
+        <ToiletSheet
+          toiletId={selectedId}
+          onClose={handleClose}
+          onRate={handleRate}
+          onDeleted={handleToiletDeleted}
+        />
       )}
       {activeSheet === 'rate' && selectedId && (
         <RatingSheet

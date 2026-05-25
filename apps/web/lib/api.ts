@@ -25,6 +25,7 @@ export interface Toilet {
   score?: Score;
   accessibility?: ToiletAccessibility;
   verified?: boolean;
+  createdById?: string;
   _count?: { ratings: number };
 }
 
@@ -147,6 +148,8 @@ export const toilets = {
     feeChf?: number;
     visibility?: string;
   }) => request<Toilet>('/toilets', { method: 'POST', body: JSON.stringify(data) }),
+
+  delete: (id: string) => request(`/toilets/${id}`, { method: 'DELETE' }),
 };
 
 // ── Users ─────────────────────────────────────────────────────────────────────
