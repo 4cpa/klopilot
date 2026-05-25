@@ -163,7 +163,7 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
         overflowX: 'auto',
         scrollbarWidth: 'none',
         WebkitOverflowScrolling: 'touch',
-        background: 'linear-gradient(to bottom, var(--paper) 50%, transparent)',
+        background: 'transparent',
         cursor: 'grab',
       }}
     >
