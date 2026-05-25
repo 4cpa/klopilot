@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, type ReactNode } from 'react';
 import { search, type Toilet } from '@/lib/api';
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -22,7 +22,7 @@ interface Props {
   userLocation?: [number, number];
   onSelect: (toilet: Toilet) => void;
   /** Optionales Element rechts im Input-Feld (z. B. ThemeToggleMini auf Mobile) */
-  trailing?: React.ReactNode;
+  trailing?: ReactNode;
 }
 
 export function SearchBar({ userLocation, onSelect, trailing }: Props) {
