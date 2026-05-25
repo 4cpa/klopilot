@@ -18,8 +18,6 @@ FROM deps AS builder
 # Quellcode kopieren
 COPY apps/api ./apps/api
 COPY packages/shared-types ./packages/shared-types
-# shared-types zuerst bauen (api hängt davon ab)
-RUN pnpm --filter @klopilot/shared-types build
 # Prisma Client generieren (schema ist jetzt vorhanden)
 RUN pnpm --filter @klopilot/api exec prisma generate
 # API bauen
@@ -46,10 +44,9 @@ COPY packages/shared-types/package.json ./packages/shared-types/
 # --prod installiert nur production deps (prisma CLI in dependencies → migrate deploy)
 RUN pnpm install --frozen-lockfile --filter @klopilot/api... --prod
 
-# Kompilierter Code + Prisma-Schema + shared-types
+# Kompilierter Code + Prisma-Schema
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
-COPY --from=builder /app/packages/shared-types/dist ./packages/shared-types/dist
 
 # Prisma Client generieren (schema ist jetzt vorhanden, openssl installiert)
 RUN pnpm --filter @klopilot/api exec prisma generate
