@@ -56,8 +56,9 @@ USER nestjs
 
 EXPOSE 3101
 
-# Healthcheck: /api/v1/health muss 200 zurückgeben
+# Healthcheck: 127.0.0.1 statt localhost — Alpine löst localhost als ::1 (IPv6) auf,
+# Fastify lauscht aber nur auf IPv4 (0.0.0.0). Daher explizit 127.0.0.1 verwenden.
 HEALTHCHECK --interval=15s --timeout=5s --start-period=45s --retries=5 \
-  CMD wget -qO- http://localhost:3101/health || exit 1
+  CMD wget -qO- http://127.0.0.1:3101/health || exit 1
 
 CMD ["node", "apps/api/dist/main"]

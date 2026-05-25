@@ -36,6 +36,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/
 USER nextjs
 EXPOSE 3102
 ENV PORT=3102
+# HOSTNAME=0.0.0.0: Next.js standalone liest HOSTNAME und bindet sich sonst
+# an den Container-Hostnamen statt an alle Interfaces.
+ENV HOSTNAME=0.0.0.0
 HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=3 \
-  CMD wget -qO- http://localhost:3102 || exit 1
+  CMD wget -qO- http://127.0.0.1:3102 || exit 1
 CMD ["node", "apps/web/server.js"]

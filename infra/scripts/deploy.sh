@@ -64,7 +64,7 @@ log "▸ Waiting for API health…"
 for i in $(seq 1 30); do
   if REGISTRY="$REGISTRY" TAG="$TAG" \
       $COMPOSE --env-file "$ENV_FILE" \
-      exec -T api wget -qO- http://localhost:3101/health 2>/dev/null | grep -q "ok"; then
+      exec -T api wget -qO- http://127.0.0.1:3101/health 2>/dev/null | grep -q "ok"; then
     log "✅ API healthy"
     break
   fi
