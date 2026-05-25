@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, Fraunces } from 'next/font/google';
 import { ThemeScript } from '@/components/ui/ThemeScript';
 import { I18nProvider } from '@/components/ui/I18nProvider';
+import { AuthProvider } from '@/components/ui/AuthProvider';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
@@ -31,7 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeScript />
       </head>
       <body className={`${inter.variable} ${fraunces.variable} font-sans antialiased`}>
-        <I18nProvider>{children}</I18nProvider>
+        <I18nProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </I18nProvider>
       </body>
     </html>
   );

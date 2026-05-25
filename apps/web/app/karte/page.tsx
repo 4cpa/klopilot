@@ -9,7 +9,6 @@ import {
   type Toilet,
   type HeatmapPoint,
 } from '@/lib/api';
-import { authStore } from '@/lib/auth-store';
 import { useGeoLocation } from '@/lib/hooks';
 import { AppBar } from '@/components/ui/AppBar';
 import { FilterBar, DEFAULT_FILTERS, type MapFilters } from '@/components/map/FilterBar';
@@ -57,11 +56,6 @@ function KarteInner() {
 
   const mapCenter = useMemo<[number, number]>(() => pos ?? [DEFAULT_LNG, DEFAULT_LAT], [pos]);
   const initialized = useRef(false);
-
-  // Auth init
-  useEffect(() => {
-    authStore.init();
-  }, []);
 
   // ── Erstes Laden beim Init ────────────────────────────────────────────────
   useEffect(() => {
