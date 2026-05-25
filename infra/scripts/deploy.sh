@@ -51,8 +51,8 @@ REGISTRY="$REGISTRY" TAG="$TAG" \
 log "▸ Running Prisma migrations…"
 REGISTRY="$REGISTRY" TAG="$TAG" \
   $COMPOSE --env-file "$ENV_FILE" run --rm --no-deps api \
-  node /app/apps/api/node_modules/.bin/prisma migrate deploy \
-    --schema /app/apps/api/prisma/schema.prisma
+  sh -c 'PRISMA_BIN=$(find /app -path "*/node_modules/.bin/prisma" | head -1) && \
+         "$PRISMA_BIN" migrate deploy --schema /app/apps/api/prisma/schema.prisma'
 
 # ── 6. API & Web neustarten ───────────────────────────────────────────────
 log "▸ Restarting API & Web…"
