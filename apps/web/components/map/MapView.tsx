@@ -12,21 +12,18 @@ function zoomToRadius(zoom: number): number {
 
 const MAPTILER_KEY = process.env.NEXT_PUBLIC_MAPTILER_KEY;
 
-function buildStyle(): maplibregl.StyleSpecification {
+export type MapStyleId = 'satellite' | 'streets' | 'outdoor';
+
+function buildStyleUrl(style: MapStyleId = 'satellite'): string | maplibregl.StyleSpecification {
   if (MAPTILER_KEY) {
-    return {
-      version: 8,
-      sources: {
-        satellite: {
-          type: 'raster',
-          tiles: [`https://api.maptiler.com/tiles/satellite/{z}/{x}/{y}.jpg?key=${MAPTILER_KEY}`],
-          tileSize: 512,
-          attribution: '© MapTiler © OpenStreetMap contributors',
-        },
-      },
-      layers: [{ id: 'satellite', type: 'raster', source: 'satellite' }],
+    const MAP: Record<MapStyleId, string> = {
+      satellite: `https://api.maptiler.com/maps/hybrid/style.json?key=${MAPTILER_KEY}`,
+      streets: `https://api.maptiler.com/maps/streets-v2/style.json?key=${MAPTILER_KEY}`,
+      outdoor: `https://api.maptiler.com/maps/outdoor-v2/style.json?key=${MAPTILER_KEY}`,
     };
+    return MAP[style];
   }
+  // Fallback: OSM-Raster (kein MapTiler-Key)
   return {
     version: 8,
     sources: {
@@ -52,6 +49,13 @@ function scoreColor(score?: Toilet['score']) {
 const HEATMAP_SOURCE = 'klo-heatmap';
 const HEATMAP_LAYER = 'klo-heatmap-layer';
 
+export interface MapBounds {
+  minLng: number;
+  minLat: number;
+  maxLng: number;
+  maxLat: number;
+}
+
 interface Props {
   toilets: Toilet[];
   center?: [number, number];
@@ -59,11 +63,12 @@ interface Props {
   zoom?: number;
   onSelect: (id: string) => void;
   /** Wird nach jeder Karten-Bewegung (debounced) aufgerufen. */
-  onMoveEnd?: (center: [number, number], radiusM: number) => void;
+  onMoveEnd?: (center: [number, number], radiusM: number, bounds: MapBounds) => void;
   /** Wird bei Klick auf die leere Karte aufgerufen (Marker-Drop-Modus). */
   onMapClick?: (lng: number, lat: number) => void;
   showHeatmap?: boolean;
   heatmapPoints?: HeatmapPoint[];
+  mapStyle?: MapStyleId;
 }
 
 export default function MapView({
@@ -76,6 +81,7 @@ export default function MapView({
   onMapClick,
   showHeatmap = false,
   heatmapPoints = [],
+  mapStyle = 'satellite',
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -83,6 +89,8 @@ export default function MapView({
   const moveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onMoveEndRef = useRef(onMoveEnd);
   const onMapClickRef = useRef(onMapClick);
+  // Ref für Heatmap-Zustand — wird nach Style-Wechsel neu angewendet
+  const heatmapStateRef = useRef({ show: showHeatmap, points: heatmapPoints });
 
   // Refs synchron vor dem nächsten Paint aktualisieren (kein Render-Body-Zugriff)
   useLayoutEffect(() => {
@@ -99,7 +107,7 @@ export default function MapView({
 
     mapRef.current = new maplibregl.Map({
       container: containerRef.current,
-      style: buildStyle(),
+      style: buildStyleUrl(mapStyle),
       center: center ?? [defaultLng, defaultLat],
       zoom,
       attributionControl: { compact: true },
@@ -123,7 +131,14 @@ export default function MapView({
       moveTimerRef.current = setTimeout(() => {
         const { lng, lat } = map.getCenter();
         const radius = zoomToRadius(map.getZoom());
-        onMoveEndRef.current?.([lng, lat], radius);
+        const b = map.getBounds();
+        const bounds: MapBounds = {
+          minLng: b.getWest(),
+          minLat: b.getSouth(),
+          maxLng: b.getEast(),
+          maxLat: b.getNorth(),
+        };
+        onMoveEndRef.current?.([lng, lat], radius, bounds);
       }, 500);
     };
     mapRef.current.on('moveend', handleMoveEnd);
@@ -197,6 +212,52 @@ export default function MapView({
     if (map.isStyleLoaded()) addMarkers();
     else map.once('load', addMarkers);
   }, [toilets, onSelect]);
+
+  // Kartenstil wechseln (nach Init)
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const newStyle = buildStyleUrl(mapStyle);
+    // Nach Style-Wechsel Heatmap-Layer neu anwenden
+    const onStyleData = () => {
+      const { show, points } = heatmapStateRef.current;
+      if (!show || points.length === 0) return;
+      if (map.getLayer(HEATMAP_LAYER)) map.removeLayer(HEATMAP_LAYER);
+      if (map.getSource(HEATMAP_SOURCE)) map.removeSource(HEATMAP_SOURCE);
+      map.addSource(HEATMAP_SOURCE, {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: points.map((p) => ({
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
+            properties: { weight: p.weight ?? 1 },
+          })),
+        },
+      });
+      map.addLayer({
+        id: HEATMAP_LAYER,
+        type: 'heatmap',
+        source: HEATMAP_SOURCE,
+        paint: {
+          'heatmap-weight': ['interpolate', ['linear'], ['get', 'weight'], 0, 0, 5, 1],
+          'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 7, 1, 15, 3],
+          'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 7, 20, 15, 40],
+          'heatmap-opacity': 0.72,
+        },
+      });
+    };
+    map.once('styledata', onStyleData);
+    map.setStyle(newStyle);
+    return () => {
+      map.off('styledata', onStyleData);
+    };
+  }, [mapStyle]);
+
+  // Heatmap-Ref für Style-Wechsel synchron halten
+  useEffect(() => {
+    heatmapStateRef.current = { show: showHeatmap, points: heatmapPoints };
+  });
 
   // Heatmap layer
   useEffect(() => {

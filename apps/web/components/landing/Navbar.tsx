@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { Logo } from '@/components/ui/Logo';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { ThemeToggle, ThemeToggleMini } from '@/components/ui/ThemeToggle';
 
 const LANGS = ['DE', 'FR', 'IT', 'EN'] as const;
 
@@ -125,7 +125,13 @@ export function Navbar() {
             ))}
           </div>
 
-          <ThemeToggle />
+          {/* Desktop: 3-Button-Gruppe; Mobile: ThemeToggleMini */}
+          <div className="hidden-mobile">
+            <ThemeToggle />
+          </div>
+          <div className="show-mobile">
+            <ThemeToggleMini />
+          </div>
 
           <Link
             href="/karte"

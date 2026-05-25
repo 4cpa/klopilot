@@ -17,6 +17,7 @@ import { ToiletSheet } from '@/components/sheets/ToiletSheet';
 import { RatingSheet } from '@/components/sheets/RatingSheet';
 import { AddToiletSheet } from '@/components/sheets/AddToiletSheet';
 import { LoginModal } from '@/components/auth/LoginModal';
+import type { MapStyleId, MapBounds } from '@/components/map/MapView';
 
 const MapView = dynamic(() => import('@/components/map/MapView'), {
   ssr: false,
@@ -51,6 +52,8 @@ function KarteInner() {
   const [showHeatmap, setShowHeatmap] = useState(false);
   const [heatmapPoints, setHeatmapPoints] = useState<HeatmapPoint[]>([]);
   const [heatmapLoading, setHeatmapLoading] = useState(false);
+  const [mapStyle, setMapStyle] = useState<MapStyleId>('satellite');
+  const [mapBounds, setMapBounds] = useState<MapBounds | null>(null);
   // Marker-Drop-Modus: Koordinaten für neue Toilette per Karten-Klick
   const [pendingLocation, setPendingLocation] = useState<{ lng: number; lat: number } | null>(null);
 
@@ -69,12 +72,16 @@ function KarteInner() {
   }, [mapCenter]);
 
   // ── Nachladen bei Karten-Bewegung (MoveEnd, debounced in MapView) ─────────
-  const handleMoveEnd = useCallback((center: [number, number], radiusM: number) => {
-    toiletsApi
-      .nearby(center[0], center[1], radiusM)
-      .then(setToiletList)
-      .catch(() => {});
-  }, []);
+  const handleMoveEnd = useCallback(
+    (center: [number, number], radiusM: number, bounds: MapBounds) => {
+      setMapBounds(bounds);
+      toiletsApi
+        .nearby(center[0], center[1], radiusM)
+        .then(setToiletList)
+        .catch(() => {});
+    },
+    [],
+  );
 
   // ── Karten-Klick: Standort für neue Toilette setzen / direkt hinzufügen ──
   const handleMapClick = useCallback(
@@ -87,21 +94,28 @@ function KarteInner() {
     [activeSheet],
   );
 
-  // Heatmap laden beim ersten Einschalten
+  // Heatmap laden beim ersten Einschalten (mit aktuellem Viewport-Bbox)
   const handleHeatmapToggle = useCallback(async () => {
     const next = !showHeatmap;
     setShowHeatmap(next);
     if (next && heatmapPoints.length === 0) {
       setHeatmapLoading(true);
       try {
-        const { points } = await heatmapApi.get();
+        // Fallback: ganzes sichtbares Gebiet oder Schweiz-Default
+        const bbox = mapBounds ?? {
+          minLng: 5.9,
+          minLat: 45.8,
+          maxLng: 10.5,
+          maxLat: 47.9,
+        };
+        const { points } = await heatmapApi.get(bbox);
         setHeatmapPoints(points);
       } catch {
         /* silent */
       }
       setHeatmapLoading(false);
     }
-  }, [showHeatmap, heatmapPoints.length]);
+  }, [showHeatmap, heatmapPoints.length, mapBounds]);
 
   // Filter
   const visibleToilets = useMemo(() => {
@@ -208,6 +222,7 @@ function KarteInner() {
         onMapClick={handleMapClick}
         showHeatmap={showHeatmap}
         heatmapPoints={heatmapPoints}
+        mapStyle={mapStyle}
       />
 
       <AppBar
@@ -225,7 +240,58 @@ function KarteInner() {
         visibleCount={visibleToilets.length}
       />
 
-      {/* Heatmap toggle */}
+      {/* Kartenstil-Wechsler */}
+      {(() => {
+        const STYLES: { id: MapStyleId; label: string; icon: string }[] = [
+          { id: 'satellite', label: 'Satellit', icon: '🛰️' },
+          { id: 'streets', label: 'Strassen', icon: '🗺️' },
+          { id: 'outdoor', label: 'Outdoor', icon: '🌿' },
+        ];
+        return (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 'max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px))',
+              left: 16,
+              zIndex: 20,
+              display: 'flex',
+              borderRadius: 12,
+              overflow: 'hidden',
+              border: '1.5px solid var(--line)',
+              boxShadow: '0 2px 12px rgba(15,23,42,0.12)',
+            }}
+          >
+            {STYLES.map(({ id, label, icon }) => (
+              <button
+                key={id}
+                type="button"
+                title={label}
+                aria-pressed={mapStyle === id}
+                onClick={() => setMapStyle(id)}
+                style={{
+                  padding: '7px 11px',
+                  background: mapStyle === id ? 'var(--brand-primary)' : 'var(--paper)',
+                  color: mapStyle === id ? '#fff' : 'var(--muted)',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  transition: 'all 0.15s',
+                  borderRight: id !== 'outdoor' ? '1px solid var(--line)' : 'none',
+                }}
+              >
+                <span style={{ fontSize: 14 }}>{icon}</span>
+                <span className="hidden sm:inline">{label}</span>
+              </button>
+            ))}
+          </div>
+        );
+      })()}
+
+      {/* Heatmap toggle — rechts neben Stil-Wechsler */}
       <button
         type="button"
         onClick={handleHeatmapToggle}
@@ -233,7 +299,7 @@ function KarteInner() {
         style={{
           position: 'absolute',
           bottom: 'max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px))',
-          left: 16,
+          left: 200,
           zIndex: 20,
           display: 'flex',
           alignItems: 'center',

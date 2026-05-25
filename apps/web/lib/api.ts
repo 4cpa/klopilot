@@ -340,6 +340,19 @@ export interface HeatmapPoint {
   weight?: number;
 }
 
+interface HeatmapCell {
+  lng: number;
+  lat: number;
+  count: number;
+}
+
 export const heatmap = {
-  get: () => request<{ points: HeatmapPoint[] }>('/heatmap'),
+  get: (bbox: { minLng: number; minLat: number; maxLng: number; maxLat: number }) =>
+    request<{ cells: HeatmapCell[] }>(
+      `/heatmap?minLng=${bbox.minLng}&minLat=${bbox.minLat}&maxLng=${bbox.maxLng}&maxLat=${bbox.maxLat}`,
+    ).then((r) => ({
+      points: r.cells
+        .filter((c) => c.count > 0)
+        .map((c) => ({ lng: c.lng, lat: c.lat, weight: c.count })) as HeatmapPoint[],
+    })),
 };
