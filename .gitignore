@@ -33,8 +33,8 @@ Thumbs.db
 npm-debug.log*
 pnpm-debug.log*
 
-# Prisma
-apps/api/prisma/migrations/
+# Prisma — Migrations-Ordner wird versioniert (enthält migration.sql-Dateien)
+# apps/api/prisma/migrations/  ← absichtlich NICHT ignoriert
 
 # Mobile
 *.orig.*
