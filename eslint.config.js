@@ -52,6 +52,15 @@ export default tseslint.config(
     files: ['*.config.*', '**/*.config.*'],
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
+      'no-undef': 'off', // CJS-Dateien (module, require, process) sind nicht ESM
+    },
+  },
+  {
+    // Expo/Babel/Metro CJS-Konfigurationsdateien
+    files: ['apps/mobile/app.config.*', 'apps/mobile/babel.config.*', 'apps/mobile/metro.config.*'],
+    rules: {
+      'no-undef': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
 );
