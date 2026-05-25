@@ -9,7 +9,7 @@
     "test:e2e": "turbo run test:e2e",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,yaml,md}\"",
-    "prepare": "husky",
+    "prepare": "[ \"$NODE_ENV\" = 'production' ] || [ -n \"$CI\" ] || husky",
     "db:migrate": "pnpm --filter api db:migrate",
     "db:studio": "pnpm --filter api db:studio",
     "db:seed": "pnpm --filter api db:seed",
