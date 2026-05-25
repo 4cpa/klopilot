@@ -176,7 +176,7 @@ function KarteInner() {
         <div
           style={{
             position: 'absolute',
-            top: 72,
+            top: 'max(72px, calc(env(safe-area-inset-top, 0px) + 72px))',
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 30,
@@ -229,7 +229,7 @@ function KarteInner() {
         title={showHeatmap ? 'Heatmap ausblenden' : 'Heatmap einblenden'}
         style={{
           position: 'absolute',
-          bottom: 24,
+          bottom: 'max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px))',
           left: 16,
           zIndex: 20,
           display: 'flex',

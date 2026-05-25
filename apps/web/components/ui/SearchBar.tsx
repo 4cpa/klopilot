@@ -81,7 +81,7 @@ export function SearchBar({ userLocation, onSelect }: Props) {
   );
 
   return (
-    <div ref={containerRef} className="relative flex-1 max-w-md">
+    <div ref={containerRef} className="relative flex-1 min-w-0 max-w-md">
       {/* Input */}
       <div
         className="flex items-center gap-2 rounded-xl px-3 py-2 border transition-colors"

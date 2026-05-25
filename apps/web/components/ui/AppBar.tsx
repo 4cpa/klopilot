@@ -50,8 +50,8 @@ export function AppBar({
       {/* Suche */}
       <SearchBar userLocation={userLocation} onSelect={onSearchSelect} />
 
-      {/* Aktionen */}
-      <div className="flex items-center gap-2">
+      {/* Aktionen — flex-shrink-0 verhindert, dass Icons auf Mobile herausgedrückt werden */}
+      <div className="flex items-center gap-2 flex-shrink-0">
         <ThemeToggle />
 
         {user ? (

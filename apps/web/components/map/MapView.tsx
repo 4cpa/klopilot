@@ -105,13 +105,14 @@ export default function MapView({
       attributionControl: { compact: true },
     });
 
-    mapRef.current.addControl(new maplibregl.NavigationControl(), 'top-right');
+    // bottom-right: kein Überlappen mit der AppBar am oberen Rand
+    mapRef.current.addControl(new maplibregl.NavigationControl(), 'bottom-right');
     mapRef.current.addControl(
       new maplibregl.GeolocateControl({
         positionOptions: { enableHighAccuracy: true },
         trackUserLocation: true,
       }),
-      'top-right',
+      'bottom-right',
     );
 
     // ── Map Move: Toiletten nachladen (debounced 500 ms) ──────────────────

@@ -109,7 +109,7 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
         left: 0,
         right: 0,
         zIndex: 15,
-        padding: '7px 12px 8px',
+        padding: '7px 8px 8px',
         display: 'flex',
         alignItems: 'center',
         gap: 6,
@@ -117,9 +117,7 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
         scrollbarWidth: 'none',
         WebkitOverflowScrolling: 'touch',
         background: 'linear-gradient(to bottom, var(--paper) 50%, transparent)',
-        // Fade right edge so chips trail off cleanly
-        maskImage: 'linear-gradient(to right, black 75%, transparent 98%)',
-        WebkitMaskImage: 'linear-gradient(to right, black 75%, transparent 98%)',
+        // Kein maskImage — Chips wurden dadurch ausgegraut / sahen deaktiviert aus
       }}
     >
       {/* Quick-toggle filters */}
@@ -211,6 +209,9 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
           {visibleCount} / {totalCount}
         </span>
       )}
+
+      {/* Spacer so last chip isn't flush against edge */}
+      <span style={{ flexShrink: 0, width: 8, display: 'inline-block' }} aria-hidden />
 
       <style>{`
         [role="toolbar"]::-webkit-scrollbar { display: none; }

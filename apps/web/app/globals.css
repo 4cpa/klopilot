@@ -68,6 +68,17 @@ body.map-page, body.map-page #__next {
 .maplibregl-map { font-family: 'Inter', sans-serif; }
 .maplibregl-ctrl-attrib-inner a { color: var(--muted); }
 
+/* Safe-area auf Mobile: Controls nicht hinter Safari-Toolbar verstecken */
+.maplibregl-ctrl-bottom-right,
+.maplibregl-ctrl-bottom-left {
+  margin-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+}
+/* AppBar-Versatz oben für Safe-Area (Notch) */
+.maplibregl-ctrl-top-right,
+.maplibregl-ctrl-top-left {
+  margin-top: max(8px, env(safe-area-inset-top, 0px));
+}
+
 /* ── Smooth theme transitions ──────────────────────────────────────────────── */
 *, *::before, *::after {
   transition: background-color 0.15s ease, border-color 0.15s ease;
