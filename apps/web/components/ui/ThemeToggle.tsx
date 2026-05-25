@@ -79,32 +79,61 @@ export function ThemeToggle() {
 
   return (
     <div
-      className="hidden sm:flex rounded-lg overflow-hidden border border-[var(--line)]"
       role="group"
       aria-label="Theme wählen"
+      style={{
+        display: 'flex',
+        borderRadius: 10,
+        overflow: 'hidden',
+        border: '1.5px solid var(--line)',
+        background: 'var(--surface)',
+        boxShadow: '0 1px 4px rgba(15,23,42,0.08)',
+      }}
     >
-      {OPTIONS.map(({ value, Icon, title }) => (
-        <button
-          key={value}
-          type="button"
-          title={title}
-          aria-pressed={theme === value}
-          onClick={() => setTheme(value)}
-          className={`px-2.5 py-1.5 transition-colors ${
-            theme === value
-              ? 'bg-[var(--brand-primary)] text-white'
-              : 'bg-[var(--surface)] text-[var(--muted)] hover:bg-[var(--cream)]'
-          }`}
-        >
-          <Icon />
-        </button>
-      ))}
+      {OPTIONS.map(({ value, Icon, title }) => {
+        const active = theme === value;
+        return (
+          <button
+            key={value}
+            type="button"
+            title={title}
+            aria-pressed={active}
+            onClick={() => setTheme(value)}
+            style={{
+              width: 30,
+              height: 30,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background 0.15s, color 0.15s',
+              background: active ? 'var(--brand-primary)' : 'transparent',
+              color: active ? '#fff' : 'var(--muted)',
+              borderRight: value !== 'dark' ? '1px solid var(--line)' : 'none',
+            }}
+            onMouseEnter={(e) => {
+              if (!active) {
+                (e.currentTarget as HTMLElement).style.background = 'var(--cream)';
+                (e.currentTarget as HTMLElement).style.color = 'var(--ink)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!active) {
+                (e.currentTarget as HTMLElement).style.background = 'transparent';
+                (e.currentTarget as HTMLElement).style.color = 'var(--muted)';
+              }
+            }}
+          >
+            <Icon />
+          </button>
+        );
+      })}
     </div>
   );
 }
 
-/* ── Mini-Button für eingebettete Nutzung im Suchfeld ─────────────────────── */
-/* Kein sichtbarer Rahmen / Hintergrund — Icon sitzt nahtlos im Suchfeld-Pill. */
+/* ── Mini-Button (Navbar mobile, AppBar) — gleicher Stil wie HelpButton ────── */
 export function ThemeToggleMini() {
   const { theme, setTheme } = useTheme();
 
@@ -122,17 +151,26 @@ export function ThemeToggleMini() {
         setTheme(nextOption.value);
       }}
       style={{
-        border: 'none',
-        background: 'transparent',
+        width: 30,
+        height: 30,
+        borderRadius: '50%',
+        border: '1.5px solid var(--line)',
+        background: 'var(--surface)',
+        color: 'var(--muted)',
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        color: 'var(--muted)',
         flexShrink: 0,
-        padding: '4px',
-        lineHeight: 0,
-        /* Kein borderRadius / Hover-Hintergrund — verhindert sichtbares Rechteck */
+        transition: 'all 0.15s',
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.background = 'var(--cream)';
+        (e.currentTarget as HTMLElement).style.color = 'var(--ink)';
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.background = 'var(--surface)';
+        (e.currentTarget as HTMLElement).style.color = 'var(--muted)';
       }}
     >
       <current.Icon />

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { ThemeToggleMini } from './ThemeToggle';
 import { SearchBar } from './SearchBar';
@@ -38,8 +39,13 @@ export function AppBar({
       className="absolute top-0 left-0 right-0 z-20 px-3 py-2.5 flex items-center gap-2"
       style={{ background: 'transparent' }}
     >
-      {/* Logo */}
-      <div className="flex items-center gap-2 flex-shrink-0">
+      {/* Logo → Startseite */}
+      <Link
+        href="/"
+        aria-label="klopilot – zur Startseite"
+        className="flex items-center gap-2 flex-shrink-0"
+        style={{ textDecoration: 'none' }}
+      >
         <Logo size={32} />
         <span
           className="font-display font-semibold text-lg hidden sm:block"
@@ -47,7 +53,7 @@ export function AppBar({
         >
           klopilot
         </span>
-      </div>
+      </Link>
 
       {/* Suche */}
       <SearchBar userLocation={userLocation} onSelect={onSearchSelect} />
