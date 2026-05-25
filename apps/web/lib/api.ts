@@ -73,7 +73,9 @@ function token(): string | null {
 async function request<T>(path: string, init: RequestInit = {}, retry = true): Promise<T> {
   const t = token();
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    // Content-Type nur setzen wenn ein Body vorhanden ist
+    // (Fastify wirft 400 bei Content-Type: application/json ohne Body)
+    ...(init.body != null ? { 'Content-Type': 'application/json' } : {}),
     ...((init.headers as Record<string, string>) ?? {}),
   };
   if (t) headers['Authorization'] = `Bearer ${t}`;
