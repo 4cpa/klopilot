@@ -46,11 +46,22 @@ export function Navbar() {
           gap: 8,
         }}
       >
-        {/* Logo */}
+        {/* Logo → Startseite */}
         <Link
           href="/"
           aria-label="klopilot Startseite"
-          style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            textDecoration: 'none',
+            borderRadius: 8,
+            padding: '4px 6px',
+            marginLeft: -6,
+            transition: 'background 0.15s',
+          }}
+          onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = 'var(--cream)')}
+          onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = 'transparent')}
         >
           <Logo size={32} />
           <span

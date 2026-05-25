@@ -64,20 +64,34 @@ export function Hero() {
         />
       </div>
 
-      {/* Logo */}
-      <div
+      {/* Logo + Brand → verlinkt zur Karte */}
+      <Link
+        href="/karte"
+        aria-label="klopilot – Zur Karte"
         style={{
           marginBottom: 28,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           gap: 12,
+          textDecoration: 'none',
         }}
       >
         <div
           style={{
             filter: 'drop-shadow(0 8px 24px rgba(255,107,53,0.30))',
             borderRadius: 22,
+            transition: 'filter 0.2s, transform 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.filter =
+              'drop-shadow(0 12px 32px rgba(255,107,53,0.50))';
+            (e.currentTarget as HTMLElement).style.transform = 'scale(1.06)';
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.filter =
+              'drop-shadow(0 8px 24px rgba(255,107,53,0.30))';
+            (e.currentTarget as HTMLElement).style.transform = '';
           }}
         >
           <Logo size={80} />
@@ -89,11 +103,16 @@ export function Hero() {
             fontSize: 28,
             color: 'var(--ink)',
             letterSpacing: '-0.03em',
+            transition: 'color 0.15s',
           }}
+          onMouseEnter={(e) =>
+            ((e.currentTarget as HTMLElement).style.color = 'var(--brand-primary)')
+          }
+          onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--ink)')}
         >
           klopilot
         </span>
-      </div>
+      </Link>
 
       {/* Badge */}
       <div
