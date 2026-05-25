@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslation } from 'react-i18next';
-import { ThemeToggle, ThemeToggleMini } from './ThemeToggle';
+import { ThemeToggleMini } from './ThemeToggle';
 import { SearchBar } from './SearchBar';
 import { Logo } from './Logo';
 import { HelpButton } from './HelpOverlay';
@@ -48,18 +48,11 @@ export function AppBar({
         </span>
       </div>
 
-      {/* ThemeToggle Desktop — zwischen Logo und Suchfeld, getrennt von Admin-Aktionen */}
-      <ThemeToggle />
-
-      {/* Suche — ThemeToggleMini auf Mobile als trailing eingebettet */}
+      {/* Suche — ThemeToggleMini auf allen Grössen rechts im Suchfeld (kein separates Rechteck) */}
       <SearchBar
         userLocation={userLocation}
         onSelect={onSearchSelect}
-        trailing={
-          <span className="sm:hidden">
-            <ThemeToggleMini />
-          </span>
-        }
+        trailing={<ThemeToggleMini />}
       />
 
       {/* Aktionen — nur Add / Help / Admin / Avatar (kein ThemeToggle mehr) */}

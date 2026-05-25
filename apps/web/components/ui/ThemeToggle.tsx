@@ -103,7 +103,8 @@ export function ThemeToggle() {
   );
 }
 
-/* ── Mini-Button für eingebettete Nutzung (z. B. in SearchBar auf Mobile) ── */
+/* ── Mini-Button für eingebettete Nutzung im Suchfeld ─────────────────────── */
+/* Kein sichtbarer Rahmen / Hintergrund — Icon sitzt nahtlos im Suchfeld-Pill. */
 export function ThemeToggleMini() {
   const { theme, setTheme } = useTheme();
 
@@ -121,9 +122,6 @@ export function ThemeToggleMini() {
         setTheme(nextOption.value);
       }}
       style={{
-        width: 28,
-        height: 28,
-        borderRadius: 8,
         border: 'none',
         background: 'transparent',
         cursor: 'pointer',
@@ -132,10 +130,10 @@ export function ThemeToggleMini() {
         justifyContent: 'center',
         color: 'var(--muted)',
         flexShrink: 0,
-        transition: 'background 0.15s',
+        padding: '4px',
+        lineHeight: 0,
+        /* Kein borderRadius / Hover-Hintergrund — verhindert sichtbares Rechteck */
       }}
-      onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = 'var(--cream)')}
-      onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = 'transparent')}
     >
       <current.Icon />
     </button>

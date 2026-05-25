@@ -41,10 +41,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/apps/web/public ./public
 # Next.js standalone output (requires output: 'standalone' in next.config.mjs)
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+# public/ muss relativ zum server.js liegen (apps/web/server.js → apps/web/public/)
+# NICHT ./public — sonst findet der Standalone-Server favicon.ico etc. nicht.
+COPY --from=builder /app/apps/web/public ./apps/web/public
 
 USER nextjs
 EXPOSE 3102

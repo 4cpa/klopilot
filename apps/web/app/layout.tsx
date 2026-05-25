@@ -22,11 +22,11 @@ export const metadata: Metadata = {
   title: 'klopilot — Toiletten-Guide',
   description:
     'Community-Plattform für öffentliche Toiletten. Finde, bewerte und teile saubere Toiletten in deiner Nähe — kostenlos, ohne Werbung.',
+  // Favicon: app/icon.tsx + app/apple-icon.tsx werden von Next.js automatisch
+  // als <link rel="icon"> / <link rel="apple-touch-icon"> injiziert.
+  // Kein manueller icons-Eintrag nötig — verhindert Konflikt mit /favicon.svg (404).
   icons: {
-    icon: [
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-      { url: '/icon', type: 'image/png', sizes: '32x32' },
-    ],
+    icon: '/icon',
     apple: '/apple-icon',
   },
   openGraph: {
