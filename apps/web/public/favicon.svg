@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Hintergrund -->
+  <rect width="64" height="64" rx="14" fill="#FF6B35"/>
+  <!-- Toilette: Schüssel -->
+  <ellipse cx="32" cy="42" rx="16" ry="10" fill="white" opacity="0.95"/>
+  <ellipse cx="32" cy="40" rx="16" ry="10" fill="white"/>
+  <ellipse cx="32" cy="40" rx="11" ry="7" fill="#FF6B35"/>
+  <!-- Toilette: Deckel -->
+  <path d="M18 32 Q18 24 32 24 Q46 24 46 32 Q46 34 32 34 Q18 34 18 32Z" fill="white"/>
+  <!-- Kompass-Nadel (Pilot-Symbol) -->
+  <circle cx="32" cy="18" r="6" fill="white" opacity="0.9"/>
+  <path d="M32 13 L34 21 L32 19 L30 21Z" fill="#EF476F"/>
+  <path d="M32 23 L30 15 L32 17 L34 15Z" fill="white" opacity="0.5"/>
+</svg>

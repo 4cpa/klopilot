@@ -1,0 +1,74 @@
+@import 'maplibre-gl/dist/maplibre-gl.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design Tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --brand-primary:   #FF6B35;
+  --brand-secondary: #FFD23F;
+  --brand-deep:      #0B132B;
+  --brand-mint:      #06D6A0;
+  --brand-berry:     #EF476F;
+  --brand-sky:       #118AB2;
+  --paper:           #FFFBF2;
+  --cream:           #FFF3DC;
+  --surface:         #FFFBF2;
+  --ink:             #0B132B;
+  --muted:           #6B7280;
+  --line:            #E7E0CF;
+  --rate-flower:     #E91E63;
+  --rate-flower-bg:  #FFE4EE;
+  --rate-fly:        #374151;
+  --rate-fly-bg:     #F3F4F6;
+  --radius-md:       12px;
+  --shadow-card:     0 6px 24px rgba(15,23,42,.06);
+}
+
+[data-theme="dark"] {
+  --paper:           #0E1117;
+  --cream:           #1F2630;
+  --surface:         #161B22;
+  --ink:             #F4EFE6;
+  --muted:           #9AA4B2;
+  --line:            #2A313C;
+  --brand-primary:   #FF8B5C;
+  --brand-secondary: #FFE066;
+  --brand-mint:      #3FE8B7;
+  --brand-berry:     #FF6B8A;
+  --rate-flower:     #FF7AB3;
+  --rate-flower-bg:  #3A1929;
+  --rate-fly:        #9AA4B2;
+  --rate-fly-bg:     #1F2630;
+  --shadow-card:     0 6px 24px rgba(0,0,0,.35);
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+body {
+  background: var(--paper);
+  color: var(--ink);
+}
+/* Map route needs full viewport height */
+body.map-page, body.map-page #__next {
+  height: 100%;
+}
+
+* { box-sizing: border-box; }
+
+/* ── Focus ─────────────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+/* ── MapLibre overrides ────────────────────────────────────────────────────── */
+.maplibregl-map { font-family: 'Inter', sans-serif; }
+.maplibregl-ctrl-attrib-inner a { color: var(--muted); }
+
+/* ── Smooth theme transitions ──────────────────────────────────────────────── */
+*, *::before, *::after {
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
