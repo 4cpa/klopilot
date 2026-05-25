@@ -277,22 +277,56 @@ export function Footer() {
         <div>
           <Link
             href="/"
+            aria-label="klopilot Startseite"
             style={{
-              display: 'flex',
+              display: 'inline-flex',
               alignItems: 'center',
               gap: 10,
               textDecoration: 'none',
               marginBottom: 18,
+              borderRadius: 10,
+              padding: '4px 8px',
+              marginLeft: -8,
+              transition: 'background 0.15s',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.07)';
+              const logo = (e.currentTarget as HTMLElement).querySelector(
+                '.footer-logo',
+              ) as HTMLElement | null;
+              if (logo) logo.style.transform = 'scale(1.06)';
+              const name = (e.currentTarget as HTMLElement).querySelector(
+                '.footer-brand-name',
+              ) as HTMLElement | null;
+              if (name) name.style.color = 'var(--brand-primary)';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = 'transparent';
+              const logo = (e.currentTarget as HTMLElement).querySelector(
+                '.footer-logo',
+              ) as HTMLElement | null;
+              if (logo) logo.style.transform = '';
+              const name = (e.currentTarget as HTMLElement).querySelector(
+                '.footer-brand-name',
+              ) as HTMLElement | null;
+              if (name) name.style.color = '#fff';
             }}
           >
-            <Logo size={36} />
             <span
+              className="footer-logo"
+              style={{ display: 'flex', transition: 'transform 0.2s', flexShrink: 0 }}
+            >
+              <Logo size={36} />
+            </span>
+            <span
+              className="footer-brand-name"
               style={{
                 fontFamily: 'var(--font-fraunces)',
                 fontWeight: 800,
                 fontSize: 22,
                 color: '#fff',
                 letterSpacing: '-0.02em',
+                transition: 'color 0.15s',
               }}
             >
               klopilot
@@ -488,17 +522,37 @@ export function Footer() {
         </span>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <IconGlobe />
+          <span style={{ color: 'rgba(255,255,255,0.25)', flexShrink: 0 }}>
+            <IconGlobe />
+          </span>
           <a
             href="https://klopilot.ch"
-            style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}
+            style={{
+              fontSize: 13,
+              color: 'rgba(255,255,255,0.35)',
+              textDecoration: 'none',
+              transition: 'color 0.15s',
+            }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = '#fff')}
+            onMouseLeave={(e) =>
+              ((e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.35)')
+            }
           >
             klopilot.ch
           </a>
           <span style={{ color: 'rgba(255,255,255,0.15)', margin: '0 4px' }}>·</span>
           <a
             href="mailto:admin@4cpa.ch"
-            style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}
+            style={{
+              fontSize: 13,
+              color: 'rgba(255,255,255,0.35)',
+              textDecoration: 'none',
+              transition: 'color 0.15s',
+            }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = '#fff')}
+            onMouseLeave={(e) =>
+              ((e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.35)')
+            }
           >
             admin@4cpa.ch
           </a>
