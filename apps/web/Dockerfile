@@ -8,8 +8,8 @@ COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY apps/web/package.json ./apps/web/
 COPY packages/i18n/package.json ./packages/i18n/
 COPY packages/shared-types/package.json ./packages/shared-types/
-# Husky prepare-script in Docker überspringen (devDependency, nicht vorhanden)
-ENV NODE_ENV=production
+# CI=true: husky prepare-script überspringen (wird in prepare-script geprüft)
+ENV CI=true
 RUN pnpm install --frozen-lockfile --filter @klopilot/web...
 
 # ── Build ─────────────────────────────────────────────────────────────────────
