@@ -208,9 +208,11 @@ jobs:
             ghcr.io/4cpa/klopilot-web:sha-${{ github.sha }}
           build-args: |
             NEXT_PUBLIC_API_URL=https://api.klopilot.ch
+            NEXT_PUBLIC_S3_PUBLIC_URL=https://minio-api.klopilot.ch/klopilot-media
             NEXT_PUBLIC_DEFAULT_LNG=7.4474
             NEXT_PUBLIC_DEFAULT_LAT=46.9481
             NEXT_PUBLIC_DEFAULT_ZOOM=13
+            NEXT_PUBLIC_MAPTILER_KEY=${{ secrets.MAPTILER_KEY }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

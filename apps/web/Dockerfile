@@ -15,6 +15,19 @@ RUN pnpm install --frozen-lockfile --filter @klopilot/web...
 # ── Build ─────────────────────────────────────────────────────────────────────
 FROM deps AS builder
 ENV NEXT_TELEMETRY_DISABLED=1
+# NEXT_PUBLIC_* werden zur Build-Zeit eingebettet (kein Runtime-Env möglich)
+ARG NEXT_PUBLIC_API_URL=https://api.klopilot.ch
+ARG NEXT_PUBLIC_S3_PUBLIC_URL=https://minio-api.klopilot.ch/klopilot-media
+ARG NEXT_PUBLIC_DEFAULT_LNG=7.4474
+ARG NEXT_PUBLIC_DEFAULT_LAT=46.9481
+ARG NEXT_PUBLIC_DEFAULT_ZOOM=13
+ARG NEXT_PUBLIC_MAPTILER_KEY=""
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_S3_PUBLIC_URL=$NEXT_PUBLIC_S3_PUBLIC_URL
+ENV NEXT_PUBLIC_DEFAULT_LNG=$NEXT_PUBLIC_DEFAULT_LNG
+ENV NEXT_PUBLIC_DEFAULT_LAT=$NEXT_PUBLIC_DEFAULT_LAT
+ENV NEXT_PUBLIC_DEFAULT_ZOOM=$NEXT_PUBLIC_DEFAULT_ZOOM
+ENV NEXT_PUBLIC_MAPTILER_KEY=$NEXT_PUBLIC_MAPTILER_KEY
 COPY apps/web ./apps/web
 COPY packages/i18n ./packages/i18n
 COPY packages/shared-types ./packages/shared-types
