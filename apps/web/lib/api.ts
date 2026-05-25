@@ -89,11 +89,16 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 // ── Auth ─────────────────────────────────────────────────────────────────────
 
 export const auth = {
-  requestMagicLink: (email: string) =>
+  /** Sendet den Magic Link und gibt die sessionId für Cross-Device-Polling zurück. */
+  requestMagicLink: (email: string): Promise<{ message: string; sessionId: string }> =>
     request('/auth/magic-link', { method: 'POST', body: JSON.stringify({ email }) }),
 
   verify: (tok: string): Promise<{ accessToken: string }> =>
     request(`/auth/verify?token=${encodeURIComponent(tok)}`),
+
+  /** Pollt ob der Handy-Klick auf den Magic Link die Laptop-Session freigegeben hat. */
+  poll: (sessionId: string): Promise<{ accessToken: string } | { pending: true }> =>
+    request(`/auth/poll?sessionId=${encodeURIComponent(sessionId)}`),
 
   refresh: (): Promise<{ accessToken: string }> => request('/auth/refresh', { method: 'POST' }),
 

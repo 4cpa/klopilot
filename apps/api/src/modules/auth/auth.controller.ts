@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -48,13 +49,23 @@ export class AuthController {
     return this.users.findByIdOrFail(user.userId);
   }
 
-  // 1) Link anfordern
+  // 1) Link anfordern — gibt sessionId für Cross-Device-Polling zurück
   @Post('magic-link')
   @HttpCode(202)
   async requestMagicLink(@Body() body: unknown) {
     const { email, platform } = MagicLinkDto.parse(body);
-    await this.auth.requestMagicLink(email, platform);
-    return { message: 'Magic Link wurde versendet' };
+    const { sessionId } = await this.auth.requestMagicLink(email, platform);
+    return { message: 'Magic Link wurde versendet', sessionId };
+  }
+
+  // 1b) Cross-Device-Session pollen — Laptop fragt alle ~3 s, ob Handy den Link bestätigt hat
+  @Get('poll')
+  @HttpCode(200)
+  async poll(@Query('sessionId') sessionId: string) {
+    if (!sessionId) throw new BadRequestException('sessionId fehlt');
+    const accessToken = await this.auth.pollSession(sessionId);
+    if (!accessToken) return { pending: true };
+    return { accessToken };
   }
 
   // 2) Link bestätigen → Tokens ausgeben

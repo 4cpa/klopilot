@@ -8,6 +8,7 @@ import { MailService } from './mail.service';
 
 const MAGIC_TTL = 15 * 60; // 15 Minuten
 const REFRESH_TTL = 7 * 24 * 3600; // 7 Tage
+const SESSION_TTL = 5 * 60; // 5 Minuten — Zeitfenster für Polling-Client
 
 @Injectable()
 export class AuthService {
@@ -25,21 +26,52 @@ export class AuthService {
 
   async requestMagicLink(email: string, platform: 'web' | 'mobile' = 'web') {
     const token = crypto.randomBytes(32).toString('hex');
-    await this.redis.set(`magic:${token}`, email, 'EX', MAGIC_TTL);
+    // sessionId identifiziert die wartende Browser-Session (Cross-Device-Polling)
+    const sessionId = crypto.randomBytes(16).toString('hex');
+    await this.redis.set(`magic:${token}`, JSON.stringify({ email, sessionId }), 'EX', MAGIC_TTL);
     await this.mail.sendMagicLink(email, token, platform);
     this.logger.log(`Magic link angefordert für ${email} (${platform})`);
+    return { sessionId };
   }
 
   async verifyMagicLink(token: string) {
-    const email = await this.redis.get(`magic:${token}`);
-    if (!email) {
+    const raw = await this.redis.get(`magic:${token}`);
+    if (!raw) {
       throw new UnauthorizedException('Link abgelaufen oder ungültig');
     }
     // Einmaliger Gebrauch — sofort löschen
     await this.redis.del(`magic:${token}`);
 
+    let email: string;
+    let sessionId: string | undefined;
+    try {
+      const parsed = JSON.parse(raw) as { email: string; sessionId?: string };
+      email = parsed.email;
+      sessionId = parsed.sessionId;
+    } catch {
+      // Rückwärtskompatibilität: raw war früher der E-Mail-String direkt
+      email = raw;
+    }
+
     const user = await this.users.findOrCreate(email);
-    return this.issueTokenPair(user.id);
+    const tokens = await this.issueTokenPair(user.id);
+
+    // Cross-Device: Access-Token kurz in Redis hinterlegen — Polling-Client holt ihn ab
+    if (sessionId) {
+      await this.redis.set(`session:${sessionId}`, tokens.accessToken, 'EX', SESSION_TTL);
+    }
+
+    return tokens;
+  }
+
+  /** Gibt den Access-Token zurück, sobald die Magic-Link-Verifizierung abgeschlossen ist.
+   *  Löscht den Eintrag nach einmaligem Abruf (einmal abholen reicht). */
+  async pollSession(sessionId: string): Promise<string | null> {
+    const accessToken = await this.redis.get(`session:${sessionId}`);
+    if (accessToken) {
+      await this.redis.del(`session:${sessionId}`);
+    }
+    return accessToken ?? null;
   }
 
   // ── Token-Verwaltung ──────────────────────────────────────────────────────

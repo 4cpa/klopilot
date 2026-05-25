@@ -1,27 +1,63 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { auth as authApi } from '@/lib/api';
+import { authStore } from '@/lib/auth-store';
 
 interface Props {
   onClose: () => void;
 }
 
-type Step = 'email' | 'sent';
+type Step = 'email' | 'sent' | 'loggedIn';
 
 export function LoginModal({ onClose }: Props) {
   const [step, setStep] = useState<Step>('email');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Polling-Intervall aufräumen wenn Modal geschlossen oder gemountet wird
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, []);
+
+  function startPolling(sessionId: string) {
+    // Magic Link ist 15 Minuten gültig — danach sinnlos weiter pollen
+    const deadline = Date.now() + 15 * 60 * 1000;
+
+    pollRef.current = setInterval(async () => {
+      if (Date.now() > deadline) {
+        if (pollRef.current) clearInterval(pollRef.current);
+        return;
+      }
+      try {
+        const res = await authApi.poll(sessionId);
+        if ('accessToken' in res) {
+          // Handy hat den Link bestätigt → Laptop einloggen
+          if (pollRef.current) clearInterval(pollRef.current);
+          authStore.setToken(res.accessToken);
+          await authStore.loadUser();
+          setStep('loggedIn');
+          // Kurz "Angemeldet!" zeigen, dann schliessen
+          setTimeout(onClose, 1500);
+        }
+      } catch {
+        // Netzwerkfehler → nächste Runde versuchen, nicht abbrechen
+      }
+    }, 3000);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      await authApi.requestMagicLink(email.trim());
+      const { sessionId } = await authApi.requestMagicLink(email.trim());
       setStep('sent');
+      startPolling(sessionId);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Fehler beim Senden');
     } finally {
@@ -45,7 +81,7 @@ export function LoginModal({ onClose }: Props) {
       >
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-semibold text-[var(--ink)]">
-            {step === 'email' ? 'Anmelden' : 'Link versendet'}
+            {step === 'email' ? 'Anmelden' : step === 'sent' ? 'Link versendet' : 'Angemeldet!'}
           </h2>
           <button
             type="button"
@@ -58,7 +94,7 @@ export function LoginModal({ onClose }: Props) {
           </button>
         </div>
 
-        {step === 'email' ? (
+        {step === 'email' && (
           <form onSubmit={handleSubmit} className="space-y-4">
             <p className="text-sm text-[var(--muted)]">
               Wir senden dir einen Magic Link — kein Passwort nötig.
@@ -91,25 +127,24 @@ export function LoginModal({ onClose }: Props) {
               {loading ? 'Wird gesendet…' : '✉️ Magic Link senden'}
             </button>
           </form>
-        ) : (
+        )}
+
+        {step === 'sent' && (
           <div className="space-y-4 text-center">
             <div className="text-5xl">📬</div>
             <p className="text-sm text-[var(--muted)]">
               Wir haben einen Link an <strong className="text-[var(--ink)]">{email}</strong>{' '}
-              gesendet. Klick darauf, um dich anzumelden.
+              gesendet. Öffne die Mail auf deinem Handy — diese Seite meldet dich danach automatisch
+              an.
             </p>
-            <p className="text-xs text-[var(--muted)]">
-              Lokal: Link im Mailhog unter{' '}
-              <a
-                href="http://localhost:8035"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline"
-                style={{ color: 'var(--brand-sky)' }}
-              >
-                localhost:8035
-              </a>
-            </p>
+            {/* Animierter Pulse zeigt dass aktiv gepollt wird */}
+            <div className="flex items-center justify-center gap-2 text-xs text-[var(--muted)]">
+              <span
+                className="inline-block w-2 h-2 rounded-full animate-pulse"
+                style={{ background: 'var(--brand-primary)' }}
+              />
+              Warte auf Bestätigung…
+            </div>
             <button
               type="button"
               onClick={onClose}
@@ -117,6 +152,13 @@ export function LoginModal({ onClose }: Props) {
             >
               Schliessen
             </button>
+          </div>
+        )}
+
+        {step === 'loggedIn' && (
+          <div className="space-y-4 text-center">
+            <div className="text-5xl">✅</div>
+            <p className="text-sm font-medium text-[var(--ink)]">Erfolgreich angemeldet!</p>
           </div>
         )}
       </div>
