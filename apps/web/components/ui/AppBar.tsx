@@ -65,6 +65,31 @@ export function AppBar({
               + {t('tabs.contribute')}
             </button>
 
+            {/* Admin-Link — nur für Admins und Moderatoren */}
+            {(user.role === 'admin' || user.role === 'moderator') && (
+              <a
+                href="/admin"
+                title="Moderation"
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: '50%',
+                  background: '#EF476F18',
+                  border: '2px solid #EF476F',
+                  color: '#EF476F',
+                  fontSize: 16,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  textDecoration: 'none',
+                }}
+              >
+                🔧
+              </a>
+            )}
+
             {/* Avatar button → opens ProfileSidebar */}
             <button
               type="button"

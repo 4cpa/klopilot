@@ -238,6 +238,45 @@ export const media = {
     `${process.env.NEXT_PUBLIC_S3_PUBLIC_URL ?? 'http://localhost:9010/klopilot-media'}/${s3Key}`,
 };
 
+// ── Moderation (Admin) ────────────────────────────────────────────────────────
+
+export interface PendingPhoto {
+  id: string;
+  s3Key: string;
+  moderationStatus: string;
+  createdAt: string;
+  toilet: { id: string; name: string };
+  user: { id: string; handle: string };
+}
+
+export interface Report {
+  id: string;
+  targetType: string;
+  targetId: string;
+  reason: string;
+  status: string;
+  createdAt: string;
+  reporter: { id: string; handle: string; email: string };
+}
+
+export const moderation = {
+  photos: (page = 1): Promise<{ items: PendingPhoto[]; total: number }> =>
+    request(`/moderation/photos?page=${page}`),
+
+  approvePhoto: (id: string) => request(`/moderation/photos/${id}/approve`, { method: 'PATCH' }),
+
+  rejectPhoto: (id: string) => request(`/moderation/photos/${id}/reject`, { method: 'PATCH' }),
+
+  reports: (status = 'open', page = 1): Promise<{ items: Report[]; total: number }> =>
+    request(`/moderation/queue?status=${status}&page=${page}`),
+
+  resolveReport: (id: string, status: 'resolved' | 'dismissed') =>
+    request(`/moderation/queue/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    }),
+};
+
 // ── Heatmap ───────────────────────────────────────────────────────────────────
 
 export interface HeatmapPoint {
