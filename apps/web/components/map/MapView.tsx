@@ -182,20 +182,72 @@ export default function MapView({
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Kompass ein-/ausschalten ─────────────────────────────────────────────
+  // ── Kompass ein-/ausschalten + DeviceOrientation ─────────────────────────
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    if (compassEnabled) {
-      map.dragRotate.enable();
-      map.touchZoomRotate.enableRotation();
-    } else {
-      // Zurück auf Nord ausrichten, dann Rotation sperren
+
+    if (!compassEnabled) {
       map.easeTo({ bearing: 0, duration: 400 });
       map.dragRotate.disable();
       map.touchZoomRotate.disableRotation();
       onBearingChangeRef.current?.(0);
+      return;
     }
+
+    // Manuelle Rotation per Drag/Pinch freischalten
+    map.dragRotate.enable();
+    map.touchZoomRotate.enableRotation();
+
+    // DeviceOrientation: Karte nach Gerätekompass drehen
+    let lastNotify = 0;
+
+    // Beide Events hören: deviceorientationabsolute (Android/Chrome, geographisch)
+    // und deviceorientation (iOS mit webkitCompassHeading)
+    // Falls beide feuern, priorisieren wir webkitCompassHeading, sonst absolute alpha.
+    let gotAbsolute = false;
+
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const ev = e as any;
+
+      // Absolute-Flag setzen sobald ein absolutes Event ankommt
+      if (ev.absolute === true) gotAbsolute = true;
+      // Nicht-absolutes Event ignorieren wenn wir bereits absolute haben
+      if (ev.absolute !== true && gotAbsolute) return;
+
+      let heading: number | null = null;
+
+      // iOS: webkitCompassHeading (0=N, 90=O, 180=S, 270=W)
+      if (typeof ev.webkitCompassHeading === 'number' && !isNaN(ev.webkitCompassHeading)) {
+        heading = ev.webkitCompassHeading;
+      } else if (e.alpha !== null && e.alpha !== undefined) {
+        // Android/Chrome: alpha ist Drehung um Z-Achse im Uhrzeigersinn ab Nord
+        // Kompassrichtung = (360 − alpha) % 360
+        heading = (360 - e.alpha) % 360;
+      }
+
+      if (heading === null) return;
+
+      // Karte direkt ohne Easing drehen (smooth genug durch rAF von MapLibre)
+      map.setBearing(heading);
+
+      // React-State max. ~10× pro Sekunde → Kompassnadel in UI bleibt flüssig
+      const now = Date.now();
+      if (now - lastNotify > 100) {
+        lastNotify = now;
+        onBearingChangeRef.current?.(heading);
+      }
+    };
+
+    const opts: AddEventListenerOptions = { passive: true };
+    window.addEventListener('deviceorientationabsolute', handleOrientation as EventListener, opts);
+    window.addEventListener('deviceorientation', handleOrientation as EventListener, opts);
+
+    return () => {
+      window.removeEventListener('deviceorientationabsolute', handleOrientation as EventListener);
+      window.removeEventListener('deviceorientation', handleOrientation as EventListener);
+    };
   }, [compassEnabled]);
 
   // Update markers when toilets change

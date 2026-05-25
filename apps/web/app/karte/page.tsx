@@ -191,9 +191,28 @@ function KarteInner() {
   }, []);
 
   const handleCompassToggle = useCallback(() => {
-    setCompassEnabled((prev) => !prev);
-    // Beim Ausschalten Bearing zurücksetzen
-    if (compassEnabled) setMapBearing(0);
+    if (compassEnabled) {
+      setCompassEnabled(false);
+      setMapBearing(0);
+      return;
+    }
+
+    // iOS 13+: DeviceOrientationEvent.requestPermission() muss synchron
+    // im User-Gesture-Handler aufgerufen werden (nicht in useEffect).
+    type DOET = typeof DeviceOrientationEvent & {
+      requestPermission?: () => Promise<'granted' | 'denied'>;
+    };
+    const DOE = DeviceOrientationEvent as DOET;
+    if (typeof DOE.requestPermission === 'function') {
+      DOE.requestPermission()
+        .then((res) => {
+          if (res === 'granted') setCompassEnabled(true);
+        })
+        .catch(() => {});
+    } else {
+      // Android / Desktop: kein explizites Permission-Request nötig
+      setCompassEnabled(true);
+    }
   }, [compassEnabled]);
 
   return (
@@ -255,14 +274,14 @@ function KarteInner() {
         visibleCount={visibleToilets.length}
       />
 
-      {/* Kartenstil-Wechsler + Heatmap — gemeinsamer Container unten-links,
-          genug Abstand zur MapLibre-Attribution (bottom ≥ 56 px) */}
+      {/* Kartenstil-Wechsler + Heatmap + Kompass — gemeinsamer Container unten-links.
+          zIndex 10: unter AppBar (20) damit HelpOverlay davor liegt. */}
       <div
         style={{
           position: 'absolute',
           bottom: 'max(56px, calc(env(safe-area-inset-bottom, 0px) + 48px))',
           left: 12,
-          zIndex: 20,
+          zIndex: 10,
           display: 'flex',
           gap: 8,
           alignItems: 'center',
