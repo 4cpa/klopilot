@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ThemeToggle, ThemeToggleMini } from './ThemeToggle';
 import { SearchBar } from './SearchBar';
 import { Logo } from './Logo';
+import { HelpButton } from './HelpOverlay';
 import { useAuth } from '@/lib/hooks';
 import type { Toilet } from '@/lib/api';
 
@@ -47,6 +48,9 @@ export function AppBar({
         </span>
       </div>
 
+      {/* ThemeToggle Desktop — zwischen Logo und Suchfeld, getrennt von Admin-Aktionen */}
+      <ThemeToggle />
+
       {/* Suche — ThemeToggleMini auf Mobile als trailing eingebettet */}
       <SearchBar
         userLocation={userLocation}
@@ -58,9 +62,10 @@ export function AppBar({
         }
       />
 
-      {/* Aktionen — flex-shrink-0 verhindert, dass Icons auf Mobile herausgedrückt werden */}
+      {/* Aktionen — nur Add / Help / Admin / Avatar (kein ThemeToggle mehr) */}
       <div className="flex items-center gap-2 flex-shrink-0">
-        <ThemeToggle />
+        {/* Hilfe-Button — immer sichtbar */}
+        <HelpButton />
 
         {user ? (
           <>

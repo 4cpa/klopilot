@@ -53,6 +53,9 @@ function PhotoLightbox({
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Foto ${startIndex + 1} von ${urls.length}`}
       style={{
         position: 'fixed',
         inset: 0,
@@ -505,7 +508,8 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
         ref={sheetRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Toiletten-Detail"
+        aria-labelledby="toilet-sheet-title"
+        aria-describedby={detail ? 'toilet-sheet-desc' : undefined}
         className="toilet-sheet"
         style={{ background: 'var(--paper)', zIndex: 40 }}
       >
@@ -676,6 +680,7 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
               <div style={{ minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                   <h2
+                    id="toilet-sheet-title"
                     style={{
                       fontSize: 17,
                       fontWeight: 800,
@@ -814,7 +819,7 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                       {/* img statt next/image: Galerie braucht dynamische Dimensionen */}
                       <img
                         src={url}
-                        alt={`Foto ${i + 1}`}
+                        alt={`${detail.name} — Foto ${i + 1} von ${photos.length}`}
                         onClick={() => setLightbox({ urls: photoUrls, idx: i })}
                         style={{
                           height: 96,

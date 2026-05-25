@@ -86,7 +86,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
     <div ref={containerRef} className="relative flex-1 min-w-0 max-w-md">
       {/* Input */}
       <div
-        className="flex items-center gap-2 rounded-2xl px-3 py-2 border transition-colors"
+        className="flex items-center gap-2 rounded-lg px-3 py-1.5 border transition-colors"
         style={{
           background: 'var(--surface)',
           borderColor: open ? 'var(--brand-primary)' : 'var(--line)',

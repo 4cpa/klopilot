@@ -170,6 +170,29 @@ services:
       - 'traefik.http.middlewares.www-redirect.redirectregex.permanent=true'
     networks: [klopilot, traefik]
 
+  # ── Uptime Kuma — Open-Source-Monitoring ─────────────────────────────────
+  # Web-UI: https://status.klopilot.ch
+  # Monitors: Web, API /health, Postgres, Redis (TCP), Meilisearch
+  # Keine externen Dienste, keine Kosten — läuft auf demselben VPS.
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: klopilot-uptime-kuma
+    restart: always
+    volumes:
+      - uptime_kuma_data:/app/data
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:3001 || exit 1']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.uptime.rule=Host(`status.klopilot.ch`)'
+      - 'traefik.http.routers.uptime.tls.certresolver=letsencrypt'
+      - 'traefik.http.services.uptime.loadbalancer.server.port=3001'
+    networks: [klopilot, traefik]
+
 volumes:
   postgres_data:
     driver: local
@@ -178,6 +201,8 @@ volumes:
   minio_data:
     driver: local
   meili_data:
+    driver: local
+  uptime_kuma_data:
     driver: local
 
 networks:

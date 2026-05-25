@@ -58,10 +58,55 @@ body.map-page, body.map-page #__next {
 
 * { box-sizing: border-box; }
 
+/* ── Skip-to-content Link (WCAG 2.4.1) ────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 8px;
+  z-index: 9999;
+  padding: 10px 20px;
+  border-radius: 0 0 10px 10px;
+  background: var(--brand-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: top 0.1s ease;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--brand-deep);
+  outline-offset: 2px;
+}
+
 /* ── Focus ─────────────────────────────────────────────────────────────────── */
 :focus-visible {
   outline: 2px solid var(--brand-primary);
   outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Buttons / Links: zusätzlicher Focus-Ring */
+button:focus-visible, a:focus-visible, [role="option"]:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.18);
+}
+
+/* ── Reduced Motion (WCAG 2.3.3) ──────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── High Contrast Mode (Windows / macOS erhöhter Kontrast) ───────────────── */
+@media (forced-colors: active) {
+  /* Marker, Chips, Buttons: System-Farben erlauben statt überschreiben */
+  .maplibregl-marker { forced-color-adjust: none; }
+  button, a { forced-color-adjust: none; }
 }
 
 /* ── MapLibre overrides ────────────────────────────────────────────────────── */

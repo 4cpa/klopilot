@@ -42,6 +42,34 @@
         "tags": ["auth"]
       }
     },
+    "/auth/poll": {
+      "get": {
+        "operationId": "AuthController_poll",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["auth"]
+      }
+    },
     "/auth/verify": {
       "get": {
         "operationId": "AuthController_verify",
@@ -707,6 +735,78 @@
     "/moderation/queue/{id}": {
       "patch": {
         "operationId": "ModerationController_updateReport",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["moderation"]
+      }
+    },
+    "/moderation/toilets": {
+      "get": {
+        "operationId": "ModerationController_listToilets",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["moderation"]
+      }
+    },
+    "/moderation/toilets/{id}/status": {
+      "patch": {
+        "operationId": "ModerationController_setToiletStatus",
         "parameters": [
           {
             "name": "id",
