@@ -3,6 +3,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { moderation, media, type PendingPhoto, type Report } from '@/lib/api';
 
+async function deletePhoto(id: string) {
+  await media.delete(id);
+}
+
 type Tab = 'photos' | 'reports';
 
 // ── Foto-Karte ────────────────────────────────────────────────────────────────
@@ -10,10 +14,12 @@ function PhotoCard({
   photo,
   onApprove,
   onReject,
+  onDelete,
 }: {
   photo: PendingPhoto;
   onApprove: () => Promise<void>;
   onReject: () => Promise<void>;
+  onDelete: () => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -111,6 +117,28 @@ function PhotoCard({
           }}
         >
           ✕ Ablehnen
+        </button>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => {
+            if (confirm('Foto endgültig löschen?')) handle(onDelete);
+          }}
+          title="Löschen"
+          style={{
+            width: 38,
+            padding: '9px 0',
+            borderRadius: 8,
+            border: '1px solid var(--line)',
+            background: 'transparent',
+            color: 'var(--muted)',
+            fontWeight: 700,
+            fontSize: 14,
+            cursor: busy ? 'not-allowed' : 'pointer',
+            opacity: busy ? 0.6 : 1,
+          }}
+        >
+          🗑
         </button>
       </div>
     </div>
@@ -295,6 +323,12 @@ export default function AdminPage() {
     setPhotoTotal((n) => n - 1);
   }
 
+  async function handleDelete(id: string) {
+    await deletePhoto(id);
+    setPhotos((prev) => prev.filter((p) => p.id !== id));
+    setPhotoTotal((n) => n - 1);
+  }
+
   async function handleResolve(id: string) {
     await moderation.resolveReport(id, 'resolved');
     setReports((prev) => prev.filter((r) => r.id !== id));
@@ -451,6 +485,7 @@ export default function AdminPage() {
                     photo={p}
                     onApprove={() => handleApprove(p.id)}
                     onReject={() => handleReject(p.id)}
+                    onDelete={() => handleDelete(p.id)}
                   />
                 ))}
               </div>

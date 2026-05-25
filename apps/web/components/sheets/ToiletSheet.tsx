@@ -13,7 +13,7 @@ interface Props {
 
 type Detail = Toilet & {
   score: Score;
-  photos: { id: string; s3Key: string; url?: string }[];
+  photos: { id: string; s3Key: string; url?: string; userId: string }[];
   ratings: Rating[];
 };
 
@@ -418,6 +418,20 @@ export function ToiletSheet({ toiletId, onClose, onRate }: Props) {
     [toiletId],
   );
 
+  const handleDeletePhoto = useCallback(
+    async (photoId: string) => {
+      if (!confirm('Foto wirklich löschen?')) return;
+      try {
+        await media.delete(photoId);
+        const updated = await toiletsApi.get(toiletId!);
+        setDetail(updated as unknown as Detail);
+      } catch {
+        /* ignorieren */
+      }
+    },
+    [toiletId],
+  );
+
   const handleNavigate = useCallback(() => {
     if (!detail) return;
     window.open(
@@ -762,33 +776,61 @@ export function ToiletSheet({ toiletId, onClose, onRate }: Props) {
                   scrollbarWidth: 'none',
                 }}
               >
-                {photoUrls.map((url, i) => (
-                  // img statt next/image: Galerie braucht dynamische Dimensionen
-                  <img
-                    key={photos[i]?.id ?? i}
-                    src={url}
-                    alt={`Foto ${i + 1}`}
-                    onClick={() => setLightbox({ urls: photoUrls, idx: i })}
-                    style={{
-                      height: 96,
-                      width: 96,
-                      objectFit: 'cover',
-                      borderRadius: 10,
-                      flexShrink: 0,
-                      cursor: 'pointer',
-                      transition: 'transform 0.15s, box-shadow 0.15s',
-                    }}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLElement).style.transform = 'scale(1.04)';
-                      (e.currentTarget as HTMLElement).style.boxShadow =
-                        '0 4px 14px rgba(0,0,0,0.2)';
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.transform = 'none';
-                      (e.currentTarget as HTMLElement).style.boxShadow = 'none';
-                    }}
-                  />
-                ))}
+                {photos.map((photo, i) => {
+                  const url = photoUrls[i];
+                  const canDelete =
+                    user &&
+                    (photo.userId === user.id || ['admin', 'moderator'].includes(user.role));
+                  return (
+                    <div
+                      key={photo.id}
+                      style={{ position: 'relative', flexShrink: 0 }}
+                      className="photo-thumb-wrap"
+                    >
+                      {/* img statt next/image: Galerie braucht dynamische Dimensionen */}
+                      <img
+                        src={url}
+                        alt={`Foto ${i + 1}`}
+                        onClick={() => setLightbox({ urls: photoUrls, idx: i })}
+                        style={{
+                          height: 96,
+                          width: 96,
+                          objectFit: 'cover',
+                          borderRadius: 10,
+                          cursor: 'pointer',
+                          display: 'block',
+                        }}
+                      />
+                      {canDelete && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeletePhoto(photo.id)}
+                          aria-label="Foto löschen"
+                          className="photo-delete-btn"
+                          style={{
+                            position: 'absolute',
+                            top: 4,
+                            right: 4,
+                            width: 20,
+                            height: 20,
+                            borderRadius: '50%',
+                            background: 'rgba(0,0,0,0.65)',
+                            border: 'none',
+                            color: '#fff',
+                            fontSize: 11,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            lineHeight: 1,
+                          }}
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
 
