@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  BadRequestException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
@@ -11,7 +6,7 @@ import { RedisService } from '../../redis/redis.service';
 import { UsersService } from '../users/users.service';
 import { MailService } from './mail.service';
 
-const MAGIC_TTL = 15 * 60;    // 15 Minuten
+const MAGIC_TTL = 15 * 60; // 15 Minuten
 const REFRESH_TTL = 7 * 24 * 3600; // 7 Tage
 
 @Injectable()
@@ -28,11 +23,11 @@ export class AuthService {
 
   // ── Magic Link ────────────────────────────────────────────────────────────
 
-  async requestMagicLink(email: string) {
+  async requestMagicLink(email: string, platform: 'web' | 'mobile' = 'web') {
     const token = crypto.randomBytes(32).toString('hex');
     await this.redis.set(`magic:${token}`, email, 'EX', MAGIC_TTL);
-    await this.mail.sendMagicLink(email, token);
-    this.logger.log(`Magic link angefordert für ${email}`);
+    await this.mail.sendMagicLink(email, token, platform);
+    this.logger.log(`Magic link angefordert für ${email} (${platform})`);
   }
 
   async verifyMagicLink(token: string) {
@@ -50,10 +45,7 @@ export class AuthService {
   // ── Token-Verwaltung ──────────────────────────────────────────────────────
 
   async issueTokenPair(userId: string) {
-    const accessToken = this.jwt.sign(
-      { sub: userId },
-      { expiresIn: '15m' },
-    );
+    const accessToken = this.jwt.sign({ sub: userId }, { expiresIn: '15m' });
 
     const refreshToken = crypto.randomBytes(40).toString('hex');
     const refreshHash = crypto.createHash('sha256').update(refreshToken).digest('hex');

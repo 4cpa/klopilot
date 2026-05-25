@@ -18,9 +18,13 @@ export class MailService {
     });
   }
 
-  async sendMagicLink(email: string, token: string) {
-    const apiUrl = this.config.get('PUBLIC_API_URL', 'http://localhost:3101');
-    const link = `${apiUrl}/auth/verify?token=${token}`;
+  async sendMagicLink(email: string, token: string, platform: 'web' | 'mobile' = 'web') {
+    const webUrl = this.config.get('PUBLIC_WEB_URL', 'http://localhost:3102');
+    const expoBase = this.config.get('EXPO_DEV_URL', 'klopilot://');
+    const link =
+      platform === 'mobile'
+        ? `${expoBase}/auth/verify?token=${token}`
+        : `${webUrl}/auth/verify?token=${token}`;
 
     await this.transporter.sendMail({
       from: this.config.get('MAIL_FROM', 'noreply@klopilot.ch'),

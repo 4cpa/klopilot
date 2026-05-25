@@ -10,6 +10,12 @@ import { ToiletsModule } from './modules/toilets/toilets.module';
 import { RatingsModule } from './modules/ratings/ratings.module';
 import { MediaModule } from './modules/media/media.module';
 import { SearchModule } from './modules/search/search.module';
+import { ModerationModule } from './modules/moderation/moderation.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { ApiKeysModule } from './modules/api-keys/api-keys.module';
+import { PublicModule } from './modules/public/public.module';
+import { HeatmapModule } from './modules/heatmap/heatmap.module';
+import { PartnersModule } from './modules/partners/partners.module';
 
 @Module({
   imports: [
@@ -17,9 +23,7 @@ import { SearchModule } from './modules/search/search.module';
       isGlobal: true,
       envFilePath: ['.env', '../../.env'],
     }),
-    ThrottlerModule.forRoot([
-      { name: 'global', ttl: 60_000, limit: 60 },
-    ]),
+    ThrottlerModule.forRoot([{ name: 'global', ttl: 60_000, limit: 60 }]),
     PrismaModule,
     RedisModule,
     HealthModule,
@@ -29,6 +33,12 @@ import { SearchModule } from './modules/search/search.module';
     RatingsModule,
     MediaModule,
     SearchModule,
+    ModerationModule,
+    NotificationsModule,
+    ApiKeysModule,
+    PublicModule,
+    HeatmapModule,
+    PartnersModule,
   ],
 })
 export class AppModule {}

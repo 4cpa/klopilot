@@ -72,21 +72,39 @@ model User {
   handle      String    @unique
   email       String?   @unique
   passwordHash String?
-  role        UserRole  @default(user)
-  locale      String    @default("de")
-  createdAt   DateTime  @default(now())
-  verifiedAt  DateTime?
+  role            UserRole  @default(user)
+  locale          String    @default("de")
+  expoPushToken   String?
+  createdAt       DateTime  @default(now())
+  verifiedAt      DateTime?
 
   toiletsCreated Toilet[]         @relation("CreatedBy")
   toiletsOwned   Toilet[]         @relation("Owner")
   ratings        Rating[]
   photos         Photo[]
   reports        Report[]
+  apiKeys        ApiKey[]
   invites        PrivateInvite[]  @relation("Invitee")
   invitesGranted PrivateInvite[]  @relation("Granter")
 
   @@index([handle])
   @@map("users")
+}
+
+model Partner {
+  id           String    @id @default(uuid()) @db.Uuid
+  name         String
+  type         String    @default("other")
+  website      String?
+  contactEmail String?
+  logoKey      String?
+  description  String?
+  verified     Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+
+  toilets      Toilet[]
+
+  @@map("partners")
 }
 
 model Toilet {
@@ -101,6 +119,8 @@ model Toilet {
   visibility   Visibility     @default(public)
   ownerId      String?        @db.Uuid
   owner        User?          @relation("Owner", fields: [ownerId], references: [id])
+  partnerId    String?        @db.Uuid
+  partner      Partner?       @relation(fields: [partnerId], references: [id])
   openingHours Json?
   feeChf       Decimal?       @db.Decimal(6, 2)
   accessibility Json?
@@ -191,6 +211,20 @@ model Report {
 
   @@index([status])
   @@map("reports")
+}
+
+model ApiKey {
+  id         String    @id @default(uuid()) @db.Uuid
+  key        String    @unique
+  name       String
+  userId     String?   @db.Uuid
+  user       User?     @relation(fields: [userId], references: [id])
+  revoked    Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime?
+
+  @@index([key])
+  @@map("api_keys")
 }
 
 model PrivateInvite {
