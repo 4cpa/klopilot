@@ -83,18 +83,20 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
   );
 
   return (
-    <div ref={containerRef} className="relative flex-1 min-w-0 max-w-md">
-      {/* Input — Pill-Rahmen nur um Suchfeld, nicht um gesamte AppBar */}
+    <div ref={containerRef} className="relative flex-1 min-w-0" style={{ maxWidth: 360 }}>
+      {/* Input — Glas-Pill: backdrop-blur statt solider Hintergrund, kein harter Rahmen */}
       <div
-        className="flex items-center gap-2 rounded-full px-3 py-1.5 transition-all w-full"
+        className="flex items-center gap-2 rounded-full px-3 py-1.5 transition-all"
         style={{
-          background: 'var(--paper)',
+          background: open ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.78)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
           boxShadow: open
-            ? '0 0 0 2px rgba(255,107,53,.40), 0 4px 16px rgba(15,23,42,.14)'
-            : '0 2px 10px rgba(15,23,42,.18)',
+            ? '0 0 0 2px rgba(255,107,53,.45), 0 4px 20px rgba(15,23,42,.12)'
+            : '0 2px 8px rgba(15,23,42,.14)',
         }}
       >
-        <span className="text-base" aria-hidden>
+        <span className="text-sm leading-none" aria-hidden>
           {loading ? '⏳' : '🔍'}
         </span>
         <input
@@ -107,7 +109,13 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
           placeholder="Toilette suchen…"
           aria-label="Toilette suchen"
           className="flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--muted)]"
-          style={{ color: 'var(--ink)' }}
+          style={{
+            color: 'var(--ink)',
+            border: 'none' /* browser-native input border entfernen */,
+            appearance: 'none' /* -webkit-appearance: searchfield aufheben */,
+            WebkitAppearance: 'none',
+            minWidth: 0,
+          }}
         />
         {query && (
           <button
