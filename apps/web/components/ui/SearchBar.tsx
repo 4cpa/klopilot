@@ -21,9 +21,11 @@ function formatDist(m?: number) {
 interface Props {
   userLocation?: [number, number];
   onSelect: (toilet: Toilet) => void;
+  /** Optionales Element rechts im Input-Feld (z. B. ThemeToggleMini auf Mobile) */
+  trailing?: React.ReactNode;
 }
 
-export function SearchBar({ userLocation, onSelect }: Props) {
+export function SearchBar({ userLocation, onSelect, trailing }: Props) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Toilet[]>([]);
   const [loading, setLoading] = useState(false);
@@ -84,7 +86,7 @@ export function SearchBar({ userLocation, onSelect }: Props) {
     <div ref={containerRef} className="relative flex-1 min-w-0 max-w-md">
       {/* Input */}
       <div
-        className="flex items-center gap-2 rounded-xl px-3 py-2 border transition-colors"
+        className="flex items-center gap-2 rounded-2xl px-3 py-2 border transition-colors"
         style={{
           background: 'var(--surface)',
           borderColor: open ? 'var(--brand-primary)' : 'var(--line)',
@@ -119,6 +121,21 @@ export function SearchBar({ userLocation, onSelect }: Props) {
           >
             ✕
           </button>
+        )}
+        {/* Trailing-Slot: z. B. ThemeToggleMini auf Mobile */}
+        {trailing && !query && (
+          <>
+            <span
+              style={{
+                width: 1,
+                height: 16,
+                background: 'var(--line)',
+                flexShrink: 0,
+              }}
+              aria-hidden
+            />
+            {trailing}
+          </>
         )}
       </div>
 

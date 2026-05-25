@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslation } from 'react-i18next';
-import { ThemeToggle } from './ThemeToggle';
+import { ThemeToggle, ThemeToggleMini } from './ThemeToggle';
 import { SearchBar } from './SearchBar';
 import { Logo } from './Logo';
 import { useAuth } from '@/lib/hooks';
@@ -47,8 +47,16 @@ export function AppBar({
         </span>
       </div>
 
-      {/* Suche */}
-      <SearchBar userLocation={userLocation} onSelect={onSearchSelect} />
+      {/* Suche — ThemeToggleMini auf Mobile als trailing eingebettet */}
+      <SearchBar
+        userLocation={userLocation}
+        onSelect={onSearchSelect}
+        trailing={
+          <span className="sm:hidden">
+            <ThemeToggleMini />
+          </span>
+        }
+      />
 
       {/* Aktionen — flex-shrink-0 verhindert, dass Icons auf Mobile herausgedrückt werden */}
       <div className="flex items-center gap-2 flex-shrink-0">

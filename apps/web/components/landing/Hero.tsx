@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { Logo } from '@/components/ui/Logo';
 
 export function Hero() {
   const { t } = useTranslation();
@@ -61,6 +62,37 @@ export function Hero() {
             background: 'radial-gradient(circle, rgba(255,210,63,0.08) 0%, transparent 70%)',
           }}
         />
+      </div>
+
+      {/* Logo */}
+      <div
+        style={{
+          marginBottom: 28,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 12,
+        }}
+      >
+        <div
+          style={{
+            filter: 'drop-shadow(0 8px 24px rgba(255,107,53,0.30))',
+            borderRadius: 22,
+          }}
+        >
+          <Logo size={80} />
+        </div>
+        <span
+          style={{
+            fontFamily: 'var(--font-fraunces)',
+            fontWeight: 800,
+            fontSize: 28,
+            color: 'var(--ink)',
+            letterSpacing: '-0.03em',
+          }}
+        >
+          klopilot
+        </span>
       </div>
 
       {/* Badge */}

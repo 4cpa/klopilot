@@ -151,7 +151,7 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
       aria-label="Kartenfilter"
       style={{
         position: 'absolute',
-        top: 54,
+        top: 64,
         left: 0,
         right: 0,
         zIndex: 15,
