@@ -397,6 +397,7 @@ export function Footer() {
                 icon={<IconWarn />}
                 label={t('footer.link_disclaimer')}
               />
+              <FooterLink href="/licence" icon={<IconDoc />} label={t('footer.link_licence')} />
               <FooterLink
                 href="mailto:admin@4cpa.ch"
                 icon={<IconMail />}

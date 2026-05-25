@@ -47,7 +47,7 @@ export default function ImpressumPage() {
       <p>
         © 2026 Transivroom Division. Alle Rechte vorbehalten, soweit nicht anders angegeben.
         Nicht-kommerzielle Nutzung des Quellcodes ist mit Quellenangabe gestattet. Siehe{' '}
-        <a href="https://github.com/transivroom/klopilot/blob/main/LICENSE">LICENSE</a>.
+        <a href="/licence">LICENSE</a>.
       </p>
 
       <h2>Streitbeilegung</h2>
