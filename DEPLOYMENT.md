@@ -66,40 +66,45 @@ bash infra/scripts/server-setup.sh
 Das Script:
 
 - Installiert Docker
-- Legt `deploy`-User an
 - Erstellt `/opt/klopilot/` mit `docker-compose.prod.yml` und `deploy.sh`
 - Startet Traefik mit Let's Encrypt
 - Konfiguriert UFW-Firewall
 
-### Schritt 4 — Deploy-User SSH-Key für GitHub Actions hinterlegen
+> **Deploy-User:** GitHub Actions verbindet sich als `ubuntu` (VPS-Hauptnutzer mit Docker-Gruppe).
+> Ein separater `deploy`-User ist nicht nötig.
+
+### Schritt 4 — SSH-Key für GitHub Actions hinterlegen
 
 ```bash
-# Lokaler Rechner: öffentlichen Key anzeigen
-cat ~/.ssh/klopilot_deploy.pub
+# Lokaler Rechner: neues Ed25519-Schlüsselpaar für CI generieren
+ssh-keygen -t ed25519 -C "github-actions@klopilot.ch" -f ~/.ssh/klopilot_ci
+
+# Öffentlichen Key anzeigen
+cat ~/.ssh/klopilot_ci.pub
 ```
 
 Auf dem Server:
 
 ```bash
-# Als root oder deploy-User
-cat >> /home/deploy/.ssh/authorized_keys << 'EOF'
-ssh-ed25519 AAAA... klopilot-github-actions
+# Als ubuntu-User
+cat >> ~/.ssh/authorized_keys << 'EOF'
+ssh-ed25519 AAAA... github-actions@klopilot.ch
 EOF
-chmod 600 /home/deploy/.ssh/authorized_keys
-chown deploy:deploy /home/deploy/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
 ```
 
 ### Schritt 5 — GitHub Secrets hinterlegen
 
 In `https://github.com/4cpa/klopilot/settings/secrets/actions`:
 
-| Secret            | Wert                                 |
-| ----------------- | ------------------------------------ |
-| `SSH_HOST`        | Server-IP oder Hostname              |
-| `SSH_USER`        | `deploy`                             |
-| `SSH_PRIVATE_KEY` | Inhalt von `~/.ssh/klopilot_deploy`  |
-| `SSH_PORT`        | `22` (Standard)                      |
-| `GHCR_TOKEN`      | GitHub PAT mit `packages:read` Scope |
+| Secret            | Wert                                                         |
+| ----------------- | ------------------------------------------------------------ |
+| `SSH_HOST`        | Server-IP oder Hostname                                      |
+| `SSH_USER`        | `ubuntu`                                                     |
+| `SSH_PRIVATE_KEY` | Inhalt von `~/.ssh/klopilot_ci` (privater Key)               |
+| `SSH_PORT`        | `22` (Standard)                                              |
+| `GHCR_TOKEN`      | GitHub PAT mit `packages:read` Scope                         |
+| `MAPTILER_KEY`    | API-Key von [cloud.maptiler.com](https://cloud.maptiler.com) |
 
 Für das GitHub **Environment** `production` (Settings → Environments → New):
 
@@ -109,11 +114,19 @@ Für das GitHub **Environment** `production` (Settings → Environments → New)
 ### Schritt 6 — Produktions-Umgebungsvariablen
 
 ```bash
-# Auf dem Server als deploy-User
+# Auf dem Server als ubuntu-User
 cp /opt/klopilot/.env.prod.example /opt/klopilot/.env.prod
-chmod 600 /opt/klopilot/.env.prod
 nano /opt/klopilot/.env.prod
 ```
+
+> **Wichtig — `.env.prod` Dateiberechtigungen:**
+> Docker Compose v5 öffnet das Env-File im Prozesskontext des SSH-Users (kein sudo).
+> Die Datei muss für diesen User lesbar sein:
+>
+> ```bash
+> # Mindestens 644 (world-readable) — sicher solange keine anderen untrusted User auf dem VPS
+> chmod 644 /opt/klopilot/.env.prod
+> ```
 
 Alle `CHANGE_ME`-Werte ersetzen:
 

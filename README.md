@@ -8,23 +8,25 @@ Community-Plattform zur Bewertung öffentlich zugänglicher Toiletten — kosten
 
 ## Features
 
-| Feature                                         | Web | Mobile |
-| ----------------------------------------------- | :-: | :----: |
-| Karte mit Toiletten-Markern                     |  ✓  |   ✓    |
-| Heatmap (Toiletten-Wüsten)                      |  ✓  |   ✓    |
-| Suche (Meilisearch)                             |  ✓  |   ✓    |
-| 10 Bewertungskriterien (🌸 / 🪰)                |  ✓  |   ✓    |
-| Foto-Upload (EXIF-frei)                         |  ✓  |   ✓    |
-| Magic-Link + OAuth Login                        |  ✓  |   ✓    |
-| Cross-Device Magic-Link Polling                 |  ✓  |   —    |
-| Dark Mode                                       |  ✓  |   ✓    |
-| i18n (DE/FR/IT/EN)                              |  ✓  |   ✓    |
-| Karten-Filter (Gratis, Barrierefrei, Kategorie) |  ✓  |   ✓    |
-| Toilet direkt per Karten-Klick hinzufügen       |  ✓  |   —    |
-| Admin-Panel (Moderation, Verwaltung)            |  ✓  |   —    |
-| Gamification (Punkte, Badges, Leaderboard)      |  —  |   ✓    |
-| Push-Benachrichtigungen                         |  —  |   ✓    |
-| Offline-Caching                                 |  —  |   ✓    |
+| Feature                                             | Web | Mobile |
+| --------------------------------------------------- | :-: | :----: |
+| Karte mit Toiletten-Markern                         |  ✓  |   ✓    |
+| Heatmap (Toiletten-Wüsten)                          |  ✓  |   ✓    |
+| Kartenstil-Wechsler (Satellit / Strassen / Outdoor) |  ✓  |   —    |
+| Kompass (DeviceOrientation, Nord-Ausrichtung)       |  ✓  |   —    |
+| Suche (Meilisearch)                                 |  ✓  |   ✓    |
+| 10 Bewertungskriterien (🌸 / 🪰)                    |  ✓  |   ✓    |
+| Foto-Upload (EXIF-frei)                             |  ✓  |   ✓    |
+| Magic-Link + OAuth Login                            |  ✓  |   ✓    |
+| Cross-Device Magic-Link Polling                     |  ✓  |   —    |
+| Dark Mode / Light / System                          |  ✓  |   ✓    |
+| i18n (DE/FR/IT/EN)                                  |  ✓  |   ✓    |
+| Karten-Filter (Gratis, Barrierefrei, Kategorie)     |  ✓  |   ✓    |
+| Toilet direkt per Karten-Klick hinzufügen           |  ✓  |   —    |
+| Admin-Panel (Moderation, Verwaltung)                |  ✓  |   —    |
+| Gamification (Punkte, Badges, Leaderboard)          |  —  |   ✓    |
+| Push-Benachrichtigungen                             |  —  |   ✓    |
+| Offline-Caching                                     |  —  |   ✓    |
 
 ---
 
@@ -223,12 +225,15 @@ Wartung und Betrieb in [docs/MAINTENANCE.md](./docs/MAINTENANCE.md).
 **Kurzversion (bei laufendem VPS):**
 
 ```bash
-# Nach jedem Push auf main — CI baut Images automatisch
-# Auf dem VPS deployen:
+# Nach jedem Push auf main läuft CI automatisch durch und triggert den Deploy-Workflow.
+# Manuell auf dem VPS (als ubuntu-User):
 cd /opt/klopilot
-sudo -u deploy docker compose -f docker-compose.prod.yml --env-file .env.prod pull
-sudo -u deploy docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --force-recreate
+bash deploy.sh
 ```
+
+> **Hinweis `.env.prod`:** Die Datei muss für Docker Compose v5 mindestens mit `chmod 644`
+> (world-readable) konfiguriert sein, da Compose die Datei im Prozesskontext des SSH-Users
+> öffnet — ohne Privilege-Escalation.
 
 ---
 

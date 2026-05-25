@@ -21,6 +21,81 @@ _Nächste geplante Features (P2/P3):_
 
 ---
 
+## [0.4.0] — 2026-05-25
+
+### Added
+
+**Karte — Kompass**
+
+- Kompass-Toggle-Button (unten links, neben Kartenstil-Wechsler): Ein/Aus
+- Ausgeschaltet: Karte immer Nord-oben, Rotation gesperrt (`dragRotate.disable`)
+- Eingeschaltet: Karte dreht sich automatisch nach Gerätekompass via `DeviceOrientation` API
+  - iOS 13+: `DeviceOrientationEvent.requestPermission()` wird synchron im Click-Handler aufgerufen (Safari-Pflicht)
+  - iOS: `webkitCompassHeading` (geografischer Nord)
+  - Android / Chrome: `deviceorientationabsolute` mit absolutem `alpha`-Wert
+  - Fallback auf reguläres `deviceorientation`
+  - Manuelle Karten-Rotation per Rechtsklick+Drag (Desktop) / Zwei-Finger (Mobile) weiterhin möglich
+- SVG-Kompassnadel im Button: rote Spitze zeigt immer Richtung Nord (dreht gegenläufig zum Karten-Bearing)
+- Bearing-Anzeige im Button-Tooltip: `Bearing: 42°`
+- Ausschalten setzt Bearing auf 0° zurück (400 ms `easeTo`)
+- `onBearingChange` Callback auf MapView: React-State max. 10×/s aktualisiert (throttle)
+
+**Karte — Kartenstil-Wechsler**
+
+- Drei Stile: 🛰️ Satellit (`hybrid`), 🗺️ Strassen (`streets-v2`), 🌿 Outdoor (`outdoor-v2`)
+- Quell: MapTiler Style-JSON (via `NEXT_PUBLIC_MAPTILER_KEY`)
+- Fallback: OSM-Raster-Tiles ohne API-Key
+- Nach Style-Wechsel wird Heatmap-Layer automatisch neu angewendet (`heatmapStateRef`)
+- Eingebauter Kompass des `NavigationControl` entfernt (`showCompass: false`); Zoom-Buttons bleiben
+
+**Karte — Heatmap**
+
+- Heatmap-API-Aufruf jetzt mit korrekten Bbox-Parametern (`minLng/minLat/maxLng/maxLat`)
+- Response-Mapping korrigiert: `cells` → `points` mit `weight: count`
+- Heatmap-Farb-Gradient: Mint → Gelb → Orange → Berry (entspricht Brand-Palette)
+- Beim Einschalten: aktueller sichtbarer Viewport als Bbox verwendet (Fallback: Schweiz-Default)
+
+**Web — Suchfeld**
+
+- Glas-Pill-Effekt: `backdrop-filter: blur(14px)` statt solider weisser Hintergrund
+- Browser-native Suchfeld-Rahmen entfernt: `appearance: none`, `WebkitAppearance: none`, `border: none`
+- Fokus-Highlight via `box-shadow` statt Browser-Outline
+- AppBar-Header: transparenter Hintergrund (kein weisser Gradient-Balken)
+
+**Web — Landing Page**
+
+- Hero: Logo (80 px) + „klopilot" als `<Link href="/karte">` — klickbar zur Karte
+  - Logo: `scale(1.06)` + stärkerer Glow bei Hover
+  - Schriftzug: Farbe → Brand-Orange bei Hover
+- Navbar: Logo + Brand mit Cream-Hintergrund-Pill bei Hover; `href="/"` (Standard)
+- Footer: Logo + Brand mit weissem Glass-Hover, scale(1.06) für Logo, Brand-Orange für Text
+- Footer: Bottom-Bar `klopilot.ch` + `admin@4cpa.ch` mit Hover-Übergang (35 % → 100 % Weiss)
+
+**Web — UI-Konsistenz**
+
+- AppBar: Logo + „klopilot" als `<Link href="/">` (war einfaches `<div>`)
+- `ThemeToggle` (Desktop-3er-Gruppe): gleicher Rahmen wie HelpButton (`1.5px solid var(--line)`, `background: var(--surface)`, Höhe 30 px)
+- `ThemeToggleMini` (Mobile/AppBar): 30 px Kreis mit `border: 1.5px solid var(--line)` — identisch zum HelpButton
+- FilterBar: `background: transparent` statt `linear-gradient(to bottom, var(--paper) 50%, transparent)` — kein weisser Balken über der Karte mehr
+
+### Fixed
+
+- **Z-Index-Schichtung**: Map-Controls-Div `zIndex: 20 → 10` — HelpOverlay, Sheets und Modals rendern nun korrekt über den Karten-Controls
+  - Ursache: AppBar (stacking context z-20) und Controls-Div (z-20, später im DOM) hatten gleichen z-Index; Controls gewannen gegen HelpOverlay innerhalb von AppBar's stacking context
+  - Fix: Controls auf z-10 → AppBar's stacking context (z-20) liegt immer drüber
+- **Deploy: `.env.prod` Permission Denied** (`open /opt/klopilot/.env.prod: permission denied`)
+  - Docker Compose v5.1.4 öffnet Env-File im Prozesskontext des SSH-Users — kein sudo, kein Privilege-Escalation
+  - Deployment-User `klopilot` hatte keine Leserechte auf ubuntu-owned `rw-------`-Datei
+  - Fix: `chmod 644 /opt/klopilot/.env.prod` (world-readable; VPS hat keine weiteren untrusted Users)
+- **MAPTILER_KEY**: GitHub Secret korrekt gesetzt; Build-Args in `ci.yml` + `release.yml` übergeben
+
+### Changed
+
+- Deploy: SSH_USER von `deploy` auf `ubuntu` (VPS-Hauptnutzer mit Docker-Gruppe)
+- `MapView`: `NavigationControl({ showCompass: false })` — eigener Kompass-Button ersetzt built-in
+
+---
+
 ## [0.3.0] — 2026-05-25
 
 ### Added
@@ -141,7 +216,8 @@ _Nächste geplante Features (P2/P3):_
 - Expo Mobile-App Grundgerüst
 - Next.js Web-App Grundgerüst mit MapLibre GL JS
 
-[Unreleased]: https://github.com/4cpa/klopilot/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/4cpa/klopilot/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/4cpa/klopilot/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/4cpa/klopilot/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/4cpa/klopilot/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/4cpa/klopilot/releases/tag/v0.1.0
