@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface MapFilters {
@@ -74,6 +75,20 @@ function Chip({
 /* ── FilterBar ───────────────────────────────────────────────────────────── */
 export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props) {
   const { t } = useTranslation();
+  const barRef = useRef<HTMLDivElement>(null);
+
+  // Desktop: Mausrad → horizontal scrollen (ohne Shift-Taste)
+  useEffect(() => {
+    const el = barRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY === 0) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY * 1.5;
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, []);
 
   function toggleFree() {
     onChange({ ...filters, free: !filters.free });
@@ -101,6 +116,7 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
 
   return (
     <div
+      ref={barRef}
       role="toolbar"
       aria-label="Kartenfilter"
       style={{
