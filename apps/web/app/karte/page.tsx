@@ -1,0 +1,323 @@
+'use client';
+
+import dynamic from 'next/dynamic';
+import { useState, useEffect, useCallback, useRef, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import {
+  toilets as toiletsApi,
+  heatmap as heatmapApi,
+  type Toilet,
+  type HeatmapPoint,
+} from '@/lib/api';
+import { authStore } from '@/lib/auth-store';
+import { useGeoLocation } from '@/lib/hooks';
+import { AppBar } from '@/components/ui/AppBar';
+import { FilterBar, DEFAULT_FILTERS, type MapFilters } from '@/components/map/FilterBar';
+import { ProfileSidebar } from '@/components/ui/ProfileSidebar';
+import { ToiletSheet } from '@/components/sheets/ToiletSheet';
+import { RatingSheet } from '@/components/sheets/RatingSheet';
+import { AddToiletSheet } from '@/components/sheets/AddToiletSheet';
+import { LoginModal } from '@/components/auth/LoginModal';
+
+const MapView = dynamic(() => import('@/components/map/MapView'), {
+  ssr: false,
+  loading: () => (
+    <div
+      className="absolute inset-0 flex items-center justify-center"
+      style={{ background: 'var(--cream)' }}
+    >
+      <div className="animate-spin w-10 h-10 rounded-full border-2 border-[var(--brand-primary)] border-t-transparent" />
+    </div>
+  ),
+});
+
+const DEFAULT_LNG = parseFloat(process.env.NEXT_PUBLIC_DEFAULT_LNG ?? '8.539');
+const DEFAULT_LAT = parseFloat(process.env.NEXT_PUBLIC_DEFAULT_LAT ?? '47.378');
+const DEFAULT_ZOOM = parseFloat(process.env.NEXT_PUBLIC_DEFAULT_ZOOM ?? '13');
+
+type Sheet = 'none' | 'detail' | 'rate' | 'add' | 'login';
+
+// ── Inner Component (braucht useSearchParams → muss in Suspense) ───────────
+function KarteInner() {
+  const searchParams = useSearchParams();
+  const { pos } = useGeoLocation();
+  const [toiletList, setToiletList] = useState<Toilet[]>([]);
+  const [filters, setFilters] = useState<MapFilters>(DEFAULT_FILTERS);
+  const [profileOpen, setProfileOpen] = useState(false);
+  // Deep-Link: ?t=<toiletId> direkt beim Init auflösen
+  const deepLinkId = searchParams.get('t');
+  const [activeSheet, setActiveSheet] = useState<Sheet>(deepLinkId ? 'detail' : 'none');
+  const [selectedId, setSelectedId] = useState<string | null>(deepLinkId);
+  const [flyTarget, setFlyTarget] = useState<[number, number] | null>(null);
+  const [showHeatmap, setShowHeatmap] = useState(false);
+  const [heatmapPoints, setHeatmapPoints] = useState<HeatmapPoint[]>([]);
+  const [heatmapLoading, setHeatmapLoading] = useState(false);
+  // Marker-Drop-Modus: Koordinaten für neue Toilette per Karten-Klick
+  const [pendingLocation, setPendingLocation] = useState<{ lng: number; lat: number } | null>(null);
+
+  const mapCenter = useMemo<[number, number]>(() => pos ?? [DEFAULT_LNG, DEFAULT_LAT], [pos]);
+  const initialized = useRef(false);
+
+  // Auth init
+  useEffect(() => {
+    authStore.init();
+  }, []);
+
+  // ── Erstes Laden beim Init ────────────────────────────────────────────────
+  useEffect(() => {
+    const [lng, lat] = mapCenter;
+    if (initialized.current) return;
+    initialized.current = true;
+    toiletsApi
+      .nearby(lng, lat, 3000)
+      .then(setToiletList)
+      .catch(() => {});
+  }, [mapCenter]);
+
+  // ── Nachladen bei Karten-Bewegung (MoveEnd, debounced in MapView) ─────────
+  const handleMoveEnd = useCallback((center: [number, number], radiusM: number) => {
+    toiletsApi
+      .nearby(center[0], center[1], radiusM)
+      .then(setToiletList)
+      .catch(() => {});
+  }, []);
+
+  // ── Karten-Klick: Standort für neue Toilette setzen ──────────────────────
+  const handleMapClick = useCallback(
+    (lng: number, lat: number) => {
+      if (activeSheet !== 'add') return; // nur im AddToilet-Modus aktiv
+      setPendingLocation({ lng, lat });
+    },
+    [activeSheet],
+  );
+
+  // Heatmap laden beim ersten Einschalten
+  const handleHeatmapToggle = useCallback(async () => {
+    const next = !showHeatmap;
+    setShowHeatmap(next);
+    if (next && heatmapPoints.length === 0) {
+      setHeatmapLoading(true);
+      try {
+        const { points } = await heatmapApi.get();
+        setHeatmapPoints(points);
+      } catch {
+        /* silent */
+      }
+      setHeatmapLoading(false);
+    }
+  }, [showHeatmap, heatmapPoints.length]);
+
+  // Filter
+  const visibleToilets = useMemo(() => {
+    return toiletList.filter((t) => {
+      if (filters.free && (t.feeChf ?? 0) > 0) return false;
+      if (filters.accessible && !t.accessibility?.wheelchair && !t.accessibility?.step_free)
+        return false;
+      if (filters.categories.size > 0 && !filters.categories.has(t.category)) return false;
+      return true;
+    });
+  }, [toiletList, filters]);
+
+  // Sheet-Handler
+  const handleSelect = useCallback((id: string) => {
+    setSelectedId(id);
+    setActiveSheet('detail');
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setActiveSheet('none');
+    setSelectedId(null);
+    setPendingLocation(null);
+  }, []);
+
+  const handleRate = useCallback((id: string) => {
+    setSelectedId(id);
+    setActiveSheet('rate');
+  }, []);
+
+  const reload = useCallback(() => {
+    const [lng, lat] = mapCenter;
+    toiletsApi
+      .nearby(lng, lat, 3000)
+      .then(setToiletList)
+      .catch(() => {});
+  }, [mapCenter]);
+
+  const handleRatingSaved = useCallback(() => {
+    reload();
+    setActiveSheet('detail');
+  }, [reload]);
+
+  const handleCreated = useCallback(
+    (id: string) => {
+      reload();
+      setPendingLocation(null);
+      setSelectedId(id);
+      setActiveSheet('detail');
+    },
+    [reload],
+  );
+
+  const handleSearchSelect = useCallback((toilet: Toilet) => {
+    setFlyTarget([toilet.longitude, toilet.latitude]);
+    setSelectedId(toilet.id);
+    setActiveSheet('detail');
+  }, []);
+
+  const handleAddClick = useCallback(() => {
+    setPendingLocation(null); // zurücksetzen, damit alter Klick-Punkt weg ist
+    setActiveSheet('add');
+  }, []);
+
+  return (
+    <main className="relative h-screen w-screen overflow-hidden">
+      {/* Cursor-Hinweis im Marker-Drop-Modus */}
+      {activeSheet === 'add' && !pendingLocation && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 72,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 30,
+            background: 'var(--brand-secondary)',
+            color: 'var(--brand-deep)',
+            padding: '8px 16px',
+            borderRadius: 999,
+            fontSize: 13,
+            fontWeight: 700,
+            boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          📍 Klick auf die Karte um den Standort zu setzen
+        </div>
+      )}
+
+      <MapView
+        toilets={visibleToilets}
+        center={pos ?? undefined}
+        flyTarget={flyTarget}
+        zoom={DEFAULT_ZOOM}
+        onSelect={handleSelect}
+        onMoveEnd={handleMoveEnd}
+        onMapClick={activeSheet === 'add' ? handleMapClick : undefined}
+        showHeatmap={showHeatmap}
+        heatmapPoints={heatmapPoints}
+      />
+
+      <AppBar
+        onLoginClick={() => setActiveSheet('login')}
+        onAddClick={handleAddClick}
+        onProfileClick={() => setProfileOpen(true)}
+        onSearchSelect={handleSearchSelect}
+        userLocation={pos ?? undefined}
+      />
+
+      <FilterBar
+        filters={filters}
+        onChange={setFilters}
+        totalCount={toiletList.length}
+        visibleCount={visibleToilets.length}
+      />
+
+      {/* Heatmap toggle */}
+      <button
+        type="button"
+        onClick={handleHeatmapToggle}
+        title={showHeatmap ? 'Heatmap ausblenden' : 'Heatmap einblenden'}
+        style={{
+          position: 'absolute',
+          bottom: 24,
+          left: 16,
+          zIndex: 20,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 6,
+          padding: '9px 14px',
+          borderRadius: 12,
+          border: showHeatmap ? '1.5px solid var(--brand-primary)' : '1.5px solid var(--line)',
+          background: showHeatmap ? 'var(--brand-primary)' : 'var(--paper)',
+          color: showHeatmap ? '#fff' : 'var(--ink)',
+          fontSize: 13,
+          fontWeight: 700,
+          cursor: 'pointer',
+          boxShadow: '0 2px 12px rgba(15,23,42,0.12)',
+          transition: 'all 0.18s',
+          opacity: heatmapLoading ? 0.7 : 1,
+        }}
+      >
+        {heatmapLoading ? (
+          <span
+            style={{
+              display: 'inline-block',
+              width: 16,
+              height: 16,
+              borderRadius: '50%',
+              border: '2px solid currentColor',
+              borderTopColor: 'transparent',
+              animation: 'spin 0.7s linear infinite',
+            }}
+          />
+        ) : (
+          '🔥'
+        )}
+        Heatmap
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </button>
+
+      {/* Sheets */}
+      {activeSheet === 'detail' && (
+        <ToiletSheet toiletId={selectedId} onClose={handleClose} onRate={handleRate} />
+      )}
+      {activeSheet === 'rate' && selectedId && (
+        <RatingSheet
+          toiletId={selectedId}
+          onClose={() => setActiveSheet('detail')}
+          onSaved={handleRatingSaved}
+        />
+      )}
+      {activeSheet === 'add' && (
+        <AddToiletSheet
+          defaultLng={pendingLocation?.lng ?? mapCenter[0]}
+          defaultLat={pendingLocation?.lat ?? mapCenter[1]}
+          pickedFromMap={pendingLocation !== null}
+          onClose={handleClose}
+          onCreated={handleCreated}
+        />
+      )}
+      {activeSheet === 'login' && <LoginModal onClose={handleClose} />}
+
+      <ProfileSidebar
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        onToiletSelect={(id) => {
+          handleSelect(id);
+        }}
+        onLoginClick={() => {
+          setProfileOpen(false);
+          setActiveSheet('login');
+        }}
+      />
+    </main>
+  );
+}
+
+// Suspense-Wrapper wegen useSearchParams
+export default function KartePage() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ background: 'var(--cream)' }}
+        >
+          <div className="animate-spin w-10 h-10 rounded-full border-2 border-[var(--brand-primary)] border-t-transparent" />
+        </div>
+      }
+    >
+      <KarteInner />
+    </Suspense>
+  );
+}
