@@ -168,29 +168,44 @@ jobs:
       - name: Build all apps (API + Web)
         run: pnpm build
 
-      # Docker-Images bauen (kein Push) — validiert Dockerfile-Korrektheit
+      # Docker-Images bauen und bei main-Push nach GHCR pushen
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Docker build API (validate only)
+      - name: Login to GHCR
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker build API
         uses: docker/build-push-action@v6
         with:
           context: .
           file: apps/api/Dockerfile
-          push: false
+          # Nur bei main-Push pushen, sonst nur validieren
+          push: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+          tags: |
+            ghcr.io/4cpa/klopilot-api:latest
+            ghcr.io/4cpa/klopilot-api:sha-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Docker build Web (validate only)
+      - name: Docker build Web
         uses: docker/build-push-action@v6
         with:
           context: .
           file: apps/web/Dockerfile
-          push: false
+          push: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+          tags: |
+            ghcr.io/4cpa/klopilot-web:latest
+            ghcr.io/4cpa/klopilot-web:sha-${{ github.sha }}
           build-args: |
-            NEXT_PUBLIC_API_URL=http://localhost:3101
-            NEXT_PUBLIC_DEFAULT_LNG=8.539
-            NEXT_PUBLIC_DEFAULT_LAT=47.378
+            NEXT_PUBLIC_API_URL=https://api.klopilot.ch
+            NEXT_PUBLIC_DEFAULT_LNG=7.4474
+            NEXT_PUBLIC_DEFAULT_LAT=46.9481
             NEXT_PUBLIC_DEFAULT_ZOOM=13
           cache-from: type=gha
           cache-to: type=gha,mode=max
