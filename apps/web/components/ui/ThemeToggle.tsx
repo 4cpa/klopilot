@@ -6,8 +6,8 @@ import { useTheme } from '@/lib/hooks';
 function SunIcon() {
   return (
     <svg
-      width="14"
-      height="14"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -32,8 +32,8 @@ function SunIcon() {
 function MoonIcon() {
   return (
     <svg
-      width="14"
-      height="14"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -50,8 +50,8 @@ function MoonIcon() {
 function MonitorIcon() {
   return (
     <svg
-      width="14"
-      height="14"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -69,8 +69,8 @@ function MonitorIcon() {
 
 const OPTIONS = [
   { value: 'light' as const, Icon: SunIcon, title: 'Hell' },
-  { value: 'dark' as const, Icon: MoonIcon, title: 'Dunkel' },
   { value: 'system' as const, Icon: MonitorIcon, title: 'System' },
+  { value: 'dark' as const, Icon: MoonIcon, title: 'Dunkel' },
 ];
 
 /* ── Desktop 3-Button-Gruppe ─────────────────────────────────────────────── */

@@ -48,16 +48,11 @@ export function AppBar({
         </span>
       </div>
 
-      {/* Suche — ThemeToggleMini auf allen Grössen rechts im Suchfeld (kein separates Rechteck) */}
-      <SearchBar
-        userLocation={userLocation}
-        onSelect={onSearchSelect}
-        trailing={<ThemeToggleMini />}
-      />
+      {/* Suche */}
+      <SearchBar userLocation={userLocation} onSelect={onSearchSelect} />
 
-      {/* Aktionen — nur Add / Help / Admin / Avatar (kein ThemeToggle mehr) */}
+      {/* Aktionen — Help | Add | Admin | Avatar | ThemeToggle */}
       <div className="flex items-center gap-2 flex-shrink-0">
-        {/* Hilfe-Button — immer sichtbar */}
         <HelpButton />
 
         {user ? (
@@ -158,6 +153,9 @@ export function AppBar({
             {t('profile.login_title')}
           </button>
         )}
+
+        {/* ThemeToggle — immer letztes Element, kein separater Rahmen */}
+        <ThemeToggleMini />
       </div>
     </header>
   );
