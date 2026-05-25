@@ -1,0 +1,14 @@
+{
+  "name": "@klopilot/i18n",
+  "version": "0.1.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {},
+  "dependencies": {
+    "i18next": "^24.2.2",
+    "react-i18next": "^15.4.1"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3"
+  }
+}

@@ -1,0 +1,100 @@
+# klopilot.ch — Produktions-Setup
+# Voraussetzung: .env.prod mit allen Werten belegt
+# Start: docker compose -f infra/docker-compose.prod.yml up -d
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: klopilot-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-klopilot}
+      POSTGRES_USER: ${POSTGRES_USER:-klopilot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-klopilot}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [klopilot]
+
+  redis:
+    image: redis:7-alpine
+    container_name: klopilot-redis
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [klopilot]
+
+  minio:
+    image: minio/minio:latest
+    container_name: klopilot-minio
+    restart: always
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_KEY}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET}
+    volumes:
+      - minio_data:/data
+    networks: [klopilot]
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.10
+    container_name: klopilot-meili
+    restart: always
+    environment:
+      MEILI_MASTER_KEY: ${MEILI_KEY}
+      MEILI_ENV: production
+    volumes:
+      - meili_data:/meili_data
+    networks: [klopilot]
+
+  api:
+    image: ${REGISTRY:-ghcr.io/transivroom}/klopilot-api:${TAG:-latest}
+    container_name: klopilot-api
+    restart: always
+    env_file: ../.env.prod
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`api.klopilot.ch`)"
+      - "traefik.http.routers.api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.api.loadbalancer.server.port=3101"
+    networks: [klopilot, traefik]
+
+  web:
+    image: ${REGISTRY:-ghcr.io/transivroom}/klopilot-web:${TAG:-latest}
+    container_name: klopilot-web
+    restart: always
+    env_file: ../.env.prod
+    depends_on: [api]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.web.rule=Host(`klopilot.ch`,`www.klopilot.ch`)"
+      - "traefik.http.routers.web.tls.certresolver=letsencrypt"
+      - "traefik.http.services.web.loadbalancer.server.port=3102"
+    networks: [klopilot, traefik]
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  meili_data:
+
+networks:
+  klopilot:
+    name: klopilot
+  traefik:
+    external: true
+    name: traefik
