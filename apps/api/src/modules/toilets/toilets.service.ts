@@ -202,10 +202,13 @@ export class ToiletsService {
   // ── Soft-Delete ───────────────────────────────────────────────────────────
 
   async remove(id: string, userId: string) {
-    await this.assertCanEdit(id, userId);
+    const { user } = await this.assertCanEdit(id, userId);
+    const isAdmin = user?.role === 'moderator' || user?.role === 'admin';
+    // Admins/Moderatoren löschen endgültig ('removed'), Nutzer verstecken ('hidden')
+    const newStatus = isAdmin ? 'removed' : 'hidden';
     return this.prisma.toilet.update({
       where: { id },
-      data: { status: 'hidden' },
+      data: { status: newStatus },
     });
   }
 
@@ -222,7 +225,7 @@ export class ToiletsService {
     if (!isOwner && !isPrivileged) {
       throw new ForbiddenException('Keine Berechtigung');
     }
-    return toilet;
+    return { toilet, user };
   }
 
   // ── Eigene Toiletten ─────────────────────────────────────────────────────

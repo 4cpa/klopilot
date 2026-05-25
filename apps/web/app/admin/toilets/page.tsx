@@ -146,13 +146,11 @@ function ToiletRow({
         </span>
       </td>
 
-      {/* Fehler */}
-      {err && (
-        <td style={{ padding: '4px 8px', fontSize: 11, color: 'var(--brand-berry)' }}>⚠ {err}</td>
-      )}
-
       {/* Aktionen */}
       <td style={{ padding: '10px 8px', verticalAlign: 'middle' }}>
+        {err && (
+          <p style={{ margin: '0 0 6px', fontSize: 11, color: 'var(--brand-berry)' }}>⚠ {err}</p>
+        )}
         <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
           {/* Link zur Karte */}
           <a
@@ -315,8 +313,9 @@ export default function AdminToiletsPage() {
   }
 
   async function handleDelete(id: string) {
-    await toiletsApi.delete(id);
-    setItems((prev) => prev.map((t) => (t.id === id ? { ...t, status: 'hidden' } : t)));
+    // 'removed' statt 'hidden' — setzt einen klar anderen Status als "Verstecken"
+    await moderation.setToiletStatus(id, 'removed');
+    setItems((prev) => prev.map((t) => (t.id === id ? { ...t, status: 'removed' } : t)));
   }
 
   return (
