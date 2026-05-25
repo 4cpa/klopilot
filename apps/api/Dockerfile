@@ -1,4 +1,6 @@
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
+# openssl + libc6-compat: benötigt von Prisma (libssl-Detection in Alpine/musl)
+RUN apk add --no-cache openssl libc6-compat
 RUN corepack enable && corepack prepare pnpm@9 --activate
 WORKDIR /app
 
@@ -17,7 +19,8 @@ COPY packages/shared-types ./packages/shared-types
 RUN pnpm --filter @klopilot/api build
 
 # ── Production image ──────────────────────────────────────────────────────────
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
+RUN apk add --no-cache openssl libc6-compat
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
 # Non-root user für Sicherheit
