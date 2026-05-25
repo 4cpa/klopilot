@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main, develop]
 
+permissions:
+  contents: read
+  packages: write   # Docker images nach GHCR pushen
+
 # Parallele Runs für denselben Branch/PR abbrechen
 concurrency:
   group: ci-${{ github.ref }}
