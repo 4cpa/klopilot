@@ -70,7 +70,7 @@ function token(): string | null {
   return localStorage.getItem('klo-access') ?? null;
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+async function request<T>(path: string, init: RequestInit = {}, retry = true): Promise<T> {
   const t = token();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -78,6 +78,22 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   };
   if (t) headers['Authorization'] = `Bearer ${t}`;
   const res = await fetch(`${BASE}${path}`, { ...init, headers, credentials: 'include' });
+
+  // Access-Token abgelaufen → einmal per Refresh-Cookie erneuern und nochmals versuchen
+  if (res.status === 401 && retry) {
+    try {
+      const { accessToken } = await request<{ accessToken: string }>(
+        '/auth/refresh',
+        { method: 'POST' },
+        false, // kein weiterer Retry
+      );
+      if (typeof window !== 'undefined') localStorage.setItem('klo-access', accessToken);
+      return request<T>(path, init, false);
+    } catch {
+      // Refresh fehlgeschlagen → Session abgelaufen, ursprünglichen 401 weiterwerfen
+    }
+  }
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: res.statusText }));
     throw Object.assign(new Error(err.message ?? 'API error'), { status: res.status });

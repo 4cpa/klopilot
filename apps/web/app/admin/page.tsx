@@ -16,12 +16,16 @@ function PhotoCard({
   onReject: () => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
   const url = media.url(photo.s3Key);
 
   async function handle(action: () => Promise<unknown>) {
     setBusy(true);
+    setErr(null);
     try {
       await action();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Fehler');
     } finally {
       setBusy(false);
     }
@@ -62,6 +66,11 @@ function PhotoCard({
           von @{photo.user.handle} · {new Date(photo.createdAt).toLocaleDateString('de-CH')}
         </p>
       </div>
+
+      {/* Fehler */}
+      {err && (
+        <p style={{ margin: '0 12px 6px', fontSize: 11, color: 'var(--brand-berry)' }}>⚠ {err}</p>
+      )}
 
       {/* Aktionen */}
       <div style={{ display: 'flex', gap: 8, padding: '0 12px 12px' }}>
@@ -119,11 +128,15 @@ function ReportRow({
   onDismiss: () => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
   async function handle(action: () => Promise<unknown>) {
     setBusy(true);
+    setErr(null);
     try {
       await action();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Fehler');
     } finally {
       setBusy(false);
     }
@@ -181,6 +194,9 @@ function ReportRow({
           von @{report.reporter.handle}
           {report.reporter.email ? ` (${report.reporter.email})` : ''}
         </p>
+        {err && (
+          <p style={{ margin: '6px 0 0', fontSize: 11, color: 'var(--brand-berry)' }}>⚠ {err}</p>
+        )}
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flexShrink: 0 }}>
         <button
