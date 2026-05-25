@@ -60,7 +60,7 @@ function Chip({
         color: active ? '#fff' : 'var(--ink)',
         fontSize: 13,
         fontWeight: active ? 700 : 500,
-        cursor: 'pointer',
+        cursor: 'inherit', // erbt grab/grabbing vom Container
         whiteSpace: 'nowrap',
         boxShadow: active ? '0 2px 10px rgba(255,107,53,0.28)' : '0 1px 4px rgba(15,23,42,0.06)',
         transition: 'all 0.15s',
@@ -76,18 +76,48 @@ function Chip({
 export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props) {
   const { t } = useTranslation();
   const barRef = useRef<HTMLDivElement>(null);
+  const drag = useRef({ active: false, startX: 0, scrollLeft: 0 });
 
-  // Desktop: Mausrad → horizontal scrollen (ohne Shift-Taste)
+  // Desktop: Mausrad → horizontal scrollen + Drag-Scroll
   useEffect(() => {
     const el = barRef.current;
     if (!el) return;
+
+    // Mausrad: vertikale Drehung → horizontaler Scroll
     const onWheel = (e: WheelEvent) => {
-      if (e.deltaY === 0) return;
+      // deltaX: native horizontales Scrollen (Trackpad) — kein Override nötig
+      if (e.deltaX !== 0) return;
       e.preventDefault();
-      el.scrollLeft += e.deltaY * 1.5;
+      el.scrollLeft += e.deltaY;
     };
+
+    // Drag-Scroll per Maustaste
+    const onMouseDown = (e: MouseEvent) => {
+      drag.current = { active: true, startX: e.pageX, scrollLeft: el.scrollLeft };
+      el.style.cursor = 'grabbing';
+      el.style.userSelect = 'none';
+    };
+    const onMouseMove = (e: MouseEvent) => {
+      if (!drag.current.active) return;
+      const dx = e.pageX - drag.current.startX;
+      el.scrollLeft = drag.current.scrollLeft - dx;
+    };
+    const onMouseUp = () => {
+      drag.current.active = false;
+      el.style.cursor = 'grab';
+      el.style.userSelect = '';
+    };
+
     el.addEventListener('wheel', onWheel, { passive: false });
-    return () => el.removeEventListener('wheel', onWheel);
+    el.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      el.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
   }, []);
 
   function toggleFree() {
@@ -133,7 +163,7 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
         scrollbarWidth: 'none',
         WebkitOverflowScrolling: 'touch',
         background: 'linear-gradient(to bottom, var(--paper) 50%, transparent)',
-        // Kein maskImage — Chips wurden dadurch ausgegraut / sahen deaktiviert aus
+        cursor: 'grab',
       }}
     >
       {/* Quick-toggle filters */}

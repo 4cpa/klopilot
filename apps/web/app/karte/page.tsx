@@ -170,7 +170,10 @@ function KarteInner() {
   }, [reload]);
 
   return (
-    <main className="relative h-screen w-screen overflow-hidden">
+    <main
+      className="relative w-screen overflow-hidden"
+      style={{ height: '100dvh' }} // 100dvh schrumpft mit Safari-Toolbar, 100vh nicht
+    >
       {/* Cursor-Hinweis im Marker-Drop-Modus */}
       {activeSheet === 'add' && !pendingLocation && (
         <div
@@ -316,7 +319,7 @@ export default function KartePage() {
       fallback={
         <div
           className="absolute inset-0 flex items-center justify-center"
-          style={{ background: 'var(--cream)' }}
+          style={{ background: 'var(--cream)', height: '100dvh' }}
         >
           <div className="animate-spin w-10 h-10 rounded-full border-2 border-[var(--brand-primary)] border-t-transparent" />
         </div>

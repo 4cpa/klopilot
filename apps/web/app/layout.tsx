@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Fraunces } from 'next/font/google';
 import { ThemeScript } from '@/components/ui/ThemeScript';
 import { I18nProvider } from '@/components/ui/I18nProvider';
@@ -7,6 +7,12 @@ import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-fraunces', display: 'swap' });
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover', // ermöglicht env(safe-area-inset-*) auf iPhone
+};
 
 export const metadata: Metadata = {
   title: 'klopilot — Toiletten-Guide',
