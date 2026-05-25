@@ -20,7 +20,11 @@ async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter);
 
   app.enableCors({
-    origin: [/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/, /\.klopilot\.ch$/],
+    // Bare-Domain klopilot.ch + alle Subdomains + localhost für Dev
+    origin: [
+      /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/,
+      /^https?:\/\/([\w-]+\.)?klopilot\.ch$/,
+    ],
     credentials: true,
   });
 
