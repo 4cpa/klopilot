@@ -125,6 +125,52 @@ export class ModerationService {
     });
   }
 
+  // ── Admin: alle Toiletten ─────────────────────────────────────────────────
+
+  async listAllToilets(page = 1, limit = 30, search?: string, status?: string) {
+    const where: Record<string, unknown> = {};
+    if (status) where['status'] = status;
+    if (search) {
+      where['OR'] = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { address: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const [items, total] = await Promise.all([
+      this.prisma.toilet.findMany({
+        where: where as never,
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+        select: {
+          id: true,
+          name: true,
+          category: true,
+          status: true,
+          visibility: true,
+          verified: true,
+          address: true,
+          createdAt: true,
+          createdById: true,
+          _count: { select: { ratings: true, photos: true } },
+          createdBy: { select: { id: true, handle: true } },
+        },
+      }),
+      this.prisma.toilet.count({ where: where as never }),
+    ]);
+    return { items, total, page, limit, pages: Math.ceil(total / limit) };
+  }
+
+  async setToiletStatus(toiletId: string, status: string, actorRole: string) {
+    if (!['moderator', 'admin'].includes(actorRole)) throw new ForbiddenException();
+    return this.prisma.toilet.update({
+      where: { id: toiletId },
+      data: { status: status as never },
+      select: { id: true, status: true },
+    });
+  }
+
   async listPendingPhotos(page = 1, limit = 30) {
     const [items, total] = await Promise.all([
       this.prisma.photo.findMany({

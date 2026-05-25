@@ -150,6 +150,9 @@ export const toilets = {
   }) => request<Toilet>('/toilets', { method: 'POST', body: JSON.stringify(data) }),
 
   delete: (id: string) => request(`/toilets/${id}`, { method: 'DELETE' }),
+
+  verify: (id: string) => request(`/toilets/${id}/verify`, { method: 'PATCH' }),
+  unverify: (id: string) => request(`/toilets/${id}/unverify`, { method: 'PATCH' }),
 };
 
 // ── Users ─────────────────────────────────────────────────────────────────────
@@ -280,6 +283,20 @@ export interface Report {
   reporter: { id: string; handle: string; email: string };
 }
 
+export interface AdminToilet {
+  id: string;
+  name: string;
+  category: string;
+  status: string;
+  visibility: string;
+  verified: boolean;
+  address?: string;
+  createdAt: string;
+  createdById: string;
+  createdBy: { id: string; handle: string };
+  _count: { ratings: number; photos: number };
+}
+
 export const moderation = {
   photos: (page = 1): Promise<{ items: PendingPhoto[]; total: number }> =>
     request(`/moderation/photos?page=${page}`),
@@ -293,6 +310,23 @@ export const moderation = {
 
   resolveReport: (id: string, status: 'resolved' | 'dismissed') =>
     request(`/moderation/queue/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    }),
+
+  listToilets: (
+    page = 1,
+    q?: string,
+    status?: string,
+  ): Promise<{ items: AdminToilet[]; total: number; pages: number }> => {
+    const p = new URLSearchParams({ page: String(page) });
+    if (q) p.set('q', q);
+    if (status) p.set('status', status);
+    return request(`/moderation/toilets?${p}`);
+  },
+
+  setToiletStatus: (id: string, status: 'active' | 'hidden' | 'removed') =>
+    request(`/moderation/toilets/${id}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ status }),
     }),

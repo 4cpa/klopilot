@@ -52,6 +52,32 @@ export class ModerationController {
     return this.mod.updateStatus(id, status, user.role);
   }
 
+  // ── Toiletten-Liste (Admin) ───────────────────────────────────────────────
+
+  @Get('moderation/toilets')
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'q', required: false })
+  @ApiQuery({ name: 'status', required: false })
+  listToilets(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(30), ParseIntPipe) limit: number,
+    @Query('q') q: string | undefined,
+    @Query('status') status: string | undefined,
+    @CurrentUser() user: { userId: string; role: string },
+  ) {
+    return this.mod.listAllToilets(page, limit, q, status);
+  }
+
+  @Patch('moderation/toilets/:id/status')
+  setToiletStatus(
+    @Param('id') id: string,
+    @Body('status') status: string,
+    @CurrentUser() user: { userId: string; role: string },
+  ) {
+    return this.mod.setToiletStatus(id, status, user.role);
+  }
+
   // ── Photo queue ───────────────────────────────────────────────────────────
 
   @Get('moderation/photos')
