@@ -28,6 +28,21 @@ export const metadata: Metadata = {
     siteName: 'klopilot.ch',
     locale: 'de_CH',
     type: 'website',
+    url: 'https://klopilot.ch',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'klopilot — Community-Toiletten-Guide',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'klopilot — Toiletten-Guide',
+    description: 'Finde öffentliche Toiletten in deiner Nähe. Kostenlos, ohne Werbung.',
+    images: ['/opengraph-image'],
   },
 };
 
