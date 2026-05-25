@@ -54,6 +54,9 @@ function KarteInner() {
   const [heatmapLoading, setHeatmapLoading] = useState(false);
   const [mapStyle, setMapStyle] = useState<MapStyleId>('satellite');
   const [mapBounds, setMapBounds] = useState<MapBounds | null>(null);
+  // Kompass
+  const [compassEnabled, setCompassEnabled] = useState(false);
+  const [mapBearing, setMapBearing] = useState(0);
   // Marker-Drop-Modus: Koordinaten für neue Toilette per Karten-Klick
   const [pendingLocation, setPendingLocation] = useState<{ lng: number; lat: number } | null>(null);
 
@@ -183,6 +186,16 @@ function KarteInner() {
     reload();
   }, [reload]);
 
+  const handleBearingChange = useCallback((bearing: number) => {
+    setMapBearing(bearing);
+  }, []);
+
+  const handleCompassToggle = useCallback(() => {
+    setCompassEnabled((prev) => !prev);
+    // Beim Ausschalten Bearing zurücksetzen
+    if (compassEnabled) setMapBearing(0);
+  }, [compassEnabled]);
+
   return (
     <main
       className="relative w-screen overflow-hidden"
@@ -223,6 +236,8 @@ function KarteInner() {
         showHeatmap={showHeatmap}
         heatmapPoints={heatmapPoints}
         mapStyle={mapStyle}
+        compassEnabled={compassEnabled}
+        onBearingChange={handleBearingChange}
       />
 
       <AppBar
@@ -339,6 +354,77 @@ function KarteInner() {
           )}
           Heatmap
           <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </button>
+
+        {/* Kompass-Toggle */}
+        <button
+          type="button"
+          onClick={handleCompassToggle}
+          title={
+            compassEnabled
+              ? `Kompass deaktivieren (Bearing: ${Math.round(mapBearing)}°)`
+              : 'Kompass aktivieren — Karte rotieren'
+          }
+          aria-pressed={compassEnabled}
+          style={{
+            width: 42,
+            height: 42,
+            borderRadius: 12,
+            border: compassEnabled ? '1.5px solid var(--brand-primary)' : '1.5px solid var(--line)',
+            background: compassEnabled ? 'var(--paper)' : 'var(--paper)',
+            color: compassEnabled ? 'var(--brand-primary)' : 'var(--muted)',
+            cursor: 'pointer',
+            boxShadow: compassEnabled
+              ? '0 2px 12px rgba(255,107,53,0.22)'
+              : '0 2px 12px rgba(15,23,42,0.12)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1,
+            transition: 'all 0.18s',
+            padding: 0,
+            flexShrink: 0,
+          }}
+        >
+          {/* SVG-Kompassnadel — dreht sich mit dem Bearing */}
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 22 22"
+            style={{
+              transform: `rotate(${-mapBearing}deg)`,
+              transition: 'transform 0.1s linear',
+              display: 'block',
+            }}
+            aria-hidden
+          >
+            {/* Nord-Pfeilspitze (rot wenn aktiv, grau wenn inaktiv) */}
+            <polygon
+              points="11,2 13.5,11 11,9 8.5,11"
+              fill={compassEnabled ? '#EF476F' : '#9AA4B2'}
+            />
+            {/* Süd-Pfeilspitze */}
+            <polygon
+              points="11,20 13.5,11 11,13 8.5,11"
+              fill={compassEnabled ? '#9AA4B2' : '#C8CDD5'}
+            />
+            {/* Mittelpunkt */}
+            <circle cx="11" cy="11" r="2" fill={compassEnabled ? 'var(--ink)' : '#9AA4B2'} />
+          </svg>
+          {/* N-Label */}
+          <span
+            style={{
+              fontSize: 9,
+              fontWeight: 800,
+              lineHeight: 1,
+              letterSpacing: '0.03em',
+              color: compassEnabled ? '#EF476F' : '#9AA4B2',
+              fontFamily: 'Inter, sans-serif',
+            }}
+          >
+            N
+          </span>
         </button>
       </div>
 

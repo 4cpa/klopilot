@@ -69,6 +69,10 @@ interface Props {
   showHeatmap?: boolean;
   heatmapPoints?: HeatmapPoint[];
   mapStyle?: MapStyleId;
+  /** Kompass-Modus: true = Rotation frei + Bearing-Tracking aktiv */
+  compassEnabled?: boolean;
+  /** Aktuelles Bearing in Grad (0–360 im Uhrzeigersinn ab Nord) */
+  onBearingChange?: (bearing: number) => void;
 }
 
 export default function MapView({
@@ -82,6 +86,8 @@ export default function MapView({
   showHeatmap = false,
   heatmapPoints = [],
   mapStyle = 'satellite',
+  compassEnabled = false,
+  onBearingChange,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -89,6 +95,7 @@ export default function MapView({
   const moveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onMoveEndRef = useRef(onMoveEnd);
   const onMapClickRef = useRef(onMapClick);
+  const onBearingChangeRef = useRef(onBearingChange);
   // Ref für Heatmap-Zustand — wird nach Style-Wechsel neu angewendet
   const heatmapStateRef = useRef({ show: showHeatmap, points: heatmapPoints });
 
@@ -96,6 +103,7 @@ export default function MapView({
   useLayoutEffect(() => {
     onMoveEndRef.current = onMoveEnd;
     onMapClickRef.current = onMapClick;
+    onBearingChangeRef.current = onBearingChange;
   });
 
   // Init map once
@@ -113,8 +121,15 @@ export default function MapView({
       attributionControl: { compact: true },
     });
 
-    // bottom-right: kein Überlappen mit der AppBar am oberen Rand
-    mapRef.current.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+    // Kompass deaktiviert beim Start: Rotation sperren
+    mapRef.current.dragRotate.disable();
+    mapRef.current.touchZoomRotate.disableRotation();
+
+    // Eigene Zoom-Buttons ohne eingebauten Kompass (den ersetzen wir selbst)
+    mapRef.current.addControl(
+      new maplibregl.NavigationControl({ showCompass: false }),
+      'bottom-right',
+    );
     mapRef.current.addControl(
       new maplibregl.GeolocateControl({
         positionOptions: { enableHighAccuracy: true },
@@ -143,6 +158,13 @@ export default function MapView({
     };
     mapRef.current.on('moveend', handleMoveEnd);
 
+    // ── Bearing-Tracking: für Custom-Kompass ──────────────────────────────
+    const handleRotate = () => {
+      onBearingChangeRef.current?.(mapRef.current?.getBearing() ?? 0);
+    };
+    mapRef.current.on('rotate', handleRotate);
+    mapRef.current.on('rotateend', handleRotate);
+
     // ── Map Click: Marker-Drop für AddToilet ──────────────────────────────
     const handleMapClick = (e: maplibregl.MapMouseEvent) => {
       if (!onMapClickRef.current) return;
@@ -159,6 +181,22 @@ export default function MapView({
       mapRef.current = null;
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Kompass ein-/ausschalten ─────────────────────────────────────────────
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (compassEnabled) {
+      map.dragRotate.enable();
+      map.touchZoomRotate.enableRotation();
+    } else {
+      // Zurück auf Nord ausrichten, dann Rotation sperren
+      map.easeTo({ bearing: 0, duration: 400 });
+      map.dragRotate.disable();
+      map.touchZoomRotate.disableRotation();
+      onBearingChangeRef.current?.(0);
+    }
+  }, [compassEnabled]);
 
   // Update markers when toilets change
   useEffect(() => {
