@@ -77,7 +77,10 @@ export class AuthService {
   // ── Token-Verwaltung ──────────────────────────────────────────────────────
 
   async issueTokenPair(userId: string) {
-    const accessToken = this.jwt.sign({ sub: userId }, { expiresIn: '15m' });
+    // role in Payload einbetten damit Guards es ohne DB-Lookup lesen können
+    const user = await this.users.findById(userId);
+    const role = user?.role ?? 'user';
+    const accessToken = this.jwt.sign({ sub: userId, role }, { expiresIn: '15m' });
 
     const refreshToken = crypto.randomBytes(40).toString('hex');
     const refreshHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
@@ -105,7 +108,7 @@ export class AuthService {
 
   // ── JWT-Validierung für Passport ──────────────────────────────────────────
 
-  validatePayload(payload: { sub: string }) {
-    return { userId: payload.sub };
+  validatePayload(payload: { sub: string; role?: string }) {
+    return { userId: payload.sub, role: payload.role ?? 'user' };
   }
 }
