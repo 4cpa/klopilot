@@ -19,6 +19,8 @@ coverage/
 .env
 .env.local
 .env.*.local
+.env.prod          # production secrets — nur auf dem Server, nie im Repo
+# .env.prod.example ist committed (kein Secret, nur Template)
 
 # Editor
 .vscode/settings.json

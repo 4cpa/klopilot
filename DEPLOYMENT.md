@@ -1,124 +1,280 @@
-# Deployment Guide
+# Deployment Guide — klopilot.ch
 
 ## Übersicht
 
-klopilot besteht aus drei deployten Einheiten:
-
-| Einheit | Technologie      | Ziel                   |
-| ------- | ---------------- | ---------------------- |
-| API     | NestJS (Docker)  | Hetzner / Fly.io       |
-| Web     | Next.js (Docker) | Hetzner / Vercel       |
-| Mobile  | Expo EAS         | App Store / Play Store |
-
-Infrastruktur (PostgreSQL, Redis, MinIO, Meilisearch) läuft als Docker Compose auf dem Server.
-
----
-
-## Lokale Entwicklung
-
-```bash
-# Infrastruktur
-docker compose -f infra/docker-compose.yml up -d
-
-# Apps
-pnpm dev
+```
+GitHub Actions (CI → Deploy)
+        │
+        │ SSH → deploy.sh
+        ▼
+Hetzner VPS (Ubuntu 24.04)
+  ├── Traefik v3  (Reverse Proxy, Let's Encrypt)
+  ├── PostgreSQL 16 + PostGIS 3.4
+  ├── Redis 7
+  ├── MinIO (S3-Storage)
+  ├── Meilisearch v1.10
+  ├── API  ← ghcr.io/4cpa/klopilot-api:latest
+  └── Web  ← ghcr.io/4cpa/klopilot-web:latest
 ```
 
+### Ablauf nach `git push main`
+
+1. CI-Workflow läuft (lint → typecheck → test → build + Docker-Validate)
+2. `release.yml` baut + pusht Images zu GHCR (nur bei `v*`-Tags)
+3. `deploy.yml` startet automatisch sobald CI grün ist
+4. Deploy-Script auf dem Server: pull → migrate → restart → healthcheck
+
 ---
 
-## Produktion
+## Erstinstallation
 
 ### Voraussetzungen
 
-- Server mit Docker & Docker Compose (Hetzner CX21 oder grösser empfohlen)
-- Domäne `klopilot.ch` mit DNS auf Server
-- SSL via Traefik oder nginx (Let's Encrypt)
-- Alle Umgebungsvariablen in `.env.prod` gesetzt (siehe `.env.example`)
+- Hetzner CX21 oder grösser (Ubuntu 24.04, 2 vCPU, 4 GB RAM)
+- Domain `klopilot.ch` mit DNS-Zugang
+- GitHub-Konto mit Schreibzugriff auf `4cpa/klopilot`
 
-### 1. Infrastruktur starten
-
-```bash
-docker compose -f infra/docker-compose.prod.yml up -d
-```
-
-### 2. Datenbank migrieren
+### Schritt 1 — Server bestellen und SSH einrichten
 
 ```bash
-DATABASE_URL=<prod-url> pnpm db:migrate
+# Lokaler Rechner
+ssh-keygen -t ed25519 -C "deploy@klopilot.ch" -f ~/.ssh/klopilot_deploy
+# Public Key beim Hetzner-Server als Root-Key hinterlegen (bei Server-Erstellung)
 ```
 
-### 3. API deployen
+### Schritt 2 — DNS-Records setzen
+
+| Record                  | Typ | Wert          |
+| ----------------------- | --- | ------------- |
+| `klopilot.ch`           | A   | `<Server-IP>` |
+| `www.klopilot.ch`       | A   | `<Server-IP>` |
+| `api.klopilot.ch`       | A   | `<Server-IP>` |
+| `minio.klopilot.ch`     | A   | `<Server-IP>` |
+| `minio-api.klopilot.ch` | A   | `<Server-IP>` |
+
+TTL: 300s für schnelle Erstpropagation, danach erhöhen.
+
+### Schritt 3 — Server-Bootstrap
 
 ```bash
-docker build -f apps/api/Dockerfile -t klopilot-api .
-docker push <registry>/klopilot-api:latest
-
-# Auf dem Server:
-docker compose -f infra/docker-compose.prod.yml pull api
-docker compose -f infra/docker-compose.prod.yml up -d api
+# Als root auf dem Server
+git clone https://github.com/4cpa/klopilot.git /tmp/klopilot-setup
+cd /tmp/klopilot-setup
+bash infra/scripts/server-setup.sh
 ```
 
-### 4. Web deployen
+Das Script:
+
+- Installiert Docker
+- Legt `deploy`-User an
+- Erstellt `/opt/klopilot/` mit `docker-compose.prod.yml` und `deploy.sh`
+- Startet Traefik mit Let's Encrypt
+- Konfiguriert UFW-Firewall
+
+### Schritt 4 — Deploy-User SSH-Key für GitHub Actions hinterlegen
 
 ```bash
-docker build -f apps/web/Dockerfile -t klopilot-web .
-docker push <registry>/klopilot-web:latest
-
-# Auf dem Server:
-docker compose -f infra/docker-compose.prod.yml pull web
-docker compose -f infra/docker-compose.prod.yml up -d web
+# Lokaler Rechner: öffentlichen Key anzeigen
+cat ~/.ssh/klopilot_deploy.pub
 ```
 
-### 5. Mobile OTA-Update (JS-only Änderungen)
+Auf dem Server:
+
+```bash
+# Als root oder deploy-User
+cat >> /home/deploy/.ssh/authorized_keys << 'EOF'
+ssh-ed25519 AAAA... klopilot-github-actions
+EOF
+chmod 600 /home/deploy/.ssh/authorized_keys
+chown deploy:deploy /home/deploy/.ssh/authorized_keys
+```
+
+### Schritt 5 — GitHub Secrets hinterlegen
+
+In `https://github.com/4cpa/klopilot/settings/secrets/actions`:
+
+| Secret            | Wert                                 |
+| ----------------- | ------------------------------------ |
+| `SSH_HOST`        | Server-IP oder Hostname              |
+| `SSH_USER`        | `deploy`                             |
+| `SSH_PRIVATE_KEY` | Inhalt von `~/.ssh/klopilot_deploy`  |
+| `SSH_PORT`        | `22` (Standard)                      |
+| `GHCR_TOKEN`      | GitHub PAT mit `packages:read` Scope |
+
+Für das GitHub **Environment** `production` (Settings → Environments → New):
+
+- Protection rules: Required reviewers (optional für Staging)
+- Secrets wie oben
+
+### Schritt 6 — Produktions-Umgebungsvariablen
+
+```bash
+# Auf dem Server als deploy-User
+cp /opt/klopilot/.env.prod.example /opt/klopilot/.env.prod
+chmod 600 /opt/klopilot/.env.prod
+nano /opt/klopilot/.env.prod
+```
+
+Alle `CHANGE_ME`-Werte ersetzen:
+
+```bash
+# Secrets generieren
+openssl rand -base64 32   # für Passwörter
+openssl rand -base64 64   # für JWT_SECRET
+```
+
+Wichtigste Variablen:
+
+- `POSTGRES_PASSWORD`, `REDIS_PASSWORD` — starke zufällige Passwörter
+- `JWT_SECRET` — mind. 64 Zeichen
+- `S3_ACCESS_KEY`, `S3_SECRET_KEY` — MinIO-Zugangsdaten
+- `MEILI_KEY` — Meilisearch Master-Key
+- `MAPTILER_KEY` / `NEXT_PUBLIC_MAPTILER_KEY` — von cloud.maptiler.com
+- `MAIL_*` — SMTP-Zugangsdaten (Infomaniak empfohlen für CH-Hosting)
+
+### Schritt 7 — Erstes Deployment
+
+```bash
+# Manuell (lokal) mit GitHub Actions:
+# GitHub → Actions → Deploy → Run workflow → tag: latest
+
+# ODER direkt auf dem Server:
+cd /opt/klopilot
+export GHCR_TOKEN="<dein-ghcr-token>"
+bash deploy.sh
+```
+
+---
+
+## Reguläre Deployments
+
+Jeder Push auf `main` → CI → automatisches Deployment.
+
+### Manuelles Deployment / Rollback
+
+```bash
+# GitHub → Actions → Deploy → Run workflow
+# tag: sha-<commit-sha> für Rollback auf bestimmte Version
+
+# ODER direkt auf dem Server:
+TAG=sha-abc123 bash /opt/klopilot/deploy.sh
+```
+
+### Prisma-Migrationen
+
+Migrationen laufen automatisch im Deploy-Script (Schritt 5 in `deploy.sh`).
+
+Manuell ausführen:
+
+```bash
+# Auf dem Server
+docker compose -f /opt/klopilot/docker-compose.prod.yml \
+  run --rm --no-deps api \
+  node /app/apps/api/node_modules/.bin/prisma migrate deploy \
+    --schema /app/apps/api/prisma/schema.prisma
+```
+
+### Produktionslogs
+
+```bash
+# API-Logs
+docker logs klopilot-api --tail 100 -f
+
+# Web-Logs
+docker logs klopilot-web --tail 100 -f
+
+# Traefik Zugriffslogs
+tail -f /var/log/traefik/access.log | grep -v "200"
+
+# Alle Services
+docker compose -f /opt/klopilot/docker-compose.prod.yml logs --tail 50 -f
+```
+
+### Datenbank-Zugriff (via SSH-Tunnel)
+
+```bash
+# Lokaler Rechner: SSH-Tunnel öffnen
+ssh -L 5433:localhost:5432 deploy@<server-ip>
+
+# Neues Terminal: Prisma Studio
+DATABASE_URL="postgresql://klopilot:<password>@localhost:5433/klopilot?schema=public" \
+  pnpm db:studio
+```
+
+---
+
+## Mobile (Expo EAS)
+
+### Voraussetzungen
+
+```bash
+pnpm add -g eas-cli
+eas login   # mit Expo-Account
+```
+
+### OTA-Update (JS-only, kein App Store Review)
 
 ```bash
 cd apps/mobile
-npx eas-cli update --branch production --message "feat: ..."
+eas update --branch production --message "fix: ..."
 ```
 
-### 6. Mobile nativer Build (neue native Dependencies)
+### Nativer Build (neue native Dependencies, App Store erforderlich)
 
 ```bash
 cd apps/mobile
-npx eas-cli build --profile production --platform all
+# iOS
+eas build --profile production --platform ios
+# Android
+eas build --profile production --platform android
 ```
+
+EAS-Konfiguration: `apps/mobile/eas.json`
 
 ---
 
-## Umgebungsvariablen
+## Monitoring & Betrieb
 
-Vollständige Liste in `.env.example`. Wichtigste Produktions-Variablen:
+### Healthchecks
 
-```env
-DATABASE_URL=postgresql://user:pass@localhost:5432/klopilot
-REDIS_URL=redis://localhost:6379
-JWT_SECRET=<starkes-zufälliges-secret>
-S3_ENDPOINT=https://s3.example.com
-S3_BUCKET=klopilot-media
-MEILI_HOST=http://localhost:7700
-MEILI_KEY=<master-key>
-MAPTILER_KEY=<api-key>
-MAIL_HOST=smtp.example.com
-EXPO_ACCESS_TOKEN=<token>
-```
+| Endpoint                                | Erwartung         |
+| --------------------------------------- | ----------------- |
+| `https://api.klopilot.ch/api/v1/health` | `{"status":"ok"}` |
+| `https://klopilot.ch`                   | HTTP 200          |
+| `http://<server>:8080` (SSH-Tunnel)     | Traefik Dashboard |
 
----
-
-## Rollback
+### Disk-Space prüfen
 
 ```bash
-# API/Web: vorheriges Image deployen
-docker compose -f infra/docker-compose.prod.yml up -d --no-build api
-
-# Mobile: vorheriges OTA-Update reaktivieren
-cd apps/mobile && npx eas-cli update:republish --branch production --group <group-id>
+df -h
+docker system df
+# Images bereinigen (ältere als 24h, nicht genutzt)
+docker image prune -f --filter "until=24h"
 ```
+
+### Backup
+
+PostgreSQL-Backup (täglich via Cron empfohlen):
+
+```bash
+# /etc/cron.daily/klopilot-backup
+#!/bin/bash
+docker exec klopilot-postgres pg_dump -U klopilot klopilot \
+  | gzip > /opt/backups/klopilot-$(date +%Y%m%d).sql.gz
+# Ältere als 30 Tage löschen
+find /opt/backups -name "*.sql.gz" -mtime +30 -delete
+```
+
+MinIO-Backup: Hetzner Object Storage als Secondary via `mc mirror`.
 
 ---
 
-## Monitoring
+## Häufige Probleme
 
-- **Fehler:** Sentry (`SENTRY_DSN` setzen)
-- **Analytics:** Plausible (`PLAUSIBLE_DOMAIN` setzen)
-- **Logs:** `docker compose logs -f api` / `docker compose logs -f web`
-- **DB:** Prisma Studio via SSH-Tunnel: `pnpm db:studio`
+| Problem                  | Ursache                   | Lösung                                              |
+| ------------------------ | ------------------------- | --------------------------------------------------- |
+| Traefik-Zertifikat fehlt | DNS noch nicht propagiert | 5–10 Minuten warten, dann `docker restart traefik`  |
+| API startet nicht        | DB nicht ready            | `docker logs klopilot-api` → Fehlermeldung prüfen   |
+| MinIO-Bucket fehlt       | minio-init nicht gelaufen | `docker compose run minio-init`                     |
+| Migration fehlgeschlagen | Schema-Konflikt           | Logs prüfen, ggf. manuell anpassen                  |
+| `prisma generate` fehlt  | Kein Prisma-Client        | `docker exec klopilot-api node ... prisma generate` |

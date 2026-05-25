@@ -1,0 +1,67 @@
+name: Deploy
+
+# Startet automatisch sobald der CI-Workflow auf main erfolgreich abgeschlossen ist.
+on:
+  workflow_run:
+    workflows: ['CI']
+    branches: [main]
+    types: [completed]
+
+  # Manueller Trigger (z.B. Rollback oder Hotfix)
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Docker-Image-Tag (default: latest)'
+        required: false
+        default: 'latest'
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    # Nur ausführen wenn CI erfolgreich war (oder manueller Trigger)
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment: production   # GitHub Environment mit Schutzregeln + Secrets
+
+    steps:
+      - name: Resolve image tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            # SHA der auslösenden CI-Run als stabilen Tag verwenden
+            echo "tag=sha-${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Tag image as latest in GHCR
+        if: github.event_name != 'workflow_dispatch'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          timeout: 300s
+          script: |
+            set -euo pipefail
+            export REGISTRY="ghcr.io/4cpa"
+            export TAG="${{ steps.tag.outputs.tag }}"
+            export GHCR_TOKEN="${{ secrets.GHCR_TOKEN }}"
+            export GHCR_USER="4cpa"
+            bash /opt/klopilot/deploy.sh
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Deployment fehlgeschlagen! Tag: ${{ steps.tag.outputs.tag }}"
+          echo "Manual rollback: workflow_dispatch mit vorherigem Tag"

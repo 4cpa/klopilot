@@ -1,0 +1,73 @@
+# Traefik v3 — statische Konfiguration
+# Datei: /etc/traefik/traefik.yml auf dem Server
+
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+# Logging
+log:
+  level: WARN
+  filePath: /var/log/traefik/traefik.log
+
+accessLog:
+  filePath: /var/log/traefik/access.log
+  bufferingSize: 100
+  filters:
+    statusCodes:
+      - '400-599'
+
+# Entrypoints
+entryPoints:
+  web:
+    address: ':80'
+    # HTTP → HTTPS redirect global
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: true
+
+  websecure:
+    address: ':443'
+    http:
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: klopilot.ch
+            sans:
+              - www.klopilot.ch
+              - api.klopilot.ch
+              - minio.klopilot.ch
+              - minio-api.klopilot.ch
+
+# Docker Provider
+providers:
+  docker:
+    endpoint: 'unix:///var/run/docker.sock'
+    exposedByDefault: false
+    network: traefik
+  file:
+    filename: /etc/traefik/dynamic.yml
+    watch: true
+
+# Let's Encrypt (ACME)
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: admin@4cpa.ch
+      storage: /etc/traefik/acme.json
+      # TLS Challenge — kein Port 80 nötig wenn bereits auf 443
+      tlsChallenge: {}
+
+# API & Dashboard (nur lokal per SSH-Tunnel erreichbar)
+api:
+  dashboard: true
+  insecure: true   # nur auf 127.0.0.1:8080 — nie nach aussen exponiert
+
+# Metriken (optional, für Monitoring)
+metrics:
+  prometheus:
+    addEntryPointsLabels: true
+    addServicesLabels: true
