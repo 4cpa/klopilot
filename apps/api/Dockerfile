@@ -57,7 +57,7 @@ USER nestjs
 EXPOSE 3101
 
 # Healthcheck: /api/v1/health muss 200 zurückgeben
-HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=3 \
-  CMD wget -qO- http://localhost:3101/api/v1/health || exit 1
+HEALTHCHECK --interval=15s --timeout=5s --start-period=45s --retries=5 \
+  CMD wget -qO- http://localhost:3101/health || exit 1
 
 CMD ["node", "apps/api/dist/main"]
