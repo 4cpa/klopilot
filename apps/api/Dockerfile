@@ -16,6 +16,8 @@ RUN pnpm install --frozen-lockfile --filter @klopilot/api...
 FROM deps AS builder
 COPY apps/api ./apps/api
 COPY packages/shared-types ./packages/shared-types
+# Prisma Client generieren (binaryTargets: native + linux-musl-openssl-3.0.x)
+RUN pnpm --filter @klopilot/api exec prisma generate
 RUN pnpm --filter @klopilot/api build
 
 # ── Production image ──────────────────────────────────────────────────────────
@@ -29,18 +31,23 @@ RUN addgroup --system --gid 1001 nodejs \
 
 WORKDIR /app
 ENV NODE_ENV=production
+# Prisma postinstall-Script überspringen (Client kommt aus builder-Stage)
+ENV PRISMA_SKIP_POSTINSTALL_GENERATE=1
 
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/shared-types/package.json ./packages/shared-types/
 
-# --prod installiert nur production deps
-# prisma (CLI) ist in "dependencies" → wird mitinstalliert → migrate deploy läuft
+# --prod installiert nur production deps (prisma CLI in dependencies → migrate deploy läuft)
 RUN pnpm install --frozen-lockfile --filter @klopilot/api... --prod
 
+# Kompilierter Code + Prisma-Schema + shared-types
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
 COPY --from=builder /app/packages/shared-types/dist ./packages/shared-types/dist
+
+# Vorgenerierten Prisma Client aus builder-Stage kopieren
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 RUN chown -R nestjs:nodejs /app
 USER nestjs
