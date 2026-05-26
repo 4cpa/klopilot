@@ -369,7 +369,7 @@ export function Footer() {
 
           {/* GitHub */}
           <a
-            href="https://github.com/transivroom/klopilot"
+            href="https://github.com/4cpa/klopilot"
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -377,20 +377,22 @@ export function Footer() {
               alignItems: 'center',
               gap: 7,
               fontSize: 13,
-              color: 'rgba(255,255,255,0.40)',
+              color: 'rgba(255,255,255,0.75)',
               textDecoration: 'none',
               padding: '7px 12px',
               borderRadius: 8,
-              border: '1px solid rgba(255,255,255,0.10)',
+              border: '1px solid rgba(255,255,255,0.22)',
               transition: 'all 0.15s',
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.color = '#fff';
-              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.25)';
+              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.45)';
+              (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.07)';
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.40)';
-              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.10)';
+              (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.75)';
+              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.22)';
+              (e.currentTarget as HTMLElement).style.background = 'transparent';
             }}
           >
             <IconGitHub /> Open Source
@@ -403,12 +405,7 @@ export function Footer() {
           <nav aria-label={t('footer.platform')}>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               <FooterLink href="/karte" icon={<IconMap />} label={t('footer.link_map')} />
-              <FooterLink
-                href="https://klopilot.ch/app"
-                icon={<IconMobile />}
-                label={t('footer.link_app')}
-                external
-              />
+              <FooterLink href="/app" icon={<IconMobile />} label={t('footer.link_app')} />
               <FooterLink href="/partner" icon={<IconPartner />} label={t('footer.link_partner')} />
             </ul>
           </nav>

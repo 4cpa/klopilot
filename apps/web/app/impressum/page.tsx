@@ -50,6 +50,25 @@ export default function ImpressumPage() {
         <a href="/licence">LICENSE</a>.
       </p>
 
+      <h2>Open Source</h2>
+      <p>Der Quellcode von klopilot.ch ist öffentlich einsehbar auf GitHub:</p>
+      <p>
+        <a href="https://github.com/4cpa/klopilot" target="_blank" rel="noopener noreferrer">
+          github.com/4cpa/klopilot
+        </a>
+      </p>
+      <p>
+        Beiträge sind willkommen — siehe{' '}
+        <a
+          href="https://github.com/4cpa/klopilot/blob/main/.github/CONTRIBUTING.md"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          CONTRIBUTING.md
+        </a>
+        . Die Nutzung unterliegt den Bedingungen gemäss <a href="/licence">LICENSE</a>.
+      </p>
+
       <h2>Streitbeilegung</h2>
       <p>
         Transivroom Division ist weder verpflichtet noch bereit, an einem Streitbeilegungsverfahren
