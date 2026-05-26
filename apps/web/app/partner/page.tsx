@@ -63,7 +63,7 @@ export default function PartnerPage() {
       <h2>So bewerben Sie sich</h2>
       <p>Senden Sie eine E-Mail an</p>
       <p>
-        📧 <a href="mailto:partner@klopilot.ch">partner@klopilot.ch</a>
+        📧 <a href="mailto:admin@4cpa.ch">admin@4cpa.ch</a>
       </p>
       <p>mit folgenden Angaben:</p>
       <ul>
