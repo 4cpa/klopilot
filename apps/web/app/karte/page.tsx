@@ -9,7 +9,7 @@ import {
   type Toilet,
   type HeatmapPoint,
 } from '@/lib/api';
-import { useGeoLocation } from '@/lib/hooks';
+import { useGeoLocation, useAuth } from '@/lib/hooks';
 import { AppBar } from '@/components/ui/AppBar';
 import { FilterBar, DEFAULT_FILTERS, type MapFilters } from '@/components/map/FilterBar';
 import { ProfileSidebar } from '@/components/ui/ProfileSidebar';
@@ -41,6 +41,7 @@ type Sheet = 'none' | 'detail' | 'rate' | 'add' | 'login';
 function KarteInner() {
   const searchParams = useSearchParams();
   const { pos } = useGeoLocation();
+  const { user } = useAuth();
   const [toiletList, setToiletList] = useState<Toilet[]>([]);
   const [filters, setFilters] = useState<MapFilters>(DEFAULT_FILTERS);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -91,10 +92,15 @@ function KarteInner() {
     (lng: number, lat: number) => {
       // Im Detail/Rate/Login-Modus Klicks ignorieren
       if (activeSheet === 'detail' || activeSheet === 'rate' || activeSheet === 'login') return;
+      // Nicht eingeloggt → Login-Modal öffnen statt AddSheet
+      if (!user) {
+        setActiveSheet('login');
+        return;
+      }
       setPendingLocation({ lng, lat });
       if (activeSheet !== 'add') setActiveSheet('add');
     },
-    [activeSheet],
+    [activeSheet, user],
   );
 
   // Heatmap laden beim ersten Einschalten (mit aktuellem Viewport-Bbox)
@@ -178,9 +184,13 @@ function KarteInner() {
   }, []);
 
   const handleAddClick = useCallback(() => {
+    if (!user) {
+      setActiveSheet('login');
+      return;
+    }
     setPendingLocation(null); // zurücksetzen, damit alter Klick-Punkt weg ist
     setActiveSheet('add');
-  }, []);
+  }, [user]);
 
   const handleToiletDeleted = useCallback(() => {
     reload();

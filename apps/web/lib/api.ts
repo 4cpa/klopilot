@@ -93,7 +93,9 @@ async function request<T>(path: string, init: RequestInit = {}, retry = true): P
       if (typeof window !== 'undefined') localStorage.setItem('klo-access', accessToken);
       return request<T>(path, init, false);
     } catch {
-      // Refresh fehlgeschlagen → Session abgelaufen, ursprünglichen 401 weiterwerfen
+      // Refresh fehlgeschlagen → stale Token entfernen, damit authStore.init()
+      // beim nächsten Seitenaufruf die Session korrekt als abgelaufen erkennt
+      if (typeof window !== 'undefined') localStorage.removeItem('klo-access');
     }
   }
 

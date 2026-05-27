@@ -62,7 +62,12 @@ export function AddToiletSheet({
       });
       onCreated(toilet.id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Fehler beim Speichern');
+      const status = (err as { status?: number })?.status;
+      if (status === 401) {
+        setError('Sitzung abgelaufen — bitte erneut einloggen.');
+      } else {
+        setError(err instanceof Error ? err.message : 'Fehler beim Speichern');
+      }
     } finally {
       setSaving(false);
     }
