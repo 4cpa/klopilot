@@ -274,15 +274,17 @@ export default function MapView({
         const hasScore = count > 0;
 
         const isNetteToilette = t.category === 'nette_toilette';
-        const isWheelchair = t.accessibility?.wheelchair === true;
+        // Badge konsistent mit "barrierefrei"-Filter (wheelchair ODER step_free)
+        const isAccessible =
+          t.accessibility?.wheelchair === true || t.accessibility?.step_free === true;
         const isEuroKey = t.accessibility?.euro_key === true;
 
         // Rahmenfarbe: Nette Toilette = grün, sonst weiss
         const border = isNetteToilette ? '2.5px solid #2DA84F' : '2px solid rgba(255,255,255,0.9)';
 
         // Badges (♿ oben-rechts, 🔑 oben-links)
-        const wheelchairBadge = isWheelchair
-          ? `<div title="Rollstuhlgerecht" style="
+        const wheelchairBadge = isAccessible
+          ? `<div title="${t.accessibility?.wheelchair ? 'Rollstuhlgerecht' : 'Stufenlos zugänglich'}" style="
                position:absolute;top:-5px;right:-7px;
                background:#1D6FA4;border-radius:50%;
                width:17px;height:17px;
