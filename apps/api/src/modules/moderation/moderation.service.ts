@@ -7,6 +7,7 @@ export const CreateReportSchema = z.object({
   targetType: z.enum(['toilet', 'rating', 'photo', 'user']),
   targetId: z.string().uuid(),
   reason: z.string().min(5).max(500),
+  severity: z.enum(['normal', 'critical']).default('normal'),
 });
 export type CreateReportDto = z.infer<typeof CreateReportSchema>;
 
@@ -65,9 +66,17 @@ export class ModerationService {
         targetType: dto.targetType,
         targetId: dto.targetId,
         reason: dto.reason,
+        severity: dto.severity ?? 'normal',
         reporterId,
       },
-      select: { id: true, targetType: true, targetId: true, status: true, createdAt: true },
+      select: {
+        id: true,
+        targetType: true,
+        targetId: true,
+        severity: true,
+        status: true,
+        createdAt: true,
+      },
     });
   }
 

@@ -59,6 +59,11 @@ enum ReportStatus {
   dismissed
 }
 
+enum ReportSeverity {
+  normal
+  critical
+}
+
 enum ReportTargetType {
   toilet
   rating
@@ -129,6 +134,12 @@ model Toilet {
   createdBy    User           @relation("CreatedBy", fields: [createdById], references: [id])
   verified     Boolean        @default(false)
   status       ToiletStatus   @default(active)
+  // Herkunft: user (selbst eingetragen) | osm (OpenStreetMap) | official (Behördendaten)
+  source       String         @default("user")
+  // Verfügbarkeit: true = offen/verfügbar, false = vorübergehend geschlossen
+  isAvailable  Boolean        @default(true)
+  // OSM-Node/Way-ID für Deduplizierung beim Import
+  osmId        String?        @unique
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
@@ -205,12 +216,14 @@ model Report {
   targetType ReportTargetType
   targetId   String           @db.Uuid
   reason     String
+  severity   ReportSeverity   @default(normal)
   reporterId String           @db.Uuid
   reporter   User             @relation(fields: [reporterId], references: [id])
   status     ReportStatus     @default(open)
   createdAt  DateTime         @default(now())
 
   @@index([status])
+  @@index([severity])
   @@map("reports")
 }
 

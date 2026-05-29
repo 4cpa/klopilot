@@ -27,6 +27,7 @@ export const ToiletInputSchema = z.object({
   openingHours: z.record(z.unknown()).optional(),
   accessibility: z.record(z.unknown()).optional(),
   visibility: z.enum(['public', 'nette_toilette', 'private']).default('public'),
+  isAvailable: z.boolean().default(true),
 });
 
 export const ToiletUpdateSchema = ToiletInputSchema.partial();

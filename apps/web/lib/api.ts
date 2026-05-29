@@ -26,6 +26,12 @@ export interface Toilet {
   accessibility?: ToiletAccessibility;
   verified?: boolean;
   createdById?: string;
+  /** Herkunft: 'user' | 'osm' | 'official' */
+  source?: string;
+  /** true = verfügbar / geöffnet, false = vorübergehend geschlossen */
+  isAvailable?: boolean;
+  /** OpenStreetMap-ID (z.B. node/12345) */
+  osmId?: string;
   _count?: { ratings: number };
 }
 
@@ -149,6 +155,7 @@ export const toilets = {
     address?: string;
     feeChf?: number;
     visibility?: string;
+    isAvailable?: boolean;
   }) => request<Toilet>('/toilets', { method: 'POST', body: JSON.stringify(data) }),
 
   delete: (id: string) => request(`/toilets/${id}`, { method: 'DELETE' }),
@@ -280,6 +287,7 @@ export interface Report {
   targetType: string;
   targetId: string;
   reason: string;
+  severity: 'normal' | 'critical';
   status: string;
   createdAt: string;
   reporter: { id: string; handle: string; email: string };
@@ -309,6 +317,13 @@ export const moderation = {
 
   reports: (status = 'open', page = 1): Promise<{ items: Report[]; total: number }> =>
     request(`/moderation/queue?status=${status}&page=${page}`),
+
+  createReport: (data: {
+    targetType: 'toilet' | 'rating' | 'photo' | 'user';
+    targetId: string;
+    reason: string;
+    severity?: 'normal' | 'critical';
+  }) => request('/reports', { method: 'POST', body: JSON.stringify(data) }),
 
   resolveReport: (id: string, status: 'resolved' | 'dismissed') =>
     request(`/moderation/queue/${id}`, {

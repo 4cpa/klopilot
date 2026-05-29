@@ -36,6 +36,7 @@ export function AddToiletSheet({
   const latValue = pickedFromMap ? defaultLat.toFixed(6) : undefined;
   const [lng, setLng] = useState(String(defaultLng.toFixed(6)));
   const [lat, setLat] = useState(String(defaultLat.toFixed(6)));
+  const [isAvailable, setIsAvailable] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,6 +60,7 @@ export function AddToiletSheet({
         latitude: parseFloat(displayLat),
         address: address.trim() || undefined,
         feeChf: fee ? parseFloat(fee) : undefined,
+        isAvailable,
       });
       onCreated(toilet.id);
     } catch (err) {
@@ -235,6 +237,42 @@ export function AddToiletSheet({
               placeholder="0.50"
               className="w-full rounded-lg px-3 py-2 text-sm border border-[var(--line)] bg-[var(--cream)] text-[var(--ink)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--brand-primary)]"
             />
+          </div>
+
+          {/* Verfügbarkeit */}
+          <div>
+            <label className="block text-sm font-medium text-[var(--ink)] mb-2">
+              Verfügbarkeit
+            </label>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {[
+                { value: true, label: '✅ Verfügbar', desc: 'Toilette ist zugänglich' },
+                { value: false, label: '🚫 Geschlossen', desc: 'Vorübergehend nicht zugänglich' },
+              ].map((opt) => (
+                <button
+                  key={String(opt.value)}
+                  type="button"
+                  onClick={() => setIsAvailable(opt.value)}
+                  style={{
+                    flex: 1,
+                    padding: '9px 10px',
+                    borderRadius: 10,
+                    border: `1.5px solid ${isAvailable === opt.value ? 'var(--brand-primary)' : 'var(--line)'}`,
+                    background:
+                      isAvailable === opt.value ? 'rgba(255,107,53,0.08)' : 'var(--cream)',
+                    color: isAvailable === opt.value ? 'var(--brand-primary)' : 'var(--muted)',
+                    fontSize: 12,
+                    fontWeight: isAvailable === opt.value ? 700 : 400,
+                    cursor: 'pointer',
+                    textAlign: 'center',
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  <div style={{ fontWeight: 600, marginBottom: 1 }}>{opt.label}</div>
+                  <div style={{ fontSize: 10, opacity: 0.7 }}>{opt.desc}</div>
+                </button>
+              ))}
+            </div>
           </div>
 
           {error && <p className="text-sm text-[var(--brand-berry)]">{error}</p>}

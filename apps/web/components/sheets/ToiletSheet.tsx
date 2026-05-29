@@ -2,7 +2,14 @@
 
 import { useEffect, useState, useCallback, useRef, useId } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toilets as toiletsApi, media, type Toilet, type Score, type Rating } from '@/lib/api';
+import {
+  toilets as toiletsApi,
+  media,
+  moderation,
+  type Toilet,
+  type Score,
+  type Rating,
+} from '@/lib/api';
 import { useAuth } from '@/lib/hooks';
 
 interface Props {
@@ -363,6 +370,9 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
   const [uploadErr, setUploadErr] = useState<string | null>(null);
   const [deleteErr, setDeleteErr] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [reporting, setReporting] = useState(false);
+  const [reportDone, setReportDone] = useState(false);
+  const [reportErr, setReportErr] = useState<string | null>(null);
   const sheetRef = useRef<HTMLElement>(null);
   const fileInputId = useId();
 
@@ -372,6 +382,8 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
       return;
     }
     setLoading(true);
+    setReportDone(false);
+    setReportErr(null);
     toiletsApi
       .get(toiletId)
       .then((d) => setDetail(d as unknown as Detail))
@@ -458,6 +470,25 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
       setDeleting(false);
     }
   }, [detail, onClose, onDeleted]);
+
+  const handleReport = useCallback(async () => {
+    if (!detail) return;
+    setReporting(true);
+    setReportErr(null);
+    try {
+      await moderation.createReport({
+        targetType: 'toilet',
+        targetId: detail.id,
+        reason: 'Gravierender Mangel gemeldet',
+        severity: 'critical',
+      });
+      setReportDone(true);
+    } catch (err) {
+      setReportErr(err instanceof Error ? err.message : 'Fehler beim Melden');
+    } finally {
+      setReporting(false);
+    }
+  }, [detail]);
 
   const handleNavigate = useCallback(() => {
     if (!detail) return;
@@ -768,6 +799,21 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                       ♿ {t('filter.accessible')}
                     </span>
                   )}
+                  {detail.isAvailable === false && (
+                    <span
+                      style={{
+                        padding: '2px 9px',
+                        borderRadius: 999,
+                        background: '#FEF2F2',
+                        border: '1px solid #FCA5A5',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: '#DC2626',
+                      }}
+                    >
+                      🚫 Vorübergehend geschlossen
+                    </span>
+                  )}
                 </div>
                 {detail.address && (
                   <p
@@ -793,6 +839,31 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                 )}
               </div>
             </div>
+
+            {/* ── OSM-Quelle Banner ── */}
+            {detail.source && detail.source !== 'user' && (
+              <div
+                style={{
+                  marginBottom: 14,
+                  padding: '10px 12px',
+                  borderRadius: 10,
+                  background: '#EFF6FF',
+                  border: '1px solid #BFDBFE',
+                  fontSize: 12,
+                  color: '#1E40AF',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 8,
+                  lineHeight: 1.45,
+                }}
+              >
+                <span style={{ fontSize: 14, flexShrink: 0 }}>ℹ️</span>
+                <span>
+                  Diese Toilette stammt aus öffentlichen Quellen (OpenStreetMap). Angaben können
+                  unvollständig sein — Bewertungen durch die Community sind jederzeit willkommen.
+                </span>
+              </div>
+            )}
 
             {/* ── Photo gallery ── */}
             {photoUrls.length > 0 && (
@@ -1044,6 +1115,51 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                 {t('toilet.login_to_rate')}
               </p>
             )}
+
+            {/* ── Schwerwiegenden Mangel melden ── */}
+            <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--line)' }}>
+              {reportDone ? (
+                <p
+                  style={{
+                    textAlign: 'center',
+                    fontSize: 12,
+                    color: '#16A34A',
+                    margin: 0,
+                    padding: '6px 0',
+                  }}
+                >
+                  ✅ Dein Hinweis wurde übermittelt. Danke!
+                </p>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleReport}
+                    disabled={reporting}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      borderRadius: 10,
+                      background: 'transparent',
+                      border: '1.5px solid #FCA5A5',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: '#DC2626',
+                      cursor: reporting ? 'not-allowed' : 'pointer',
+                      opacity: reporting ? 0.6 : 1,
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    {reporting ? '…' : '⚠️ Schwerwiegenden Mangel melden'}
+                  </button>
+                  {reportErr && (
+                    <p style={{ fontSize: 12, color: 'var(--brand-berry)', margin: '4px 0 0' }}>
+                      ⚠ {reportErr}
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         )}
 
