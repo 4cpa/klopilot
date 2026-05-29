@@ -6,6 +6,7 @@ import { ThemeToggleMini } from './ThemeToggle';
 import { SearchBar } from './SearchBar';
 import { Logo } from './Logo';
 import { HelpButton } from './HelpOverlay';
+import { LangDropdown } from '@/components/landing/Navbar';
 import { useAuth } from '@/lib/hooks';
 import type { Toilet } from '@/lib/api';
 
@@ -160,6 +161,9 @@ export function AppBar({
             {t('profile.login_title')}
           </button>
         )}
+
+        {/* Sprach-Dropdown — compact, kein Text-Label auf Mobile */}
+        <LangDropdown compact />
 
         {/* ThemeToggle — immer letztes Element, kein separater Rahmen */}
         <ThemeToggleMini />

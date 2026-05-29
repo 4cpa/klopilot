@@ -237,7 +237,7 @@ export function Hero() {
           { value: '100 %', labelKey: 'landing.stat_free' },
           { value: '0', labelKey: 'landing.stat_ads' },
           { value: '🌸 🪰', labelKey: 'landing.stat_rating' },
-          { value: 'CH · DE · AT', labelKey: 'landing.stat_available' },
+          { value: '🇨🇭 🇩🇪 🇦🇹 🇫🇷 🇮🇹', labelKey: 'landing.stat_available' },
         ].map(({ value, labelKey }) => (
           <div key={labelKey} style={{ textAlign: 'center' }}>
             <div
