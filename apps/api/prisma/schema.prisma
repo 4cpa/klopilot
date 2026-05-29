@@ -137,9 +137,9 @@ model Toilet {
   // Herkunft: user (selbst eingetragen) | osm (OpenStreetMap) | official (Behördendaten)
   source       String         @default("user")
   // Verfügbarkeit: true = offen/verfügbar, false = vorübergehend geschlossen
-  isAvailable  Boolean        @default(true)
+  isAvailable  Boolean        @default(true)  @map("is_available")
   // OSM-Node/Way-ID für Deduplizierung beim Import
-  osmId        String?        @unique
+  osmId        String?        @unique         @map("osm_id")
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 

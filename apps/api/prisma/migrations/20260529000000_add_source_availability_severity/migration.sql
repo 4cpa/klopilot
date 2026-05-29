@@ -6,9 +6,9 @@ ALTER TABLE "toilets" ADD COLUMN IF NOT EXISTS "source" TEXT NOT NULL DEFAULT 'u
 -- Toilet: Verfügbarkeit (true = offen, false = vorübergehend geschlossen)
 ALTER TABLE "toilets" ADD COLUMN IF NOT EXISTS "is_available" BOOLEAN NOT NULL DEFAULT true;
 
--- Toilet: OSM-ID für Deduplizierung
+-- Toilet: OSM-ID für Deduplizierung (voller UNIQUE constraint, damit Prisma upsert funktioniert)
 ALTER TABLE "toilets" ADD COLUMN IF NOT EXISTS "osm_id" TEXT;
-CREATE UNIQUE INDEX IF NOT EXISTS "toilets_osm_id_key" ON "toilets"("osm_id") WHERE "osm_id" IS NOT NULL;
+ALTER TABLE "toilets" ADD CONSTRAINT "toilets_osm_id_key" UNIQUE ("osm_id");
 
 -- Report: Schweregrad
 DO $$ BEGIN

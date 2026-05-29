@@ -108,11 +108,31 @@ async function queryOverpass(
 ): Promise<Array<{ osmId: string; lat: number; lng: number; tags: Record<string, string> }>> {
   const [s, w, n, e] = bbox;
   const query = `[out:json][timeout:60];(node[amenity=toilets](${s},${w},${n},${e});way[amenity=toilets](${s},${w},${n},${e}););out center body;`;
-  const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+
+  // Mehrere Overpass-Instanzen als Fallback
+  const ENDPOINTS = [
+    'https://overpass-api.de/api/interpreter',
+    'https://overpass.kumi.systems/api/interpreter',
+  ];
+
+  const HEADERS = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'User-Agent': 'klopilot/1.0 seed-osm-import (admin@4cpa.ch)',
+  };
 
   console.log(`  → Overpass-Anfrage für bbox ${bbox.join(',')} …`);
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Overpass API Fehler: ${res.status} ${res.statusText}`);
+  let res: Response | null = null;
+  for (const endpoint of ENDPOINTS) {
+    res = await fetch(endpoint, {
+      method: 'POST',
+      headers: HEADERS,
+      body: `data=${encodeURIComponent(query)}`,
+    });
+    if (res.ok) break;
+    console.log(`  ⚠ ${endpoint} → ${res.status}, versuche nächste Instanz…`);
+    await sleep(3000);
+  }
+  if (!res || !res.ok) throw new Error(`Alle Overpass-Instanzen fehlgeschlagen`);
 
   const json = (await res.json()) as {
     elements: Array<{
