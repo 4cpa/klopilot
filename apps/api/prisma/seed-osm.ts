@@ -27,42 +27,99 @@ const REGIONS: Array<{ name: string; bbox: [number, number, number, number] }> =
   { name: 'Italien-N', bbox: [43.5, 6.6, 46.8, 14.0] },
 ];
 
+// ── Transport-Schlüsselwörter (6 Sprachen) ────────────────────────────────────
+const TRANSPORT_KEYWORDS = [
+  // Deutsch
+  'bahnhof',
+  'hauptbahnhof',
+  'hbf',
+  'flughafen',
+  'busbahnhof',
+  'zentralbahnhof',
+  // Französisch
+  'gare',
+  'aéroport',
+  'gare centrale',
+  'gare routière',
+  // Italienisch
+  'stazione',
+  'aeroporto',
+  'stazione centrale',
+  // Englisch
+  'station',
+  'airport',
+  'bus terminal',
+  'railway',
+  'transit',
+  // Weitere
+  'bahnsteig',
+  'perron',
+  'terminal',
+];
+
 // ── OSM-Tag → unsere Kategorie ────────────────────────────────────────────────
 function mapCategory(
   tags: Record<string, string>,
 ): 'public' | 'nette_toilette' | 'gastronomy' | 'transport' | 'mall' | 'event' {
+  const name = (tags['name'] ?? tags['description'] ?? '').toLowerCase();
   const loc = (tags['location'] ?? '').toLowerCase();
   const op = (tags['operator:type'] ?? tags['operator'] ?? '').toLowerCase();
   const acc = (tags['access'] ?? '').toLowerCase();
 
+  // Transport: Tags + Name-basiert (alle Sprachen)
+  const isTransport =
+    !!tags['public_transport'] ||
+    !!tags['railway'] ||
+    TRANSPORT_KEYWORDS.some((kw) => loc.includes(kw) || name.includes(kw));
+  if (isTransport) return 'transport';
+
+  // Mall / Einkaufszentrum
   if (
-    loc.includes('station') ||
-    loc.includes('airport') ||
-    loc.includes('railway') ||
-    tags['public_transport'] ||
-    tags['railway']
+    loc.includes('mall') ||
+    loc.includes('shopping') ||
+    !!tags['shop'] ||
+    name.includes('einkaufszentrum') ||
+    name.includes('center') ||
+    name.includes('centre commercial') ||
+    name.includes('centro commerciale')
   )
-    return 'transport';
-  if (loc.includes('mall') || loc.includes('shop') || tags['shop']) return 'mall';
+    return 'mall';
+
+  // Nette Toilette Projekt (vor Gastronomie prüfen!)
+  if (
+    tags['nette_toilette'] === 'yes' ||
+    tags['toilets:scheme'] === 'nette_toilette' ||
+    op.includes('nette toilette') ||
+    name.includes('nette toilette')
+  )
+    return 'nette_toilette';
+
+  // Gastronomie: Restaurants/Cafés die ihre Toilette öffnen
   if (
     acc === 'customers' ||
     loc.includes('restaurant') ||
     loc.includes('cafe') ||
+    loc.includes('bar') ||
     tags['amenity'] === 'restaurant' ||
-    tags['amenity'] === 'cafe'
+    tags['amenity'] === 'cafe' ||
+    tags['amenity'] === 'bar'
   )
     return 'gastronomy';
+
+  // Öffentlich (Gemeinde/Stadt)
   if (
     op.includes('gemeinde') ||
     op.includes('stadt') ||
     op.includes('canton') ||
     op.includes('municipality') ||
     op.includes('mairie') ||
-    op.includes('commune')
+    op.includes('commune') ||
+    op.includes('ville') ||
+    op.includes('città') ||
+    op.includes('comune')
   )
     return 'public';
-  if (tags['nette_toilette'] === 'yes' || tags['toilets:scheme'] === 'nette_toilette')
-    return 'nette_toilette';
+
   return 'public';
 }
 
@@ -97,30 +154,51 @@ function mapFee(tags: Record<string, string>): number | undefined {
 }
 
 // ── Zugänglichkeit aus OSM-Tags ───────────────────────────────────────────────
-function mapAccessibility(tags: Record<string, string>) {
+function mapAccessibility(tags: Record<string, string>): Record<string, boolean> | undefined {
+  const result: Record<string, boolean> = {};
+
+  // Rollstuhlgerecht
   const wheelchair = tags['toilets:wheelchair'] ?? tags['wheelchair'];
-  return wheelchair === 'yes' || wheelchair === 'designated' ? { wheelchair: true } : undefined;
+  if (wheelchair === 'yes' || wheelchair === 'designated') result.wheelchair = true;
+
+  // Eurokey (europäischer Behindertenausweis-Schlüssel)
+  if (tags['centralkey'] === 'eurokey' || tags['key:eurokey'] === 'yes') result.euro_key = true;
+
+  // Wickeltisch
+  if (tags['changing_table'] === 'yes' || tags['diaper'] === 'yes') result.baby_changing = true;
+
+  // Geschlechtsneutral / unisex
+  if (tags['unisex'] === 'yes' || tags['toilets:unisex'] === 'yes') result.gender_neutral = true;
+
+  // Stufenlos
+  if (tags['wheelchair'] === 'yes' || tags['step_free'] === 'yes') result.step_free = true;
+
+  // Dusche
+  if (tags['shower'] === 'yes') result.shower = true;
+
+  return Object.keys(result).length > 0 ? result : undefined;
 }
 
 // ── Overpass-Abfrage ──────────────────────────────────────────────────────────
 async function queryOverpass(
   bbox: [number, number, number, number],
+  extraFilter = '',
 ): Promise<Array<{ osmId: string; lat: number; lng: number; tags: Record<string, string> }>> {
   const [s, w, n, e] = bbox;
-  const query = `[out:json][timeout:60];(node[amenity=toilets](${s},${w},${n},${e});way[amenity=toilets](${s},${w},${n},${e}););out center body;`;
+  const bboxStr = `${s},${w},${n},${e}`;
+  const query = extraFilter
+    ? `[out:json][timeout:60];(${extraFilter.replace(/\{BBOX\}/g, bboxStr)});out center body;`
+    : `[out:json][timeout:60];(node[amenity=toilets](${bboxStr});way[amenity=toilets](${bboxStr}););out center body;`;
 
-  // Mehrere Overpass-Instanzen als Fallback
   const ENDPOINTS = [
     'https://overpass-api.de/api/interpreter',
     'https://overpass.kumi.systems/api/interpreter',
   ];
-
   const HEADERS = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'User-Agent': 'klopilot/1.0 seed-osm-import (admin@4cpa.ch)',
   };
 
-  console.log(`  → Overpass-Anfrage für bbox ${bbox.join(',')} …`);
   let res: Response | null = null;
   for (const endpoint of ENDPOINTS) {
     res = await fetch(endpoint, {
@@ -159,6 +237,78 @@ async function queryOverpass(
     }));
 }
 
+// ── Einzelne Toilette upserten ────────────────────────────────────────────────
+async function upsertToilet(
+  item: { osmId: string; lat: number; lng: number; tags: Record<string, string> },
+  systemUserId: string,
+  counters: { imported: number; skipped: number },
+  forceCat?: 'public' | 'nette_toilette' | 'gastronomy' | 'transport' | 'mall' | 'event',
+) {
+  const tags = item.tags;
+
+  // Privat / gesperrt → überspringen
+  if (tags['access'] === 'private' || tags['access'] === 'no') {
+    counters.skipped++;
+    return;
+  }
+
+  const city = tags['addr:city'] ?? tags['addr:municipality'] ?? '';
+  const name =
+    tags['name'] ??
+    tags['description'] ??
+    (city ? `Öffentliche Toilette ${city}` : 'Öffentliche Toilette');
+
+  const category = forceCat ?? mapCategory(tags);
+  const address = buildAddress(tags);
+  const feeChf = mapFee(tags);
+  const accessibility = mapAccessibility(tags);
+
+  if (DRY_RUN) {
+    const eurokey = accessibility?.euro_key ? ' [EUROKEY]' : '';
+    const wc = accessibility?.wheelchair ? ' [WC]' : '';
+    console.log(
+      `    [DRY] ${item.osmId}: ${name} (${category})${eurokey}${wc} @ ${item.lat},${item.lng}`,
+    );
+    counters.imported++;
+    return;
+  }
+
+  const toilet = await prisma.toilet.upsert({
+    where: { osmId: item.osmId },
+    create: {
+      name: name.slice(0, 120),
+      category,
+      longitude: item.lng,
+      latitude: item.lat,
+      address,
+      feeChf: feeChf !== undefined ? feeChf : undefined,
+      accessibility: accessibility ?? undefined,
+      source: 'osm',
+      osmId: item.osmId,
+      isAvailable: true,
+      visibility: category === 'nette_toilette' ? 'nette_toilette' : 'public',
+      createdById: systemUserId,
+    },
+    update: {
+      name: name.slice(0, 120),
+      category, // OSM-Quelle: Kategorie darf aktualisiert werden (kein manueller Nutzer-Eintrag)
+      address,
+      feeChf: feeChf !== undefined ? feeChf : undefined,
+      accessibility: accessibility ?? undefined,
+    },
+  });
+
+  // PostGIS geom setzen (nur wenn noch nicht gesetzt)
+  await prisma.$executeRaw`
+    UPDATE toilets
+    SET    geom = ST_SetSRID(ST_MakePoint(${item.lng}, ${item.lat}), 4326)::geography
+    WHERE  id   = ${toilet.id}::uuid
+      AND  geom IS NULL
+  `;
+
+  counters.imported++;
+}
+
 // ── Hilfsfunktion: Schlafe ────────────────────────────────────────────────────
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
@@ -169,7 +319,7 @@ async function main() {
   console.log('🚽 klopilot OSM-Import gestartet');
   if (DRY_RUN) console.log('  (DRY RUN — keine Datenbankänderungen)');
 
-  // System-User für OSM-Importe (wird angelegt falls nicht vorhanden)
+  // System-User
   let systemUser = await prisma.user.findFirst({ where: { handle: 'osm-import' } });
   if (!systemUser && !DRY_RUN) {
     systemUser = await prisma.user.create({
@@ -179,7 +329,7 @@ async function main() {
   }
   const systemUserId = systemUser?.id ?? '00000000-0000-0000-0000-000000000000';
 
-  // Beispieldaten löschen (source = 'user' und kein osmId und erstellt von system/test-usern)
+  // Alte Seed-Daten entfernen
   if (!DRY_RUN) {
     const deleted = await prisma.toilet.deleteMany({
       where: { source: 'user', osmId: null, createdBy: { handle: { in: ['seed', 'osm-import'] } } },
@@ -187,89 +337,133 @@ async function main() {
     if (deleted.count > 0) console.log(`  🗑️  ${deleted.count} Beispiel-Toiletten entfernt`);
   }
 
-  let totalImported = 0;
-  let totalSkipped = 0;
+  const counters = { imported: 0, skipped: 0 };
 
+  // ── Phase 1: Standard-Import (alle amenity=toilets) ──────────────────────────
+  console.log('\n── Phase 1: Standard-Toiletten ──────────────────────');
   for (const region of REGIONS) {
     console.log(`\n📍 Region: ${region.name}`);
     try {
       const items = await queryOverpass(region.bbox);
       console.log(`  ${items.length} Toiletten gefunden`);
-
       for (const item of items) {
-        const tags = item.tags;
-
-        // Toiletten ohne Namen werden nach Kategorie + Stadt benannt
-        const city = tags['addr:city'] ?? tags['addr:municipality'] ?? '';
-        const name =
-          tags['name'] ??
-          tags['description'] ??
-          (city ? `Öffentliche Toilette ${city}` : 'Öffentliche Toilette');
-
-        // Privat / nur für Kunden → überspringen (keine Kunden-/Privat-Toiletten importieren)
-        if (tags['access'] === 'private' || tags['access'] === 'no') {
-          totalSkipped++;
-          continue;
-        }
-
-        const category = mapCategory(tags);
-        const address = buildAddress(tags);
-        const feeChf = mapFee(tags);
-        const accessibility = mapAccessibility(tags);
-
-        if (DRY_RUN) {
-          console.log(`    [DRY] ${item.osmId}: ${name} (${category}) @ ${item.lat},${item.lng}`);
-          totalImported++;
-          continue;
-        }
-
-        // Upsert via osmId — verhindert Duplikate bei Mehrfach-Import
-        const toilet = await prisma.toilet.upsert({
-          where: { osmId: item.osmId },
-          create: {
-            name: name.slice(0, 120),
-            category,
-            longitude: item.lng,
-            latitude: item.lat,
-            address,
-            feeChf: feeChf !== undefined ? feeChf : undefined,
-            accessibility: accessibility ?? undefined,
-            source: 'osm',
-            osmId: item.osmId,
-            isAvailable: true,
-            visibility: category === 'nette_toilette' ? 'nette_toilette' : 'public',
-            createdById: systemUserId,
-          },
-          update: {
-            // Nur nicht-nutzerseitig veränderte Felder aktualisieren
-            name: name.slice(0, 120),
-            address,
-            feeChf: feeChf !== undefined ? feeChf : undefined,
-            accessibility: accessibility ?? undefined,
-          },
-        });
-
-        // PostGIS geom setzen
-        await prisma.$executeRaw`
-          UPDATE toilets
-          SET    geom = ST_SetSRID(ST_MakePoint(${item.lng}, ${item.lat}), 4326)::geography
-          WHERE  id   = ${toilet.id}::uuid
-            AND  geom IS NULL
-        `;
-
-        totalImported++;
+        await upsertToilet(item, systemUserId, counters);
       }
-
-      // Höfliche Pause zwischen Regionen (Overpass Rate-Limit)
-      await sleep(2000);
+      await sleep(2500);
     } catch (err) {
       console.error(`  ❌ Fehler bei Region ${region.name}:`, (err as Error).message);
     }
   }
 
+  // ── Phase 2: Eurokey-Toiletten (CH + AT + DE-SW) ──────────────────────────────
+  console.log('\n── Phase 2: Eurokey-Toiletten ───────────────────────');
+  const EUROKEY_REGIONS = [
+    { name: 'CH-Eurokey', bbox: [45.8, 5.9, 47.8, 10.5] as [number, number, number, number] },
+    { name: 'AT-Eurokey', bbox: [46.3, 10.0, 48.0, 17.2] as [number, number, number, number] },
+    { name: 'DE-SW-Eurokey', bbox: [47.5, 7.5, 48.5, 9.5] as [number, number, number, number] },
+    { name: 'FR-E-Eurokey', bbox: [46.0, 6.0, 48.8, 8.2] as [number, number, number, number] },
+    { name: 'IT-N-Eurokey', bbox: [43.5, 6.6, 46.8, 14.0] as [number, number, number, number] },
+  ];
+  const EUROKEY_FILTER =
+    'node["amenity"="toilets"]["centralkey"="eurokey"]({BBOX});' +
+    'way["amenity"="toilets"]["centralkey"="eurokey"]({BBOX});' +
+    'node["amenity"="toilets"]["key:eurokey"="yes"]({BBOX});';
+
+  for (const region of EUROKEY_REGIONS) {
+    console.log(`\n♿ Eurokey-Region: ${region.name}`);
+    try {
+      const items = await queryOverpass(region.bbox, EUROKEY_FILTER);
+      console.log(`  ${items.length} Eurokey-Toiletten gefunden`);
+      for (const item of items) {
+        // euro_key wird via mapAccessibility gesetzt
+        await upsertToilet(item, systemUserId, counters);
+      }
+      await sleep(2000);
+    } catch (err) {
+      console.error(`  ❌ Fehler bei ${region.name}:`, (err as Error).message);
+    }
+  }
+
+  // ── Phase 3: Nette Toilette Projekt ───────────────────────────────────────────
+  console.log('\n── Phase 3: Nette Toilette Projekt ──────────────────');
+  const NETTE_FILTER =
+    'node[~"^(toilets:scheme|nette_toilette)$"~"nette_toilette|yes"]({BBOX});' +
+    'way[~"^(toilets:scheme|nette_toilette)$"~"nette_toilette|yes"]({BBOX});' +
+    'node["amenity"]["operator"~"nette.toilette",i]({BBOX});';
+
+  for (const region of [
+    { name: 'CH-NetteToi', bbox: [45.8, 5.9, 47.8, 10.5] as [number, number, number, number] },
+    { name: 'DE-NetteToi', bbox: [47.5, 7.5, 48.5, 9.5] as [number, number, number, number] },
+    { name: 'AT-NetteToi', bbox: [46.3, 10.0, 48.0, 17.2] as [number, number, number, number] },
+  ]) {
+    console.log(`\n🤝 Nette Toilette Region: ${region.name}`);
+    try {
+      const items = await queryOverpass(region.bbox, NETTE_FILTER);
+      console.log(`  ${items.length} Nette-Toilette-Einträge gefunden`);
+      for (const item of items) {
+        await upsertToilet(item, systemUserId, counters, 'nette_toilette');
+      }
+      await sleep(2000);
+    } catch (err) {
+      console.error(`  ❌ Fehler bei ${region.name}:`, (err as Error).message);
+    }
+  }
+
+  // ── Phase 4: Bahnhofs-Toiletten (explizit via location-Tag) ──────────────────
+  console.log('\n── Phase 4: Bahnhofs-Toiletten ──────────────────────');
+  const STATION_FILTER =
+    'node["amenity"="toilets"]["public_transport"]({BBOX});' +
+    'node["amenity"="toilets"]["railway"]({BBOX});' +
+    'way["amenity"="toilets"]["public_transport"]({BBOX});' +
+    'node["amenity"="toilets"][~"^location$"~"station|airport|railway|transit",i]({BBOX});' +
+    'way["amenity"="toilets"][~"^location$"~"station|airport|railway|transit",i]({BBOX});';
+
+  for (const region of REGIONS) {
+    console.log(`\n🚉 Bahnhofs-Region: ${region.name}`);
+    try {
+      const items = await queryOverpass(region.bbox, STATION_FILTER);
+      console.log(`  ${items.length} Bahnhofs-Toiletten gefunden`);
+      for (const item of items) {
+        await upsertToilet(item, systemUserId, counters, 'transport');
+      }
+      await sleep(2000);
+    } catch (err) {
+      console.error(`  ❌ Fehler bei ${region.name}:`, (err as Error).message);
+    }
+  }
+
   console.log(`\n✅ OSM-Import abgeschlossen`);
-  console.log(`   Importiert: ${totalImported}`);
-  console.log(`   Übersprungen: ${totalSkipped}`);
+  console.log(`   Importiert/aktualisiert: ${counters.imported}`);
+  console.log(`   Übersprungen (privat):   ${counters.skipped}`);
+
+  // Abschluss-Statistik pro Kategorie
+  if (!DRY_RUN) {
+    const stats = await prisma.toilet.groupBy({
+      by: ['category'],
+      where: { status: 'active', source: 'osm' },
+      _count: { id: true },
+      orderBy: { _count: { id: 'desc' } },
+    });
+    console.log('\n📊 Kategorie-Verteilung (OSM):');
+    stats.forEach((s) => console.log(`   ${s.category}: ${s._count.id}`));
+
+    const eurokey = await prisma.toilet.count({
+      where: {
+        status: 'active',
+        source: 'osm',
+        accessibility: { path: ['euro_key'], equals: true },
+      },
+    });
+    const wheelchair = await prisma.toilet.count({
+      where: {
+        status: 'active',
+        source: 'osm',
+        accessibility: { path: ['wheelchair'], equals: true },
+      },
+    });
+    console.log(`\n♿ Rollstuhlgerecht: ${wheelchair}`);
+    console.log(`🔑 Eurokey: ${eurokey}`);
+  }
 }
 
 main()
