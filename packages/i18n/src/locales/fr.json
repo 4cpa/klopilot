@@ -201,7 +201,8 @@
   "filter": {
     "free": "Gratuit",
     "accessible": "Accessible",
-    "radius": "Rayon"
+    "radius": "Rayon",
+    "shower": "Douche"
   },
   "errors": {
     "name_required": "Nom manquant",

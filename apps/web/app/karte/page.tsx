@@ -130,8 +130,16 @@ function KarteInner() {
   const visibleToilets = useMemo(() => {
     return toiletList.filter((t) => {
       if (filters.free && (t.feeChf ?? 0) > 0) return false;
-      if (filters.accessible && !t.accessibility?.wheelchair && !t.accessibility?.step_free)
+      // Barrierefrei: wheelchair ODER step_free ODER euro_key (Eurokey ist Behindertenausweis-System)
+      if (
+        filters.accessible &&
+        !t.accessibility?.wheelchair &&
+        !t.accessibility?.step_free &&
+        !t.accessibility?.euro_key
+      )
         return false;
+      // Dusche vorhanden
+      if (filters.shower && !t.accessibility?.shower) return false;
       if (filters.categories.size > 0 && !filters.categories.has(t.category)) return false;
       return true;
     });

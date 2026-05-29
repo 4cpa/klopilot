@@ -201,7 +201,8 @@
   "filter": {
     "free": "Free",
     "accessible": "Accessible",
-    "radius": "Radius"
+    "radius": "Radius",
+    "shower": "Shower"
   },
   "errors": {
     "name_required": "Name required",

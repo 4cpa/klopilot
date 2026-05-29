@@ -6,17 +6,19 @@ import { useTranslation } from 'react-i18next';
 export interface MapFilters {
   free: boolean;
   accessible: boolean;
+  shower: boolean;
   categories: Set<string>;
 }
 
 export const DEFAULT_FILTERS: MapFilters = {
   free: false,
   accessible: false,
+  shower: false,
   categories: new Set(),
 };
 
 export function hasActiveFilters(f: MapFilters) {
-  return f.free || f.accessible || f.categories.size > 0;
+  return f.free || f.accessible || f.shower || f.categories.size > 0;
 }
 
 const CATEGORIES: { key: string; emoji: string; i18nKey: string }[] = [
@@ -129,6 +131,10 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
     onChange({ ...filters, accessible: !filters.accessible });
   }
 
+  function toggleShower() {
+    onChange({ ...filters, shower: !filters.shower });
+  }
+
   function toggleCategory(key: string) {
     const next = new Set(filters.categories);
     if (next.has(key)) {
@@ -173,6 +179,9 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
       </Chip>
       <Chip active={filters.accessible} onClick={toggleAccessible}>
         ♿ {t('filter.accessible')}
+      </Chip>
+      <Chip active={filters.shower} onClick={toggleShower}>
+        🚿 {t('filter.shower')}
       </Chip>
 
       {/* Divider dot */}

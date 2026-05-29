@@ -201,7 +201,8 @@
   "filter": {
     "free": "Gratis",
     "accessible": "Barrierefrei",
-    "radius": "Radius"
+    "radius": "Radius",
+    "shower": "Dusche"
   },
   "errors": {
     "name_required": "Name fehlt",

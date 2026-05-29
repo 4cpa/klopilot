@@ -201,7 +201,8 @@
   "filter": {
     "free": "Gratuito",
     "accessible": "Accessibile",
-    "radius": "Raggio"
+    "radius": "Raggio",
+    "shower": "Doccia"
   },
   "errors": {
     "name_required": "Nome mancante",

@@ -183,12 +183,16 @@ function mapAccessibility(tags: Record<string, string>): Record<string, boolean>
 async function queryOverpass(
   bbox: [number, number, number, number],
   extraFilter = '',
+  /** Vollständige Overpass-QL Query (ersetzt bbox-Platzhalter {BBOX}) */
+  fullQuery = false,
 ): Promise<Array<{ osmId: string; lat: number; lng: number; tags: Record<string, string> }>> {
   const [s, w, n, e] = bbox;
   const bboxStr = `${s},${w},${n},${e}`;
-  const query = extraFilter
-    ? `[out:json][timeout:60];(${extraFilter.replace(/\{BBOX\}/g, bboxStr)});out center body;`
-    : `[out:json][timeout:60];(node[amenity=toilets](${bboxStr});way[amenity=toilets](${bboxStr}););out center body;`;
+  const query = fullQuery
+    ? extraFilter.replace(/\{BBOX\}/g, bboxStr)
+    : extraFilter
+      ? `[out:json][timeout:60];(${extraFilter.replace(/\{BBOX\}/g, bboxStr)});out center body;`
+      : `[out:json][timeout:60];(node[amenity=toilets](${bboxStr});way[amenity=toilets](${bboxStr}););out center body;`;
 
   const ENDPOINTS = [
     'https://overpass-api.de/api/interpreter',
@@ -427,6 +431,64 @@ async function main() {
         await upsertToilet(item, systemUserId, counters, 'transport');
       }
       await sleep(2000);
+    } catch (err) {
+      console.error(`  ❌ Fehler bei ${region.name}:`, (err as Error).message);
+    }
+  }
+
+  // ── Phase 5: Bahnhofs-/Flughafen-Toiletten via Bereichsabfrage ───────────────
+  console.log('\n── Phase 5: Stationen/Airports (Bereichsabfrage) ────');
+  const STATION_AREA_QUERY = `
+[out:json][timeout:90];
+(
+  node["railway"="station"]({BBOX});
+  way["railway"="station"]({BBOX});
+  node["aeroway"="terminal"]({BBOX});
+  way["aeroway"="terminal"]({BBOX});
+  node["public_transport"="station"]({BBOX});
+  way["public_transport"="station"]({BBOX});
+)->.transport;
+node["amenity"="toilets"](around.transport:250)({BBOX});
+out center body;`.trim();
+
+  for (const region of REGIONS) {
+    console.log(`\n🚉 Station-Bereich: ${region.name}`);
+    try {
+      const items = await queryOverpass(region.bbox, STATION_AREA_QUERY, true);
+      console.log(`  ${items.length} Stationstoiletten (Bereich) gefunden`);
+      for (const item of items) {
+        await upsertToilet(item, systemUserId, counters, 'transport');
+      }
+      await sleep(3000);
+    } catch (err) {
+      console.error(`  ❌ Fehler bei ${region.name}:`, (err as Error).message);
+    }
+  }
+
+  // ── Phase 6: Einkaufszentren via Bereichsabfrage ──────────────────────────────
+  console.log('\n── Phase 6: Einkaufszentren (Bereichsabfrage) ───────');
+  const MALL_AREA_QUERY = `
+[out:json][timeout:90];
+(
+  node["shop"="mall"]({BBOX});
+  way["shop"="mall"]({BBOX});
+  node["shop"="department_store"]({BBOX});
+  way["shop"="department_store"]({BBOX});
+  node["shop"="supermarket"]["name"~"Coop|Migros|Globus|Manor|Breuninger|Galeria|Kaufhof",i]({BBOX});
+  way["shop"="supermarket"]["name"~"Coop City|Migros City|Globus",i]({BBOX});
+)->.malls;
+node["amenity"="toilets"](around.malls:200)({BBOX});
+out center body;`.trim();
+
+  for (const region of REGIONS) {
+    console.log(`\n🏬 Mall-Bereich: ${region.name}`);
+    try {
+      const items = await queryOverpass(region.bbox, MALL_AREA_QUERY, true);
+      console.log(`  ${items.length} Mall-Toiletten (Bereich) gefunden`);
+      for (const item of items) {
+        await upsertToilet(item, systemUserId, counters, 'mall');
+      }
+      await sleep(3000);
     } catch (err) {
       console.error(`  ❌ Fehler bei ${region.name}:`, (err as Error).message);
     }
