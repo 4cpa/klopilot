@@ -3,12 +3,13 @@ import { useState } from 'react';
 import { toilets } from '@/lib/api';
 
 const CATEGORIES = [
-  { value: 'public', label: 'Öffentlich' },
-  { value: 'nette_toilette', label: 'Nette Toilette' },
-  { value: 'gastronomy', label: 'Gastronomie' },
-  { value: 'transport', label: 'Bahnhof / Transit' },
-  { value: 'mall', label: 'Einkaufszentrum' },
-  { value: 'event', label: 'Event' },
+  { value: 'public', label: '🚽 Öffentlich' },
+  { value: 'nette_toilette', label: '🤝 Nette Toilette' },
+  { value: 'gastronomy', label: '🍽️ Gastronomie' },
+  { value: 'transport', label: '🚂 Bahnhof / Transit' },
+  { value: 'mall', label: '🏬 Einkaufszentrum' },
+  { value: 'event', label: '🎪 Event' },
+  { value: 'private', label: '🔒 Privat (nur Eingeladene)' },
 ];
 
 interface Props {
@@ -37,6 +38,12 @@ export function AddToiletSheet({
   const [lng, setLng] = useState(String(defaultLng.toFixed(6)));
   const [lat, setLat] = useState(String(defaultLat.toFixed(6)));
   const [isAvailable, setIsAvailable] = useState(true);
+  // Ausstattung / Zugänglichkeit
+  const [wheelchair, setWheelchair] = useState(false);
+  const [euroKey, setEuroKey] = useState(false);
+  const [shower, setShower] = useState(false);
+  const [babyChanging, setBabyChanging] = useState(false);
+  const [genderNeutral, setGenderNeutral] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,6 +60,13 @@ export function AddToiletSheet({
     setSaving(true);
     setError(null);
     try {
+      const accessibilityData: Record<string, boolean> = {};
+      if (wheelchair) accessibilityData.wheelchair = true;
+      if (euroKey) accessibilityData.euro_key = true;
+      if (shower) accessibilityData.shower = true;
+      if (babyChanging) accessibilityData.baby_changing = true;
+      if (genderNeutral) accessibilityData.gender_neutral = true;
+
       const toilet = await toilets.create({
         name: name.trim(),
         category,
@@ -61,6 +75,7 @@ export function AddToiletSheet({
         address: address.trim() || undefined,
         feeChf: fee ? parseFloat(fee) : undefined,
         isAvailable,
+        accessibility: Object.keys(accessibilityData).length > 0 ? accessibilityData : undefined,
       });
       onCreated(toilet.id);
     } catch (err) {
@@ -138,12 +153,29 @@ export function AddToiletSheet({
                       ? 'text-white'
                       : 'bg-[var(--cream)] text-[var(--ink)] hover:bg-[var(--line)]'
                   }`}
-                  style={category === c.value ? { background: 'var(--brand-primary)' } : {}}
+                  style={
+                    category === c.value
+                      ? {
+                          background:
+                            c.value === 'private' ? 'var(--brand-berry)' : 'var(--brand-primary)',
+                        }
+                      : {}
+                  }
                 >
                   {c.label}
                 </button>
               ))}
             </div>
+            {category === 'private' && (
+              <p
+                className="mt-2 text-xs rounded-lg px-3 py-2"
+                style={{ background: 'rgba(209,48,72,0.08)', color: 'var(--brand-berry)' }}
+              >
+                🔒 Private Toiletten erscheinen <strong>nicht</strong> auf der öffentlichen Karte.
+                Nur eingeladene Personen können sie sehen. Der genaue Standort wird auf ~100 m
+                gerundet gespeichert.
+              </p>
+            )}
           </div>
 
           {/* Adresse */}
@@ -216,6 +248,52 @@ export function AddToiletSheet({
                 placeholder="Breitengrad"
                 className="w-full rounded-lg px-3 py-2 text-xs border border-[var(--line)] bg-[var(--cream)] text-[var(--ink)] focus:outline-none focus:border-[var(--brand-primary)]"
               />
+            </div>
+          </div>
+
+          {/* Ausstattung & Zugänglichkeit */}
+          <div>
+            <label className="block text-sm font-medium text-[var(--ink)] mb-2">
+              Ausstattung & Zugänglichkeit
+            </label>
+            <div className="grid grid-cols-2 gap-1.5">
+              {[
+                {
+                  key: 'wheelchair',
+                  label: '♿ Rollstuhlgerecht',
+                  value: wheelchair,
+                  set: setWheelchair,
+                },
+                { key: 'euroKey', label: '🔑 Eurokey', value: euroKey, set: setEuroKey },
+                { key: 'shower', label: '🚿 Dusche', value: shower, set: setShower },
+                {
+                  key: 'babyChanging',
+                  label: '👶 Wickeltisch',
+                  value: babyChanging,
+                  set: setBabyChanging,
+                },
+                {
+                  key: 'genderNeutral',
+                  label: '🚻 Unisex',
+                  value: genderNeutral,
+                  set: setGenderNeutral,
+                },
+              ].map((opt) => (
+                <button
+                  key={opt.key}
+                  type="button"
+                  onClick={() => opt.set(!opt.value)}
+                  aria-pressed={opt.value}
+                  className={`text-sm py-2 px-3 rounded-lg text-left transition-all ${
+                    opt.value
+                      ? 'text-white'
+                      : 'bg-[var(--cream)] text-[var(--ink)] hover:bg-[var(--line)]'
+                  }`}
+                  style={opt.value ? { background: 'var(--brand-mint)' } : {}}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
           </div>
 

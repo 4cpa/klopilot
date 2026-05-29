@@ -20,11 +20,22 @@ const DRY_RUN = process.argv.includes('--dry-run');
 // ── Bounding-Boxes ────────────────────────────────────────────────────────────
 // Format: [south, west, north, east]
 const REGIONS: Array<{ name: string; bbox: [number, number, number, number] }> = [
+  // ── Kernländer ──────────────────────────────────────────────────────────────
   { name: 'Schweiz', bbox: [45.8, 5.9, 47.8, 10.5] },
   { name: 'Österreich', bbox: [46.3, 10.0, 48.0, 17.2] },
-  { name: 'Deutschland-SW', bbox: [47.5, 7.5, 48.5, 9.5] },
-  { name: 'Frankreich-E', bbox: [46.0, 6.0, 48.8, 8.2] },
   { name: 'Italien-N', bbox: [43.5, 6.6, 46.8, 14.0] },
+  // ── Deutschland (3 Teile für Overpass-Timeout) ────────────────────────────
+  // Süd: Bayern, BW, Saarland, RLP → enthält München, Stuttgart, Nürnberg, Freiburg
+  { name: 'Deutschland-S', bbox: [47.2, 6.1, 50.5, 14.0] as [number, number, number, number] },
+  // Nord: NRW, Hessen, Niedersachsen, Hamburg, Bremen, SH, MV, Berlin, BB, Thüringen, Sachsen, LSA
+  { name: 'Deutschland-N', bbox: [50.5, 5.8, 55.1, 15.1] as [number, number, number, number] },
+  // ── Frankreich (3 Teile) ──────────────────────────────────────────────────
+  // Nord-Ost: Elsass, Lothringen, Bourgogne-FC → direkt angrenzend an CH/DE
+  { name: 'Frankreich-NE', bbox: [46.0, 5.5, 49.5, 8.5] as [number, number, number, number] },
+  // Nord-West: Île-de-France (Paris), Normandie, Bretagne, Hauts-de-France
+  { name: 'Frankreich-NW', bbox: [46.0, -5.5, 51.5, 5.5] as [number, number, number, number] },
+  // Süd: Nouvelle-Aquitaine, Occitanie, PACA, Auvergne-RA → enthält Lyon, Marseille, Bordeaux, Toulouse
+  { name: 'Frankreich-S', bbox: [41.3, -5.5, 46.0, 9.6] as [number, number, number, number] },
 ];
 
 // ── Transport-Schlüsselwörter (6 Sprachen) ────────────────────────────────────
@@ -437,9 +448,11 @@ async function main() {
   }
 
   // ── Phase 5: Bahnhofs-/Flughafen-Toiletten via Bereichsabfrage ───────────────
-  console.log('\n── Phase 5: Stationen/Airports (Bereichsabfrage) ────');
+  // Radius 500m (statt 250m), KEIN BBox-Filter auf den Toiletten-Nodes damit
+  // Toiletten an Grenzen nicht verschwinden. Relations (für grosse HBf) einbezogen.
+  console.log('\n── Phase 5: Stationen/Airports (Bereichsabfrage, r=500m) ────');
   const STATION_AREA_QUERY = `
-[out:json][timeout:90];
+[out:json][timeout:120];
 (
   node["railway"="station"]({BBOX});
   way["railway"="station"]({BBOX});
@@ -448,7 +461,10 @@ async function main() {
   node["public_transport"="station"]({BBOX});
   way["public_transport"="station"]({BBOX});
 )->.transport;
-node["amenity"="toilets"](around.transport:250)({BBOX});
+(
+  node["amenity"="toilets"](around.transport:500);
+  way["amenity"="toilets"](around.transport:500);
+);
 out center body;`.trim();
 
   for (const region of REGIONS) {
@@ -491,6 +507,98 @@ out center body;`.trim();
       await sleep(3000);
     } catch (err) {
       console.error(`  ❌ Fehler bei ${region.name}:`, (err as Error).message);
+    }
+  }
+
+  // ── Phase 7: Grosse Hauptbahnhöfe (direkte Named-Query, kein BBox-Zwang) ──────
+  // Für die grössten Fernbahnhöfe D-A-CH + FR + IT deren Toiletten-Nodes oft
+  // innerhalb eines komplexen Way/Relation-Bahnhofspolygons liegen und durch die
+  // BBox-Filterung in Phase 5 nicht gefunden werden.
+  console.log('\n── Phase 7: Grosse Hauptbahnhöfe (Named) ─────────────');
+  const MAJOR_STATIONS: Array<{ name: string; lat: number; lng: number; r: number }> = [
+    // Schweiz
+    { name: 'Zürich HB', lat: 47.3782, lng: 8.5403, r: 600 },
+    { name: 'Bern HB', lat: 46.949, lng: 7.4391, r: 500 },
+    { name: 'Basel SBB', lat: 47.5476, lng: 7.5892, r: 500 },
+    { name: 'Genève Cornavin', lat: 46.21, lng: 6.1426, r: 500 },
+    { name: 'Lausanne', lat: 46.5169, lng: 6.6297, r: 500 },
+    { name: 'Luzern', lat: 47.0505, lng: 8.3101, r: 500 },
+    { name: 'St. Gallen', lat: 47.4232, lng: 9.3697, r: 400 },
+    { name: 'Winterthur', lat: 47.5003, lng: 8.7241, r: 400 },
+    { name: 'Olten', lat: 47.3521, lng: 7.9077, r: 400 },
+    { name: 'Biel/Bienne', lat: 47.1374, lng: 7.2463, r: 400 },
+    // Österreich
+    { name: 'Wien HB', lat: 48.1851, lng: 16.3762, r: 600 },
+    { name: 'Wien Westbahnhof', lat: 48.1969, lng: 16.3381, r: 500 },
+    { name: 'Wien Meidling', lat: 48.173, lng: 16.3327, r: 400 },
+    { name: 'Graz HB', lat: 47.0726, lng: 15.4136, r: 500 },
+    { name: 'Salzburg HB', lat: 47.8131, lng: 13.0455, r: 500 },
+    { name: 'Linz HB', lat: 48.2902, lng: 14.2918, r: 500 },
+    { name: 'Innsbruck HB', lat: 47.2638, lng: 11.4005, r: 500 },
+    // Deutschland
+    { name: 'München HB', lat: 48.1402, lng: 11.5599, r: 700 },
+    { name: 'Berlin HBf', lat: 52.5251, lng: 13.3694, r: 700 },
+    { name: 'Hamburg HB', lat: 53.553, lng: 10.0067, r: 600 },
+    { name: 'Frankfurt HB', lat: 50.1069, lng: 8.6636, r: 600 },
+    { name: 'Köln HB', lat: 50.943, lng: 6.9582, r: 500 },
+    { name: 'Stuttgart HB', lat: 48.7841, lng: 9.1824, r: 500 },
+    { name: 'Düsseldorf HB', lat: 51.2201, lng: 6.7941, r: 500 },
+    { name: 'Leipzig HB', lat: 51.3454, lng: 12.3821, r: 500 },
+    { name: 'Nürnberg HB', lat: 49.4456, lng: 11.0826, r: 500 },
+    { name: 'Hannover HB', lat: 52.3769, lng: 9.7419, r: 500 },
+    { name: 'Dresden HB', lat: 51.0407, lng: 13.7323, r: 500 },
+    { name: 'Freiburg i.Br. HB', lat: 47.9969, lng: 7.8411, r: 400 },
+    { name: 'Heidelberg HB', lat: 49.4035, lng: 8.6757, r: 400 },
+    { name: 'Mannheim HB', lat: 49.4803, lng: 8.4697, r: 400 },
+    { name: 'Karlsruhe HB', lat: 48.9936, lng: 8.4023, r: 400 },
+    { name: 'Konstanz', lat: 47.6607, lng: 9.179, r: 400 },
+    // Frankreich
+    { name: 'Paris Gare du Nord', lat: 48.8809, lng: 2.3553, r: 600 },
+    { name: 'Paris Gare de Lyon', lat: 48.8448, lng: 2.374, r: 500 },
+    { name: 'Paris Gare St-Laz.', lat: 48.8762, lng: 2.325, r: 500 },
+    { name: 'Lyon Part-Dieu', lat: 45.7603, lng: 4.8593, r: 500 },
+    { name: 'Marseille St-Ch.', lat: 43.3027, lng: 5.3812, r: 500 },
+    { name: 'Bordeaux St-Jean', lat: 44.8252, lng: -0.5567, r: 500 },
+    { name: 'Toulouse Matabiau', lat: 43.6116, lng: 1.4537, r: 400 },
+    { name: 'Strasbourg', lat: 48.5852, lng: 7.7352, r: 400 },
+    { name: 'Mulhouse', lat: 47.7404, lng: 7.342, r: 400 },
+    // Italien-N
+    { name: 'Milano Centrale', lat: 45.4862, lng: 9.2046, r: 700 },
+    { name: 'Torino Porta Nuova', lat: 45.0607, lng: 7.6778, r: 500 },
+    { name: 'Venezia S. Lucia', lat: 45.4414, lng: 12.3211, r: 500 },
+    { name: 'Bologna Centrale', lat: 44.5064, lng: 11.3428, r: 500 },
+    { name: 'Genova Piazza Pr.', lat: 44.4113, lng: 8.927, r: 400 },
+  ];
+
+  // Baue eine Overpass-Abfrage für jeden Bahnhof: alle Toiletten in r Metern
+  for (const station of MAJOR_STATIONS) {
+    const r = station.r;
+    const query = `
+[out:json][timeout:30];
+(
+  node["amenity"="toilets"](around:${r},${station.lat},${station.lng});
+  way["amenity"="toilets"](around:${r},${station.lat},${station.lng});
+);
+out center body;`.trim();
+    try {
+      const bbox: [number, number, number, number] = [
+        station.lat - 0.01,
+        station.lng - 0.01,
+        station.lat + 0.01,
+        station.lng + 0.01,
+      ];
+      const items = await queryOverpass(bbox, query, true);
+      if (items.length > 0) {
+        process.stdout.write(`  🚉 ${station.name}: ${items.length} Toiletten`);
+        for (const item of items) {
+          await upsertToilet(item, systemUserId, counters, 'transport');
+        }
+        process.stdout.write('\n');
+      }
+      await sleep(1500);
+    } catch (err) {
+      console.error(`  ❌ ${station.name}:`, (err as Error).message);
+      await sleep(3000);
     }
   }
 
