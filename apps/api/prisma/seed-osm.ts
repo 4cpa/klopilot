@@ -76,6 +76,32 @@ const REGIONS: Array<{ name: string; bbox: [number, number, number, number] }> =
   { name: 'Finnland-S', bbox: [59.5, 19.5, 65.5, 31.6] as [number, number, number, number] },
   // Finnland-N: Oulu, Rovaniemi, Lappland
   { name: 'Finnland-N', bbox: [65.5, 19.5, 70.5, 31.6] as [number, number, number, number] },
+
+  // ── Britische Inseln ──────────────────────────────────────────────────────────
+  // England + Wales: London, Manchester, Birmingham, Leeds, Bristol, Cardiff
+  { name: 'England-Wales', bbox: [49.9, -5.8, 53.5, 2.0] as [number, number, number, number] },
+  // Schottland + Nordirland: Edinburgh, Glasgow, Aberdeen, Belfast
+  { name: 'Schottland-NI', bbox: [53.5, -8.2, 60.9, -0.7] as [number, number, number, number] },
+  // Irland (Republik): Dublin, Cork, Galway, Limerick
+  { name: 'Irland', bbox: [51.4, -10.5, 55.4, -5.8] as [number, number, number, number] },
+
+  // ── Inselstaaten & -territorien ───────────────────────────────────────────────
+  // Island: Reykjavik, Akureyri
+  { name: 'Island', bbox: [63.2, -24.6, 66.6, -13.3] as [number, number, number, number] },
+  // Malta: Valletta, Sliema
+  { name: 'Malta', bbox: [35.7, 14.1, 36.1, 14.7] as [number, number, number, number] },
+  // Zypern: Nikosia, Limassol, Larnaka
+  { name: 'Zypern', bbox: [34.5, 32.2, 35.7, 34.1] as [number, number, number, number] },
+  // Färöer-Inseln: Tórshavn
+  { name: 'Färöer', bbox: [61.3, -7.7, 62.4, -6.3] as [number, number, number, number] },
+  // Kanarische Inseln (ES): Las Palmas, Santa Cruz de Tenerife
+  { name: 'Kanaren', bbox: [27.6, -18.2, 29.5, -13.4] as [number, number, number, number] },
+  // Madeira (PT): Funchal
+  { name: 'Madeira', bbox: [32.6, -17.3, 33.1, -16.3] as [number, number, number, number] },
+  // Azoren (PT): Ponta Delgada
+  { name: 'Azoren', bbox: [36.9, -31.3, 39.9, -24.8] as [number, number, number, number] },
+  // Korsika (FR): Ajaccio, Bastia
+  { name: 'Korsika', bbox: [41.3, 8.5, 43.1, 9.6] as [number, number, number, number] },
 ];
 
 // ── Transport-Schlüsselwörter (6 Sprachen) ────────────────────────────────────
@@ -102,6 +128,20 @@ const TRANSPORT_KEYWORDS = [
   'bus terminal',
   'railway',
   'transit',
+  // Spanisch / Portugiesisch
+  'estación',
+  'estacao',
+  'aeropuerto',
+  'aeroporto',
+  // Skandinavisch
+  'togstation',
+  'järnvägsstation',
+  'togstasjon',
+  'rautatieasema',
+  'lufthavn',
+  'flygplats',
+  'flyplass',
+  'lentokenttä',
   // Weitere
   'bahnsteig',
   'perron',
@@ -648,6 +688,32 @@ out center body;`.trim();
     { name: 'Tampere', lat: 61.4975, lng: 23.7726, r: 400 },
     { name: 'Turku', lat: 60.4548, lng: 22.2679, r: 400 },
     { name: 'Oulu', lat: 65.0125, lng: 25.4736, r: 400 },
+    // England
+    { name: "London King's Cross", lat: 51.5308, lng: -0.1238, r: 600 },
+    { name: 'London Euston', lat: 51.5284, lng: -0.1331, r: 500 },
+    { name: 'London Paddington', lat: 51.5154, lng: -0.1755, r: 500 },
+    { name: 'London Victoria', lat: 51.4965, lng: -0.1441, r: 500 },
+    { name: 'London Waterloo', lat: 51.5031, lng: -0.1128, r: 600 },
+    { name: 'London St Pancras', lat: 51.5321, lng: -0.1231, r: 400 },
+    { name: 'Manchester Piccadilly', lat: 53.4773, lng: -2.2309, r: 500 },
+    { name: 'Birmingham New St', lat: 52.4775, lng: -1.8998, r: 500 },
+    { name: 'Leeds', lat: 53.7953, lng: -1.5491, r: 400 },
+    { name: 'Bristol Temple Meads', lat: 51.449, lng: -2.5813, r: 400 },
+    { name: 'Liverpool Lime St', lat: 53.4075, lng: -2.9779, r: 400 },
+    // Schottland
+    { name: 'Edinburgh Waverley', lat: 55.9519, lng: -3.1896, r: 500 },
+    { name: 'Glasgow Central', lat: 55.8582, lng: -4.2575, r: 500 },
+    { name: 'Aberdeen', lat: 57.1437, lng: -2.0981, r: 400 },
+    // Wales
+    { name: 'Cardiff Central', lat: 51.476, lng: -3.1791, r: 400 },
+    // Nordirland
+    { name: 'Belfast Central', lat: 54.5973, lng: -5.9301, r: 400 },
+    // Irland
+    { name: 'Dublin Heuston', lat: 53.3464, lng: -6.2939, r: 500 },
+    { name: 'Dublin Connolly', lat: 53.3523, lng: -6.2448, r: 400 },
+    { name: 'Cork Kent', lat: 51.9016, lng: -8.4638, r: 400 },
+    // Island (kein Bahnnetz — Busbahnhof Reykjavik)
+    { name: 'Reykjavik BSÍ', lat: 64.1413, lng: -21.9502, r: 400 },
   ];
 
   // Baue eine Overpass-Abfrage für jeden Bahnhof: alle Toiletten in r Metern

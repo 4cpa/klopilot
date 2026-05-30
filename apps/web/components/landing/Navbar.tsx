@@ -9,10 +9,16 @@ import { changeLanguage } from '@/lib/i18n';
 
 /** Sprach-Optionen: Code → Label, Flagge, Länder-Hinweis */
 export const LANG_OPTIONS = [
-  { code: 'de', label: 'Deutsch', flag: '🇩🇪', hint: 'CH · DE · AT' },
-  { code: 'fr', label: 'Français', flag: '🇫🇷', hint: 'CH · FR' },
-  { code: 'it', label: 'Italiano', flag: '🇮🇹', hint: 'CH · IT' },
-  { code: 'en', label: 'English', flag: '🌐', hint: '' },
+  { code: 'de', label: 'Deutsch', flag: '🇩🇪', hint: 'DE · AT · CH' },
+  { code: 'fr', label: 'Français', flag: '🇫🇷', hint: 'FR · CH · BE' },
+  { code: 'it', label: 'Italiano', flag: '🇮🇹', hint: 'IT · CH' },
+  { code: 'en', label: 'English', flag: '🇬🇧', hint: 'UK · IE' },
+  { code: 'es', label: 'Español', flag: '🇪🇸', hint: 'ES · PT' },
+  { code: 'pt', label: 'Português', flag: '🇵🇹', hint: 'PT · BR' },
+  { code: 'da', label: 'Dansk', flag: '🇩🇰', hint: 'DK' },
+  { code: 'sv', label: 'Svenska', flag: '🇸🇪', hint: 'SE' },
+  { code: 'no', label: 'Norsk', flag: '🇳🇴', hint: 'NO' },
+  { code: 'fi', label: 'Suomi', flag: '🇫🇮', hint: 'FI' },
 ] as const;
 
 /** Kompaktes Sprach-Dropdown — wiederverwendbar (Navbar + AppBar) */
