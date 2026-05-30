@@ -11,7 +11,9 @@
     "hint": "Syötä nimi tai osoite",
     "no_results": "Ei tuloksia haulle «{{query}}»",
     "no_results_generic": "Ei tuloksia",
-    "recent": "Viimeisimmät:"
+    "recent": "Viimeisimmät:",
+    "wc_label": "WC",
+    "placeholder_short": "etsi…"
   },
   "contribute": {
     "title": "Lisää WC",

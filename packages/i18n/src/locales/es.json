@@ -11,7 +11,9 @@
     "hint": "Introduce un nombre o dirección",
     "no_results": "Sin resultados para «{{query}}»",
     "no_results_generic": "Sin resultados",
-    "recent": "Reciente:"
+    "recent": "Reciente:",
+    "wc_label": "WC",
+    "placeholder_short": "buscar…"
   },
   "contribute": {
     "title": "Añadir un baño",

@@ -11,7 +11,9 @@
     "hint": "Indtast et navn eller en adresse",
     "no_results": "Ingen resultater for «{{query}}»",
     "no_results_generic": "Ingen resultater",
-    "recent": "Seneste:"
+    "recent": "Seneste:",
+    "wc_label": "WC",
+    "placeholder_short": "søg…"
   },
   "contribute": {
     "title": "Tilføj toilet",

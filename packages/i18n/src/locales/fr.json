@@ -11,7 +11,9 @@
     "hint": "Entrez un nom ou une adresse",
     "no_results": "Aucun résultat pour « {{query}} »",
     "no_results_generic": "Aucun résultat",
-    "recent": "Récent :"
+    "recent": "Récent :",
+    "wc_label": "WC",
+    "placeholder_short": "chercher…"
   },
   "contribute": {
     "title": "Ajouter une toilette",

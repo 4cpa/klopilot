@@ -11,7 +11,9 @@
     "hint": "Introduz um nome ou morada",
     "no_results": "Sem resultados para «{{query}}»",
     "no_results_generic": "Sem resultados",
-    "recent": "Recente:"
+    "recent": "Recente:",
+    "wc_label": "WC",
+    "placeholder_short": "pesquisar…"
   },
   "contribute": {
     "title": "Adicionar casa de banho",

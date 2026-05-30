@@ -11,7 +11,9 @@
     "hint": "Skriv inn et navn eller en adresse",
     "no_results": "Ingen resultater for «{{query}}»",
     "no_results_generic": "Ingen resultater",
-    "recent": "Siste:"
+    "recent": "Siste:",
+    "wc_label": "WC",
+    "placeholder_short": "søk…"
   },
   "contribute": {
     "title": "Legg til toalett",

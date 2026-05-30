@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { search, type Toilet } from '@/lib/api';
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -26,6 +27,7 @@ interface Props {
 }
 
 export function SearchBar({ userLocation, onSelect, trailing }: Props) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Toilet[]>([]);
   const [loading, setLoading] = useState(false);
@@ -82,12 +84,16 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
     [onSelect],
   );
 
+  const wcLabel = t('search.wc_label');
+  const placeholder = t('search.placeholder_short');
+
   return (
     <div ref={containerRef} className="relative flex-1 min-w-0" style={{ maxWidth: 360 }}>
-      {/* Input — Glas-Pill: backdrop-blur statt solider Hintergrund, kein harter Rahmen */}
+      {/* Input — Glas-Pill */}
       <div
-        className="flex items-center gap-2 rounded-full px-3 py-1.5 transition-all"
+        className="flex items-center rounded-full px-3 py-1.5 transition-all"
         style={{
+          gap: 0,
           background: open ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.78)',
           backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',
@@ -96,9 +102,32 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
             : '0 2px 8px rgba(15,23,42,.14)',
         }}
       >
-        <span className="text-sm leading-none" aria-hidden>
-          {loading ? '⏳' : '🔍'}
+        {/* Lupe + WC eng zusammen */}
+        <span
+          className="flex items-center leading-none select-none"
+          aria-hidden
+          style={{ gap: 2, marginRight: 6, flexShrink: 0 }}
+        >
+          <span className="text-sm">{loading ? '⏳' : '🔍'}</span>
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 800,
+              letterSpacing: '0.04em',
+              color: 'var(--brand-primary)',
+              lineHeight: 1,
+            }}
+          >
+            {wcLabel}
+          </span>
         </span>
+
+        {/* Trennlinie */}
+        <span
+          style={{ width: 1, height: 14, background: 'var(--line)', flexShrink: 0, marginRight: 6 }}
+          aria-hidden
+        />
+
         <input
           type="search"
           value={query}
@@ -106,13 +135,13 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
           onFocus={() => {
             if (results.length > 0) setOpen(true);
           }}
-          placeholder="Toilette suchen…"
-          aria-label="Toilette suchen"
+          placeholder={placeholder}
+          aria-label={`${wcLabel} ${placeholder}`}
           className="flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--muted)]"
           style={{
             color: 'var(--ink)',
-            border: 'none' /* browser-native input border entfernen */,
-            appearance: 'none' /* -webkit-appearance: searchfield aufheben */,
+            border: 'none',
+            appearance: 'none',
             WebkitAppearance: 'none',
             minWidth: 0,
           }}
@@ -125,7 +154,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
               setResults([]);
               setOpen(false);
             }}
-            className="text-[var(--muted)] hover:text-[var(--ink)] text-sm leading-none"
+            className="text-[var(--muted)] hover:text-[var(--ink)] text-sm leading-none ml-1"
             aria-label="Suche löschen"
           >
             ✕
@@ -140,6 +169,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
                 height: 16,
                 background: 'var(--line)',
                 flexShrink: 0,
+                margin: '0 6px',
               }}
               aria-hidden
             />
@@ -213,7 +243,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
             fontSize: '0.875rem',
           }}
         >
-          Keine Treffer für «{query}»
+          {t('search.no_results', { query })}
         </div>
       )}
     </div>

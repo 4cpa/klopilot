@@ -11,7 +11,9 @@
     "hint": "Enter a name or address",
     "no_results": "No results for «{{query}}»",
     "no_results_generic": "No results",
-    "recent": "Recent:"
+    "recent": "Recent:",
+    "wc_label": "WC",
+    "placeholder_short": "search…"
   },
   "contribute": {
     "title": "Add a toilet",

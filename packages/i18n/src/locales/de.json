@@ -11,7 +11,9 @@
     "hint": "Name oder Adresse eingeben",
     "no_results": "Keine Treffer für «{{query}}»",
     "no_results_generic": "Keine Treffer",
-    "recent": "Zuletzt:"
+    "recent": "Zuletzt:",
+    "wc_label": "WC",
+    "placeholder_short": "suchen…"
   },
   "contribute": {
     "title": "Toilette eintragen",

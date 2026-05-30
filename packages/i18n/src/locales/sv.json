@@ -11,7 +11,9 @@
     "hint": "Ange ett namn eller en adress",
     "no_results": "Inga resultat för «{{query}}»",
     "no_results_generic": "Inga resultat",
-    "recent": "Senaste:"
+    "recent": "Senaste:",
+    "wc_label": "WC",
+    "placeholder_short": "sök…"
   },
   "contribute": {
     "title": "Lägg till toalett",

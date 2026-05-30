@@ -11,7 +11,9 @@
     "hint": "Εισάγετε όνομα ή διεύθυνση",
     "no_results": "Δεν βρέθηκαν αποτελέσματα για «{{query}}»",
     "no_results_generic": "Δεν βρέθηκαν αποτελέσματα",
-    "recent": "Πρόσφατα:"
+    "recent": "Πρόσφατα:",
+    "wc_label": "WC",
+    "placeholder_short": "αναζήτηση…"
   },
   "contribute": {
     "title": "Προσθήκη τουαλέτας",

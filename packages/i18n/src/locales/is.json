@@ -11,7 +11,9 @@
     "hint": "Sláðu inn nafn eða heimilisfang",
     "no_results": "Engar niðurstöður fyrir «{{query}}»",
     "no_results_generic": "Engar niðurstöður",
-    "recent": "Nýlegt:"
+    "recent": "Nýlegt:",
+    "wc_label": "WC",
+    "placeholder_short": "leita…"
   },
   "contribute": {
     "title": "Bæta við salerni",

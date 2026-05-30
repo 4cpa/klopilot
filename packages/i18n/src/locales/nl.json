@@ -11,7 +11,9 @@
     "hint": "Naam of adres invoeren",
     "no_results": "Geen resultaten voor «{{query}}»",
     "no_results_generic": "Geen resultaten",
-    "recent": "Recent:"
+    "recent": "Recent:",
+    "wc_label": "WC",
+    "placeholder_short": "zoeken…"
   },
   "contribute": {
     "title": "Toilet toevoegen",
