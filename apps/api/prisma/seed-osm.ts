@@ -20,22 +20,38 @@ const DRY_RUN = process.argv.includes('--dry-run');
 // ── Bounding-Boxes ────────────────────────────────────────────────────────────
 // Format: [south, west, north, east]
 const REGIONS: Array<{ name: string; bbox: [number, number, number, number] }> = [
-  // ── Kernländer ──────────────────────────────────────────────────────────────
+  // ── Schweiz ──────────────────────────────────────────────────────────────────
   { name: 'Schweiz', bbox: [45.8, 5.9, 47.8, 10.5] },
-  { name: 'Österreich', bbox: [46.3, 10.0, 48.0, 17.2] },
-  { name: 'Italien-N', bbox: [43.5, 6.6, 46.8, 14.0] },
-  // ── Deutschland (3 Teile für Overpass-Timeout) ────────────────────────────
-  // Süd: Bayern, BW, Saarland, RLP → enthält München, Stuttgart, Nürnberg, Freiburg
-  { name: 'Deutschland-S', bbox: [47.2, 6.1, 50.5, 14.0] as [number, number, number, number] },
-  // Nord: NRW, Hessen, Niedersachsen, Hamburg, Bremen, SH, MV, Berlin, BB, Thüringen, Sachsen, LSA
-  { name: 'Deutschland-N', bbox: [50.5, 5.8, 55.1, 15.1] as [number, number, number, number] },
-  // ── Frankreich (3 Teile) ──────────────────────────────────────────────────
+
+  // ── Österreich (komplett, inkl. Vorarlberg ab 9.5°E) ─────────────────────────
+  { name: 'Österreich', bbox: [46.3, 9.5, 48.8, 17.2] as [number, number, number, number] },
+
+  // ── Deutschland (2 Teile für Overpass-Timeout) ────────────────────────────────
+  // Süd: Bayern, BW, Saarland, RLP, Thüringen → München, Stuttgart, Nürnberg, Freiburg
+  { name: 'Deutschland-S', bbox: [47.2, 5.8, 51.0, 15.1] as [number, number, number, number] },
+  // Nord: NRW, Hessen, Niedersachsen, Hamburg, Bremen, SH, MV, Berlin, BB, Sachsen, LSA
+  { name: 'Deutschland-N', bbox: [51.0, 5.8, 55.1, 15.1] as [number, number, number, number] },
+
+  // ── Frankreich (3 Teile) ──────────────────────────────────────────────────────
   // Nord-Ost: Elsass, Lothringen, Bourgogne-FC → direkt angrenzend an CH/DE
   { name: 'Frankreich-NE', bbox: [46.0, 5.5, 49.5, 8.5] as [number, number, number, number] },
   // Nord-West: Île-de-France (Paris), Normandie, Bretagne, Hauts-de-France
   { name: 'Frankreich-NW', bbox: [46.0, -5.5, 51.5, 5.5] as [number, number, number, number] },
-  // Süd: Nouvelle-Aquitaine, Occitanie, PACA, Auvergne-RA → enthält Lyon, Marseille, Bordeaux, Toulouse
+  // Süd: Nouvelle-Aquitaine, Occitanie, PACA, Auvergne-RA → Lyon, Marseille, Bordeaux, Toulouse
   { name: 'Frankreich-S', bbox: [41.3, -5.5, 46.0, 9.6] as [number, number, number, number] },
+
+  // ── Italien (3 Teile) ────────────────────────────────────────────────────────
+  // Nord: Piemonte, Lombardei, Veneto, Ligurien, Friaul, Trentino, Emilia-Romagna
+  { name: 'Italien-N', bbox: [43.5, 6.6, 46.8, 14.0] },
+  // Mitte: Toskana, Latium (Roma), Umbrien, Marken, Abruzzen, Molise
+  { name: 'Italien-M', bbox: [40.5, 11.0, 43.5, 15.8] as [number, number, number, number] },
+  // Süd + Inseln: Kampanien (Napoli), Kalabrien, Apulien, Basilikata, Sizilien, Sardinien
+  { name: 'Italien-S', bbox: [35.0, 7.5, 40.5, 18.6] as [number, number, number, number] },
+
+  // ── Benelux ───────────────────────────────────────────────────────────────────
+  { name: 'Luxemburg', bbox: [49.4, 5.7, 50.2, 6.6] as [number, number, number, number] },
+  { name: 'Belgien', bbox: [49.5, 2.5, 51.6, 6.5] as [number, number, number, number] },
+  { name: 'Niederlande', bbox: [50.7, 3.3, 53.6, 7.3] as [number, number, number, number] },
 ];
 
 // ── Transport-Schlüsselwörter (6 Sprachen) ────────────────────────────────────

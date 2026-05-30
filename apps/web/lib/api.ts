@@ -156,6 +156,7 @@ export const toilets = {
     feeChf?: number;
     visibility?: string;
     isAvailable?: boolean;
+    accessibility?: Record<string, boolean>;
   }) => request<Toilet>('/toilets', { method: 'POST', body: JSON.stringify(data) }),
 
   delete: (id: string) => request(`/toilets/${id}`, { method: 'DELETE' }),
