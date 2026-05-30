@@ -450,14 +450,23 @@ async function main() {
     }
   }
 
-  // ── Phase 2: Eurokey-Toiletten (CH + AT + DE-SW) ──────────────────────────────
+  // ── Phase 2: Eurokey-Toiletten (alle 19 Länder) ────────────────────────────────
   console.log('\n── Phase 2: Eurokey-Toiletten ───────────────────────');
   const EUROKEY_REGIONS = [
     { name: 'CH-Eurokey', bbox: [45.8, 5.9, 47.8, 10.5] as [number, number, number, number] },
-    { name: 'AT-Eurokey', bbox: [46.3, 10.0, 48.0, 17.2] as [number, number, number, number] },
-    { name: 'DE-SW-Eurokey', bbox: [47.5, 7.5, 48.5, 9.5] as [number, number, number, number] },
-    { name: 'FR-E-Eurokey', bbox: [46.0, 6.0, 48.8, 8.2] as [number, number, number, number] },
-    { name: 'IT-N-Eurokey', bbox: [43.5, 6.6, 46.8, 14.0] as [number, number, number, number] },
+    { name: 'AT-Eurokey', bbox: [46.3, 9.5, 48.8, 17.2] as [number, number, number, number] },
+    { name: 'DE-S-Eurokey', bbox: [47.2, 5.8, 51.0, 15.1] as [number, number, number, number] },
+    { name: 'DE-N-Eurokey', bbox: [51.0, 5.8, 55.1, 15.1] as [number, number, number, number] },
+    { name: 'FR-Eurokey', bbox: [41.3, -5.5, 51.5, 9.6] as [number, number, number, number] },
+    { name: 'IT-Eurokey', bbox: [35.0, 6.6, 46.8, 18.6] as [number, number, number, number] },
+    { name: 'NL-Eurokey', bbox: [50.7, 3.3, 53.6, 7.3] as [number, number, number, number] },
+    { name: 'BE-Eurokey', bbox: [49.5, 2.5, 51.6, 6.5] as [number, number, number, number] },
+    { name: 'LU-Eurokey', bbox: [49.4, 5.7, 50.2, 6.6] as [number, number, number, number] },
+    { name: 'DK-Eurokey', bbox: [54.5, 8.0, 57.9, 15.3] as [number, number, number, number] },
+    { name: 'SE-Eurokey', bbox: [55.3, 10.5, 69.1, 24.2] as [number, number, number, number] },
+    { name: 'NO-Eurokey', bbox: [57.5, 4.5, 71.2, 31.5] as [number, number, number, number] },
+    { name: 'FI-Eurokey', bbox: [59.5, 19.5, 70.5, 31.6] as [number, number, number, number] },
+    { name: 'UK-Eurokey', bbox: [49.9, -8.2, 60.9, 2.0] as [number, number, number, number] },
   ];
   const EUROKEY_FILTER =
     'node["amenity"="toilets"]["centralkey"="eurokey"]({BBOX});' +
@@ -488,8 +497,13 @@ async function main() {
 
   for (const region of [
     { name: 'CH-NetteToi', bbox: [45.8, 5.9, 47.8, 10.5] as [number, number, number, number] },
-    { name: 'DE-NetteToi', bbox: [47.5, 7.5, 48.5, 9.5] as [number, number, number, number] },
-    { name: 'AT-NetteToi', bbox: [46.3, 10.0, 48.0, 17.2] as [number, number, number, number] },
+    { name: 'DE-S-NetteToi', bbox: [47.2, 5.8, 51.0, 15.1] as [number, number, number, number] },
+    { name: 'DE-N-NetteToi', bbox: [51.0, 5.8, 55.1, 15.1] as [number, number, number, number] },
+    { name: 'AT-NetteToi', bbox: [46.3, 9.5, 48.8, 17.2] as [number, number, number, number] },
+    { name: 'NL-NetteToi', bbox: [50.7, 3.3, 53.6, 7.3] as [number, number, number, number] },
+    { name: 'BE-NetteToi', bbox: [49.5, 2.5, 51.6, 6.5] as [number, number, number, number] },
+    { name: 'LU-NetteToi', bbox: [49.4, 5.7, 50.2, 6.6] as [number, number, number, number] },
+    { name: 'FR-NetteToi', bbox: [41.3, -5.5, 51.5, 9.6] as [number, number, number, number] },
   ]) {
     console.log(`\n🤝 Nette Toilette Region: ${region.name}`);
     try {
@@ -714,6 +728,32 @@ out center body;`.trim();
     { name: 'Cork Kent', lat: 51.9016, lng: -8.4638, r: 400 },
     // Island (kein Bahnnetz — Busbahnhof Reykjavik)
     { name: 'Reykjavik BSÍ', lat: 64.1413, lng: -21.9502, r: 400 },
+    // Niederlande
+    { name: 'Amsterdam Centraal', lat: 52.3791, lng: 4.9003, r: 700 },
+    { name: 'Rotterdam Centraal', lat: 51.9249, lng: 4.469, r: 600 },
+    { name: 'Den Haag Centraal', lat: 52.0799, lng: 4.3248, r: 500 },
+    { name: 'Utrecht Centraal', lat: 52.0892, lng: 5.1101, r: 600 },
+    { name: 'Eindhoven Centraal', lat: 51.4432, lng: 5.4796, r: 500 },
+    { name: 'Amsterdam Schiphol', lat: 52.3086, lng: 4.7639, r: 800 },
+    // Belgien
+    { name: 'Bruxelles-Midi/Zuid', lat: 50.8357, lng: 4.3356, r: 700 },
+    { name: 'Bruxelles-Central', lat: 50.8455, lng: 4.3571, r: 500 },
+    { name: 'Bruxelles-Nord/Brussel-Noord', lat: 50.8594, lng: 4.3605, r: 500 },
+    { name: 'Antwerpen Centraal', lat: 51.2172, lng: 4.4213, r: 600 },
+    { name: 'Gent-Sint-Pieters', lat: 51.0359, lng: 3.7101, r: 500 },
+    { name: 'Liège-Guillemins', lat: 50.6244, lng: 5.5666, r: 500 },
+    { name: 'Brussels Airport', lat: 50.901, lng: 4.4844, r: 700 },
+    // Luxemburg
+    { name: 'Luxembourg Gare', lat: 49.5996, lng: 6.1357, r: 500 },
+    { name: 'Luxembourg Aéroport', lat: 49.6234, lng: 6.2044, r: 600 },
+    // Malta (kein Bahnnetz — Busbahnhof + Valletta Fährhafen)
+    { name: 'Valletta Bus Terminal', lat: 35.899, lng: 14.509, r: 400 },
+    { name: 'Malta International Airport', lat: 35.8574, lng: 14.4775, r: 600 },
+    // Zypern (kein Bahnnetz — Busbahnhof Nikosia + Flughafen)
+    { name: 'Nicosia Central Bus Station', lat: 35.1676, lng: 33.3736, r: 400 },
+    { name: 'Larnaca Airport', lat: 34.8752, lng: 33.6249, r: 600 },
+    { name: 'Paphos Airport', lat: 34.718, lng: 32.4857, r: 600 },
+    { name: 'Limassol Port', lat: 34.668, lng: 33.0472, r: 500 },
   ];
 
   // Baue eine Overpass-Abfrage für jeden Bahnhof: alle Toiletten in r Metern
