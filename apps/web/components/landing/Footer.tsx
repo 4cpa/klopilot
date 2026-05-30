@@ -178,6 +178,12 @@ const LANGS = [
   { code: 'fr', label: 'Français', flag: '🇫🇷' },
   { code: 'it', label: 'Italiano', flag: '🇮🇹' },
   { code: 'en', label: 'English', flag: '🇬🇧' },
+  { code: 'es', label: 'Español', flag: '🇪🇸' },
+  { code: 'pt', label: 'Português', flag: '🇵🇹' },
+  { code: 'da', label: 'Dansk', flag: '🇩🇰' },
+  { code: 'sv', label: 'Svenska', flag: '🇸🇪' },
+  { code: 'no', label: 'Norsk', flag: '🇳🇴' },
+  { code: 'fi', label: 'Suomi', flag: '🇫🇮' },
 ];
 
 /* ── Reusable link row ────────────────────────────────────────────────────── */
