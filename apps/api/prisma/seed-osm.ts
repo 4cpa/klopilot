@@ -748,6 +748,88 @@ out center body;`.trim();
     }
   }
 
+  // ── Phase 8: Coop/Migros CH (Schweizer Grossverteiler) ──────────────────────
+  console.log('\n── Phase 8: Coop/Migros CH ───────────────────────────');
+  const CH_BBOX: [number, number, number, number] = [45.8, 5.9, 47.8, 10.5];
+
+  // 8a: Toiletten die explizit Coop/Migros als Operator nennen
+  const COOP_MIGROS_OP_FILTER = `
+(
+  node["amenity"="toilets"]["operator"~"Coop|Migros",i]({BBOX});
+  way["amenity"="toilets"]["operator"~"Coop|Migros",i]({BBOX});
+);
+out center body;
+`;
+  try {
+    const cmOpItems = await queryOverpass(CH_BBOX, COOP_MIGROS_OP_FILTER);
+    console.log(`  8a Operator-Tag: ${cmOpItems.length} Treffer`);
+    for (const item of cmOpItems) {
+      await upsertToilet(item, systemUserId, counters, 'mall');
+    }
+    await sleep(2000);
+  } catch (err) {
+    console.error('  ❌ Phase 8a:', (err as Error).message);
+    await sleep(3000);
+  }
+
+  // 8b: Toiletten in/um Coop/Migros-Läden (Bereichsabfrage, 150 m)
+  const COOP_MIGROS_AREA_QUERY = `
+[out:json][timeout:180];
+(
+  node["shop"~"supermarket|department_store|mall"]["brand"~"^(Coop|Migros)",i]({BBOX});
+  way["shop"~"supermarket|department_store|mall"]["brand"~"^(Coop|Migros)",i]({BBOX});
+  node["shop"~"supermarket|department_store|mall"]["operator"~"Coop|Migros",i]({BBOX});
+  way["shop"~"supermarket|department_store|mall"]["operator"~"Coop|Migros",i]({BBOX});
+  node["shop"~"supermarket|department_store|mall"]["name"~"^(Coop|Migros)",i]({BBOX});
+  way["shop"~"supermarket|department_store|mall"]["name"~"^(Coop|Migros)",i]({BBOX});
+)->.shops;
+(
+  node["amenity"="toilets"](around.shops:150);
+  way["amenity"="toilets"](around.shops:150);
+);
+out center body;
+`;
+  try {
+    const cmAreaItems = await queryOverpass(CH_BBOX, COOP_MIGROS_AREA_QUERY, true);
+    console.log(`  8b Bereichsabfrage 150m: ${cmAreaItems.length} Treffer`);
+    for (const item of cmAreaItems) {
+      await upsertToilet(item, systemUserId, counters, 'mall');
+    }
+    await sleep(2000);
+  } catch (err) {
+    console.error('  ❌ Phase 8b:', (err as Error).message);
+    await sleep(3000);
+  }
+
+  // 8c: Eurokey-Toiletten in Coop/Migros-Nähe (Schlüsselkiosk-Konzept)
+  const COOP_MIGROS_EUROKEY_QUERY = `
+[out:json][timeout:120];
+(
+  node["shop"~"supermarket|department_store|mall"]["brand"~"^(Coop|Migros)",i]({BBOX});
+  way["shop"~"supermarket|department_store|mall"]["brand"~"^(Coop|Migros)",i]({BBOX});
+  node["shop"~"supermarket|department_store|mall"]["name"~"^(Coop|Migros)",i]({BBOX});
+  way["shop"~"supermarket|department_store|mall"]["name"~"^(Coop|Migros)",i]({BBOX});
+)->.shops;
+(
+  node["amenity"="toilets"]["centralkey"="eurokey"](around.shops:200);
+  way["amenity"="toilets"]["centralkey"="eurokey"](around.shops:200);
+  node["amenity"="toilets"]["access"="key"](around.shops:200);
+  way["amenity"="toilets"]["access"="key"](around.shops:200);
+);
+out center body;
+`;
+  try {
+    const cmEurokeyItems = await queryOverpass(CH_BBOX, COOP_MIGROS_EUROKEY_QUERY, true);
+    console.log(`  8c Eurokey-Nähe: ${cmEurokeyItems.length} Treffer`);
+    for (const item of cmEurokeyItems) {
+      await upsertToilet(item, systemUserId, counters, 'mall');
+    }
+    await sleep(2000);
+  } catch (err) {
+    console.error('  ❌ Phase 8c:', (err as Error).message);
+    await sleep(3000);
+  }
+
   console.log(`\n✅ OSM-Import abgeschlossen`);
   console.log(`   Importiert/aktualisiert: ${counters.imported}`);
   console.log(`   Übersprungen (privat):   ${counters.skipped}`);

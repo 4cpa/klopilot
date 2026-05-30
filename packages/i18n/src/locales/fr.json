@@ -264,8 +264,8 @@
     "feature_free_desc": "Pas d'abonnement, pas de pub, pas de vente de données. klopilot est et restera gratuit.",
     "feature_private_title": "Discret & sécurisé",
     "feature_private_desc": "Pas de compte nécessaire pour naviguer. Les photos sont stockées sans métadonnées EXIF.",
-    "feature_i18n_title": "Multilingue",
-    "feature_i18n_desc": "Disponible en allemand, français, italien et anglais.",
+    "feature_i18n_title": "10 langues",
+    "feature_i18n_desc": "Disponible en allemand, anglais, français, italien, espagnol, portugais, danois, suédois, norvégien et finnois.",
     "feature_gamification_title": "Contribuer, c'est fun",
     "feature_gamification_desc": "Gagne des points, débloque des badges et monte dans le classement.",
     "how_title": "C'est aussi simple que ça",
@@ -281,7 +281,7 @@
     "stat_free": "Gratuit",
     "stat_ads": "Publicité",
     "stat_rating": "Système d'avis",
-    "stat_available": "Toilettes dans 5 pays"
+    "stat_available": "Pays dans le monde"
   },
   "footer": {
     "tagline": "Gratuit. Sans pub. Pour tout le monde.",

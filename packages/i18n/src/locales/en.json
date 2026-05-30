@@ -264,8 +264,8 @@
     "feature_free_desc": "No subscription, no ads, no data sales. klopilot is and will always be free.",
     "feature_private_title": "Discreet & secure",
     "feature_private_desc": "No account needed to browse. Photos are stored without EXIF metadata.",
-    "feature_i18n_title": "Multilingual",
-    "feature_i18n_desc": "Available in German, French, Italian and English.",
+    "feature_i18n_title": "10 languages",
+    "feature_i18n_desc": "Available in German, English, French, Italian, Spanish, Portuguese, Danish, Swedish, Norwegian and Finnish.",
     "feature_gamification_title": "Fun to contribute",
     "feature_gamification_desc": "Earn points, unlock badges and climb the leaderboard.",
     "how_title": "That's how easy it is",
@@ -281,7 +281,7 @@
     "stat_free": "Free",
     "stat_ads": "Ads",
     "stat_rating": "Rating system",
-    "stat_available": "Available in"
+    "stat_available": "Countries worldwide"
   },
   "footer": {
     "tagline": "Free. No ads. For everyone.",
