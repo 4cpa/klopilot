@@ -8,9 +8,25 @@ import da from './locales/da.json';
 import sv from './locales/sv.json';
 import no from './locales/no.json';
 import fi from './locales/fi.json';
+import nl from './locales/nl.json';
+import is from './locales/is.json';
+import el from './locales/el.json';
 
-export { de, fr, it, en, es, pt, da, sv, no, fi };
-export type Locale = 'de' | 'fr' | 'it' | 'en' | 'es' | 'pt' | 'da' | 'sv' | 'no' | 'fi';
+export { de, fr, it, en, es, pt, da, sv, no, fi, nl, is, el };
+export type Locale =
+  | 'de'
+  | 'fr'
+  | 'it'
+  | 'en'
+  | 'es'
+  | 'pt'
+  | 'da'
+  | 'sv'
+  | 'no'
+  | 'fi'
+  | 'nl'
+  | 'is'
+  | 'el';
 export const SUPPORTED_LOCALES: Locale[] = [
   'de',
   'fr',
@@ -22,6 +38,9 @@ export const SUPPORTED_LOCALES: Locale[] = [
   'sv',
   'no',
   'fi',
+  'nl',
+  'is',
+  'el',
 ];
 export const DEFAULT_LOCALE: Locale = 'de';
 

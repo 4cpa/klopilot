@@ -2,7 +2,7 @@
 
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { de, fr, it, en, es, pt, da, sv, no, fi } from '@klopilot/i18n';
+import { de, fr, it, en, es, pt, da, sv, no, fi, nl, is, el } from '@klopilot/i18n';
 
 const LANG_KEY = 'klo-language';
 
@@ -20,6 +20,9 @@ i18next.use(initReactI18next).init({
     sv: { translation: sv },
     no: { translation: no },
     fi: { translation: fi },
+    nl: { translation: nl },
+    is: { translation: is },
+    el: { translation: el },
   },
   interpolation: { escapeValue: false },
 });

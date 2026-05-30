@@ -1,5 +1,10 @@
 {
-  "tabs": { "map": "Kort", "search": "Søg", "contribute": "Tilføj", "profile": "Profil" },
+  "tabs": {
+    "map": "Kort",
+    "search": "Søg",
+    "contribute": "Tilføj",
+    "profile": "Profil"
+  },
   "search": {
     "title": "Søg",
     "placeholder": "Søg efter et toilet…",
@@ -211,7 +216,11 @@
     "generic": "Ukendt fejl",
     "upload_failed": "Upload mislykkedes"
   },
-  "common": { "cancel": "Annuller", "error": "Fejl", "close": "Luk" },
+  "common": {
+    "cancel": "Annuller",
+    "error": "Fejl",
+    "close": "Luk"
+  },
   "category": {
     "public": "Offentlig",
     "nette_toilette": "Venligt toilet",
@@ -255,8 +264,8 @@
     "feature_free_desc": "Intet abonnement, ingen reklamer, ingen datasalg.",
     "feature_private_title": "Diskret og sikkert",
     "feature_private_desc": "Ingen konto nødvendig for at gennemse.",
-    "feature_i18n_title": "Flersproget",
-    "feature_i18n_desc": "Tilgængelig på dansk og mange andre sprog.",
+    "feature_i18n_title": "13 sprog",
+    "feature_i18n_desc": "Tilgængelig på tysk, engelsk, fransk, italiensk, spansk, portugisisk, dansk, svensk, norsk, finsk, nederlandsk, islandsk og græsk.",
     "feature_gamification_title": "Sjovt at bidrage",
     "feature_gamification_desc": "Tjen point, lås badges op og klatr op på ranglisten.",
     "how_title": "Så enkelt er det",
@@ -289,5 +298,7 @@
     "link_contact": "Kontakt",
     "copyright": "© {{year}} Transivroom Division. Ikke-kommerciel brug tilladt."
   },
-  "legal": { "back": "← Tilbage til forsiden" }
+  "legal": {
+    "back": "← Tilbage til forsiden"
+  }
 }

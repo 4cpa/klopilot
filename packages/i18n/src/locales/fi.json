@@ -1,5 +1,10 @@
 {
-  "tabs": { "map": "Kartta", "search": "Etsi", "contribute": "Lisää", "profile": "Profiili" },
+  "tabs": {
+    "map": "Kartta",
+    "search": "Etsi",
+    "contribute": "Lisää",
+    "profile": "Profiili"
+  },
   "search": {
     "title": "Etsi",
     "placeholder": "Etsi WC:tä…",
@@ -193,7 +198,12 @@
     "go": "Mennään! 🚽",
     "skip": "Ohita"
   },
-  "filter": { "free": "Ilmainen", "accessible": "Esteetön", "radius": "Säde", "shower": "Suihku" },
+  "filter": {
+    "free": "Ilmainen",
+    "accessible": "Esteetön",
+    "radius": "Säde",
+    "shower": "Suihku"
+  },
   "errors": {
     "name_required": "Nimi vaaditaan",
     "email_required": "Sähköposti vaaditaan",
@@ -206,7 +216,11 @@
     "generic": "Tuntematon virhe",
     "upload_failed": "Lataus epäonnistui"
   },
-  "common": { "cancel": "Peruuta", "error": "Virhe", "close": "Sulje" },
+  "common": {
+    "cancel": "Peruuta",
+    "error": "Virhe",
+    "close": "Sulje"
+  },
   "category": {
     "public": "Julkinen",
     "nette_toilette": "Ystävällinen WC",
@@ -250,8 +264,8 @@
     "feature_free_desc": "Ei tilausta, ei mainoksia, ei tietojen myyntiä.",
     "feature_private_title": "Diskreetti ja turvallinen",
     "feature_private_desc": "Selaaminen ei vaadi tiliä.",
-    "feature_i18n_title": "Monikielinen",
-    "feature_i18n_desc": "Saatavilla suomeksi ja monilla muilla kielillä.",
+    "feature_i18n_title": "13 kieltä",
+    "feature_i18n_desc": "Saatavilla saksaksi, englanniksi, ranskaksi, italiaksi, espanjaksi, portugaliksi, tanskaksi, ruotsiksi, norjaksi, suomeksi, hollanniksi, islanniksi ja kreikaksi.",
     "feature_gamification_title": "Hauskaa osallistua",
     "feature_gamification_desc": "Ansaitse pisteitä, avaa merkkejä ja kiipeä tulostaulukossa.",
     "how_title": "Näin yksinkertaista se on",
@@ -284,5 +298,7 @@
     "link_contact": "Yhteystiedot",
     "copyright": "© {{year}} Transivroom Division. Ei-kaupallinen käyttö sallittu."
   },
-  "legal": { "back": "← Takaisin etusivulle" }
+  "legal": {
+    "back": "← Takaisin etusivulle"
+  }
 }

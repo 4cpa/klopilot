@@ -1,5 +1,10 @@
 {
-  "tabs": { "map": "Karta", "search": "Sök", "contribute": "Lägg till", "profile": "Profil" },
+  "tabs": {
+    "map": "Karta",
+    "search": "Sök",
+    "contribute": "Lägg till",
+    "profile": "Profil"
+  },
   "search": {
     "title": "Sök",
     "placeholder": "Sök efter en toalett…",
@@ -193,7 +198,12 @@
     "go": "Kör! 🚽",
     "skip": "Hoppa över"
   },
-  "filter": { "free": "Gratis", "accessible": "Tillgänglig", "radius": "Radie", "shower": "Dusch" },
+  "filter": {
+    "free": "Gratis",
+    "accessible": "Tillgänglig",
+    "radius": "Radie",
+    "shower": "Dusch"
+  },
   "errors": {
     "name_required": "Namn krävs",
     "email_required": "E-post krävs",
@@ -206,7 +216,11 @@
     "generic": "Okänt fel",
     "upload_failed": "Uppladdning misslyckades"
   },
-  "common": { "cancel": "Avbryt", "error": "Fel", "close": "Stäng" },
+  "common": {
+    "cancel": "Avbryt",
+    "error": "Fel",
+    "close": "Stäng"
+  },
   "category": {
     "public": "Offentlig",
     "nette_toilette": "Vänlig toalett",
@@ -250,8 +264,8 @@
     "feature_free_desc": "Inget abonnemang, inga annonser, ingen dataförsäljning.",
     "feature_private_title": "Diskret och säkert",
     "feature_private_desc": "Inget konto behövs för att surfa.",
-    "feature_i18n_title": "Flerspråkig",
-    "feature_i18n_desc": "Tillgänglig på svenska och många andra språk.",
+    "feature_i18n_title": "13 språk",
+    "feature_i18n_desc": "Tillgänglig på tyska, engelska, franska, italienska, spanska, portugisiska, danska, svenska, norska, finska, nederländska, isländska och grekiska.",
     "feature_gamification_title": "Roligt att bidra",
     "feature_gamification_desc": "Tjäna poäng, lås upp märken och klättra på toplistan.",
     "how_title": "Så enkelt är det",
@@ -284,5 +298,7 @@
     "link_contact": "Kontakt",
     "copyright": "© {{year}} Transivroom Division. Icke-kommersiell användning tillåten."
   },
-  "legal": { "back": "← Tillbaka till startsidan" }
+  "legal": {
+    "back": "← Tillbaka till startsidan"
+  }
 }

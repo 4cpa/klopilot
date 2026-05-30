@@ -19,6 +19,9 @@ export const LANG_OPTIONS = [
   { code: 'sv', label: 'Svenska', flag: '🇸🇪', hint: 'SE' },
   { code: 'no', label: 'Norsk', flag: '🇳🇴', hint: 'NO' },
   { code: 'fi', label: 'Suomi', flag: '🇫🇮', hint: 'FI' },
+  { code: 'nl', label: 'Nederlands', flag: '🇳🇱', hint: 'NL · BE' },
+  { code: 'is', label: 'Íslenska', flag: '🇮🇸', hint: 'IS' },
+  { code: 'el', label: 'Ελληνικά', flag: '🇬🇷', hint: 'CY · GR' },
 ] as const;
 
 /** Kompaktes Sprach-Dropdown — wiederverwendbar (Navbar + AppBar) */

@@ -184,6 +184,9 @@ const LANGS = [
   { code: 'sv', label: 'Svenska', flag: '🇸🇪' },
   { code: 'no', label: 'Norsk', flag: '🇳🇴' },
   { code: 'fi', label: 'Suomi', flag: '🇫🇮' },
+  { code: 'nl', label: 'Nederlands', flag: '🇳🇱' },
+  { code: 'is', label: 'Íslenska', flag: '🇮🇸' },
+  { code: 'el', label: 'Ελληνικά', flag: '🇬🇷' },
 ];
 
 /* ── Reusable link row ────────────────────────────────────────────────────── */
