@@ -52,6 +52,30 @@ const REGIONS: Array<{ name: string; bbox: [number, number, number, number] }> =
   { name: 'Luxemburg', bbox: [49.4, 5.7, 50.2, 6.6] as [number, number, number, number] },
   { name: 'Belgien', bbox: [49.5, 2.5, 51.6, 6.5] as [number, number, number, number] },
   { name: 'Niederlande', bbox: [50.7, 3.3, 53.6, 7.3] as [number, number, number, number] },
+
+  // ── Iberische Halbinsel ───────────────────────────────────────────────────────
+  // Portugal: Lissabon, Porto, Faro
+  { name: 'Portugal', bbox: [36.8, -9.6, 42.2, -6.2] as [number, number, number, number] },
+  // Spanien-N: Galicia, Asturien, Kantabrien, País Vasco, Navarra, Aragón, Katalonien, Kastilien-León
+  { name: 'Spanien-N', bbox: [40.0, -9.5, 43.9, 4.4] as [number, number, number, number] },
+  // Spanien-S: Andalusien, Extremadura, Kastilien-La Mancha, Valencia, Murcia, Balearen
+  { name: 'Spanien-S', bbox: [35.9, -9.5, 40.0, 4.4] as [number, number, number, number] },
+
+  // ── Skandinavien ──────────────────────────────────────────────────────────────
+  // Dänemark (inkl. Bornholm): Kopenhagen, Aarhus, Odense
+  { name: 'Dänemark', bbox: [54.5, 8.0, 57.9, 15.3] as [number, number, number, number] },
+  // Schweden-S: Stockholm, Göteborg, Malmö, Uppsala
+  { name: 'Schweden-S', bbox: [55.3, 10.5, 62.5, 24.2] as [number, number, number, number] },
+  // Schweden-N: Sundsvall, Umeå, Luleå, Kiruna
+  { name: 'Schweden-N', bbox: [62.5, 10.5, 69.1, 24.2] as [number, number, number, number] },
+  // Norwegen-S: Oslo, Bergen, Stavanger, Trondheim
+  { name: 'Norwegen-S', bbox: [57.5, 4.5, 63.0, 16.0] as [number, number, number, number] },
+  // Norwegen-N: Bodø, Tromsø, Nordkapp
+  { name: 'Norwegen-N', bbox: [63.0, 4.5, 71.2, 31.5] as [number, number, number, number] },
+  // Finnland-S: Helsinki, Tampere, Turku, Jyväskylä
+  { name: 'Finnland-S', bbox: [59.5, 19.5, 65.5, 31.6] as [number, number, number, number] },
+  // Finnland-N: Oulu, Rovaniemi, Lappland
+  { name: 'Finnland-N', bbox: [65.5, 19.5, 70.5, 31.6] as [number, number, number, number] },
 ];
 
 // ── Transport-Schlüsselwörter (6 Sprachen) ────────────────────────────────────
@@ -584,6 +608,46 @@ out center body;`.trim();
     { name: 'Venezia S. Lucia', lat: 45.4414, lng: 12.3211, r: 500 },
     { name: 'Bologna Centrale', lat: 44.5064, lng: 11.3428, r: 500 },
     { name: 'Genova Piazza Pr.', lat: 44.4113, lng: 8.927, r: 400 },
+    // Italien-M/S
+    { name: 'Roma Termini', lat: 41.9009, lng: 12.5007, r: 700 },
+    { name: 'Firenze S.M.N.', lat: 43.7758, lng: 11.2478, r: 500 },
+    { name: 'Napoli Centrale', lat: 40.8527, lng: 14.2718, r: 600 },
+    { name: 'Palermo Centrale', lat: 38.1125, lng: 13.3439, r: 500 },
+    // Spanien
+    { name: 'Madrid Atocha', lat: 40.4067, lng: -3.6896, r: 700 },
+    { name: 'Madrid Chamartín', lat: 40.4727, lng: -3.6823, r: 500 },
+    { name: 'Barcelona Sants', lat: 41.3791, lng: 2.1403, r: 600 },
+    { name: 'Barcelona Passeig Gr.', lat: 41.3949, lng: 2.1837, r: 400 },
+    { name: 'Valencia Joaquín S.', lat: 39.4657, lng: -0.3773, r: 500 },
+    { name: 'Sevilla Santa Justa', lat: 37.3783, lng: -5.9759, r: 500 },
+    { name: 'Bilbao Abando', lat: 43.2567, lng: -2.9287, r: 400 },
+    { name: 'Málaga M.-Picasso', lat: 36.7121, lng: -4.43, r: 400 },
+    { name: 'Zaragoza Delicias', lat: 41.6559, lng: -0.909, r: 400 },
+    // Portugal
+    { name: 'Lisboa Oriente', lat: 38.768, lng: -9.0989, r: 500 },
+    { name: 'Lisboa S. Apolónia', lat: 38.7134, lng: -9.1222, r: 400 },
+    { name: 'Porto Campanhã', lat: 41.1484, lng: -8.5858, r: 500 },
+    { name: 'Porto S. Bento', lat: 41.1458, lng: -8.6104, r: 400 },
+    // Dänemark
+    { name: 'København H', lat: 55.6729, lng: 12.5653, r: 600 },
+    { name: 'Aarhus', lat: 56.1503, lng: 10.2044, r: 400 },
+    { name: 'Odense', lat: 55.4013, lng: 10.3836, r: 400 },
+    // Schweden
+    { name: 'Stockholm C', lat: 59.3308, lng: 18.0579, r: 600 },
+    { name: 'Göteborg C', lat: 57.7089, lng: 11.9736, r: 500 },
+    { name: 'Malmö C', lat: 55.61, lng: 13.0017, r: 400 },
+    { name: 'Uppsala C', lat: 59.8581, lng: 17.6452, r: 400 },
+    { name: 'Linköping C', lat: 58.4162, lng: 15.6254, r: 400 },
+    // Norwegen
+    { name: 'Oslo S', lat: 59.9109, lng: 10.7525, r: 600 },
+    { name: 'Bergen', lat: 60.391, lng: 5.3331, r: 500 },
+    { name: 'Stavanger', lat: 58.9697, lng: 5.7326, r: 400 },
+    { name: 'Trondheim S', lat: 63.4363, lng: 10.3981, r: 400 },
+    // Finnland
+    { name: 'Helsinki', lat: 60.1713, lng: 24.9413, r: 600 },
+    { name: 'Tampere', lat: 61.4975, lng: 23.7726, r: 400 },
+    { name: 'Turku', lat: 60.4548, lng: 22.2679, r: 400 },
+    { name: 'Oulu', lat: 65.0125, lng: 25.4736, r: 400 },
   ];
 
   // Baue eine Overpass-Abfrage für jeden Bahnhof: alle Toiletten in r Metern
