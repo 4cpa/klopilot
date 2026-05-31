@@ -1,6 +1,9 @@
 'use client';
 
 import { useTranslation } from 'react-i18next';
+import { SUPPORTED_LOCALES } from '@klopilot/i18n';
+
+const LANG_COUNT = SUPPORTED_LOCALES.length;
 
 const FEATURES = [
   {
@@ -123,7 +126,7 @@ export function Features() {
                   marginBottom: 8,
                 }}
               >
-                {t(titleKey)}
+                {t(titleKey, { langCount: LANG_COUNT })}
               </h3>
 
               <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--muted)' }}>{t(descKey)}</p>
