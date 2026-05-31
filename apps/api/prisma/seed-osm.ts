@@ -15,6 +15,7 @@
 import { PrismaClient } from '@prisma/client';
 import { type OsmCategory, resolveCategory } from '../src/common/utils/osm-category';
 import { mapFee } from '../src/common/utils/osm-fee';
+import { reindexMeili } from './reindex-meili';
 
 const prisma = new PrismaClient();
 const DRY_RUN = process.argv.includes('--dry-run');
@@ -799,6 +800,19 @@ out center body;
     });
     console.log(`\n♿ Rollstuhlgerecht: ${wheelchair}`);
     console.log(`🔑 Eurokey: ${eurokey}`);
+  }
+
+  // ── Suchindex aktualisieren ──────────────────────────────────────────────
+  // Der Bulk-Import schreibt nicht in Meili (nur die API tut das pro Toilette).
+  // Ohne diesen Schritt bliebe /search veraltet/leer.
+  if (!DRY_RUN) {
+    console.log('\n── Meilisearch-Reindex ──────────────────────────────');
+    try {
+      const n = await reindexMeili(prisma);
+      console.log(`  ✓ ${n} Toiletten in Meili eingereiht`);
+    } catch (e) {
+      console.error('  ❌ Meili-Reindex fehlgeschlagen:', (e as Error).message);
+    }
   }
 }
 
