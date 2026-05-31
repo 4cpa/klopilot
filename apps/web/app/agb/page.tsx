@@ -94,10 +94,57 @@ export default function AgbPage() {
         angegeben.
       </p>
 
-      <h2>10. Anwendbares Recht</h2>
-      <p>Es gilt Schweizer Recht. Gerichtsstand ist am Sitz des Betreibers.</p>
+      <h2>10. Anwendbares Recht und internationale Nutzer</h2>
+      <p>
+        Diese AGB und die Nutzung der Plattform unterliegen ausschliesslich schweizerischem Recht
+        unter Ausschluss des Kollisionsrechts und des UN-Kaufrechts (CISG). Bei Nutzerinnen und
+        Nutzern, die als Verbraucher in einem anderen Staat ansässig sind, bleiben die zwingenden
+        verbraucherschützenden Bestimmungen ihres Wohnsitzstaates unberührt; schweizerisches Recht
+        gilt insoweit nur, als es diesen zwingenden Schutz nicht verkürzt.
+      </p>
 
-      <h2>11. Kontakt</h2>
+      <h2>11. Gerichtsstand und Streitbeilegung</h2>
+      <p>
+        Ausschliesslicher Gerichtsstand für alle Streitigkeiten aus oder im Zusammenhang mit diesen
+        AGB ist — soweit gesetzlich zulässig — der Sitz des Betreibers in der Schweiz. Zwingende
+        Gerichtsstände zugunsten von Verbrauchern bleiben unberührt.
+      </p>
+      <p>
+        Vor Anrufung eines Gerichts streben die Parteien eine gütliche Einigung an (Kontakt:{' '}
+        <a href="mailto:admin@4cpa.ch">admin@4cpa.ch</a>). Streitigkeiten, die keine
+        Verbraucherstreitigkeiten sind, werden auf Wunsch einer Partei nach den Swiss Rules of
+        International Arbitration des Swiss Arbitration Centre endgültig entschieden; Sitz des
+        Schiedsgerichts ist Zürich, Verfahrenssprache Deutsch. Verbraucher in der EU können zudem
+        die Online-Streitbeilegungs-Plattform der EU-Kommission nutzen:{' '}
+        <a href="https://ec.europa.eu/consumers/odr" rel="noopener noreferrer" target="_blank">
+          ec.europa.eu/consumers/odr
+        </a>
+        .
+      </p>
+
+      <h2>12. Internationale Verfügbarkeit, Sanktionen und Exportkontrolle</h2>
+      <p>
+        Die Plattform richtet sich an ein internationales Publikum, ist jedoch nicht für die Nutzung
+        in Gebieten bestimmt, in denen dies gegen geltendes Recht verstösst. Nutzer sichern zu,
+        anwendbare Sanktions-, Embargo- und Exportkontrollvorschriften (insbesondere der Schweiz,
+        der EU und der UNO) einzuhalten. In von Sanktionen erfassten Gebieten (u. a. Russland,
+        Belarus) wird die Plattform nicht aktiv angeboten.
+      </p>
+
+      <h2>13. Salvatorische Klausel</h2>
+      <p>
+        Sollten einzelne Bestimmungen dieser AGB ganz oder teilweise unwirksam sein oder werden,
+        bleibt die Wirksamkeit der übrigen Bestimmungen unberührt. An die Stelle der unwirksamen
+        Bestimmung tritt eine Regelung, die dem verfolgten wirtschaftlichen Zweck am nächsten kommt.
+      </p>
+
+      <h2>14. Massgebliche Sprachfassung</h2>
+      <p>
+        Massgeblich ist die deutschsprachige Fassung dieser AGB. Übersetzungen dienen nur der
+        besseren Verständlichkeit; bei Widersprüchen geht die deutsche Fassung vor.
+      </p>
+
+      <h2>15. Kontakt</h2>
       <p>
         Fragen zu diesen AGB: <a href="mailto:admin@4cpa.ch">admin@4cpa.ch</a>
       </p>
