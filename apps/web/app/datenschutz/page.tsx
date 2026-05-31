@@ -7,8 +7,10 @@ export default function DatenschutzPage() {
   return (
     <LegalPage title="Datenschutzerklärung">
       <div className="meta">
-        Stand: Mai 2026 · Gültig für klopilot.ch und die klopilot Mobile-App. Rechtsgrundlage:
-        revDSG (Schweiz) und DSGVO (EU).
+        Stand: Mai 2026 · Gültig für klopilot.ch und die klopilot Mobile-App. Rechtsgrundlagen:
+        revDSG (Schweiz), DSGVO/GDPR (EU/EWR) und UK GDPR sowie — für Nutzerinnen und Nutzer
+        ausserhalb dieser Räume — die jeweils anwendbaren nationalen Datenschutzgesetze. Wir wenden
+        weltweit mindestens das Schutzniveau von revDSG und DSGVO an.
       </div>
 
       <h2>1. Verantwortliche Stelle</h2>
@@ -52,7 +54,12 @@ export default function DatenschutzPage() {
         <li>Bewertungen sind mit deinem Benutzerkonto verknüpft.</li>
       </ul>
 
-      <h2>3. Zweck der Datenverarbeitung</h2>
+      <h2>3. Zweck und Rechtsgrundlage der Datenverarbeitung</h2>
+      <p>
+        Rechtsgrundlage der Verarbeitung sind Art. 6 Abs. 1 DSGVO (Vertragserfüllung, berechtigtes
+        Interesse, ggf. Einwilligung) bzw. die entsprechenden Bestimmungen des revDSG. Verarbeitet
+        wird zu folgenden Zwecken:
+      </p>
       <ul>
         <li>Betrieb und Verbesserung der Plattform</li>
         <li>Authentifizierung und Sicherheit</li>
@@ -101,7 +108,32 @@ export default function DatenschutzPage() {
         von 30 Tagen.
       </p>
 
-      <h2>8. Kontakt Datenschutz</h2>
+      <h2>8. Internationale Datenübermittlung</h2>
+      <p>
+        Unsere Server stehen in der Schweiz und in Deutschland (EU). Die Plattform ist international
+        zugänglich. Werden Daten von Nutzerinnen und Nutzern ausserhalb der Schweiz bzw. des EWR
+        verarbeitet, erfolgt eine Übermittlung an unsere Auftragsverarbeiter auf Grundlage der
+        EU-Standardvertragsklauseln (SCC) bzw. eines Angemessenheitsbeschlusses, soweit ein solcher
+        besteht. Unabhängig vom Aufenthaltsort der Nutzer wenden wir durchgängig das Schutzniveau
+        von revDSG und DSGVO als Mindeststandard an.
+      </p>
+      <p>
+        Die in der App dargestellten Toiletten-Standorte beruhen auf öffentlich zugänglichen
+        Geodaten (u. a. OpenStreetMap, lizenziert unter ODbL) und enthalten keine personenbezogenen
+        Daten Dritter.
+      </p>
+
+      <h2>9. Nutzerinnen und Nutzer ausserhalb der Schweiz und der EU</h2>
+      <p>
+        klopilot richtet sich an ein internationales Publikum. Personen mit Wohnsitz ausserhalb der
+        Schweiz/EU geniessen denselben Datenschutz-Mindeststandard. Zwingende Rechte nach dem
+        jeweils lokal anwendbaren Datenschutzrecht (z. B. UK GDPR oder die nationalen Gesetze in der
+        Ukraine, den Balkanstaaten sowie den Mittelmeer-Anrainerstaaten) bleiben unberührt und
+        können zusätzlich geltend gemacht werden. Regionspezifische Anfragen richte unter Angabe
+        deines Wohnsitzstaates an <a href="mailto:admin@4cpa.ch">admin@4cpa.ch</a>.
+      </p>
+
+      <h2>10. Kontakt Datenschutz</h2>
       <p>
         Bei Fragen zum Datenschutz: <a href="mailto:admin@4cpa.ch">admin@4cpa.ch</a>
       </p>
