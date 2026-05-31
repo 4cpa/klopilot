@@ -48,10 +48,25 @@ export function useGeoLocation() {
       setError('Geolocation nicht verfügbar');
       return;
     }
+    const onOk = (p: GeolocationPosition) => setPos([p.coords.longitude, p.coords.latitude]);
+
+    // Erst grobe, schnelle Ortung (WLAN/IP — funktioniert auch ohne GPS, z. B.
+    // auf Desktops). Bei Fehler/Timeout ein Versuch mit hoher Genauigkeit.
     navigator.geolocation.getCurrentPosition(
-      (p) => setPos([p.coords.longitude, p.coords.latitude]),
-      () => setError('Standort nicht freigegeben'),
-      { enableHighAccuracy: true, timeout: 8000 },
+      onOk,
+      () => {
+        navigator.geolocation.getCurrentPosition(
+          onOk,
+          (e) =>
+            setError(
+              e.code === e.PERMISSION_DENIED
+                ? 'Standort nicht freigegeben'
+                : 'Standort nicht verfügbar',
+            ),
+          { enableHighAccuracy: true, timeout: 10000 },
+        );
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 },
     );
   }, []);
 
