@@ -140,6 +140,10 @@ const ACTIVE_REGIONS = REGIONS.filter((r) => regionMatches(r.name));
 const EXCLUDE_BBOXES: Array<[number, number, number, number]> = [
   // [south, west, north, east]
   [30.0, 7.5, 37.4, 11.6], // Tunesien (Südrand Italien-S); Lampedusa/Pantelleria (lng>12) bleiben
+  // Türkisches Festland (Ostrand der Griechenland-Süd-Bbox). Sorgfältig so
+  // gewählt, dass die grossen griechischen Inseln draussen bleiben:
+  [38.0, 26.85, 39.5, 28.5], // Izmir/Manisa — Lesbos/Chios (lng<26.85) bleiben
+  [36.6, 27.2, 38.0, 28.6], // Muğla/Bodrum/Marmaris — Kos/Samos (lng<27.2), Rhodos (lat<36.6) bleiben
 ];
 // ISO-3166-1-alpha-2 nicht-europäischer Länder (via OSM addr:country)
 const NON_EU_COUNTRIES = new Set([

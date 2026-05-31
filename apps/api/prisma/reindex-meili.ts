@@ -37,6 +37,11 @@ export async function reindexMeili(prisma: PrismaClient): Promise<number> {
   await idx.updateSearchableAttributes(['name', 'address']);
   await idx.updateFilterableAttributes(['category']);
 
+  // Voller Resync: zuerst leeren, damit gelöschte/ausgeschlossene Toiletten
+  // (z. B. Nicht-EU-Spillover) auch aus dem Suchindex verschwinden, nicht nur
+  // aus Postgres. Meili verarbeitet die Tasks der Reihe nach (leeren → neu).
+  await idx.deleteAllDocuments();
+
   let skip = 0;
   let total = 0;
   for (;;) {
