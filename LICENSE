@@ -18,3 +18,22 @@ ist gestattet, sofern folgende Bedingungen erfüllt sind:
 DIESE SOFTWARE WIRD OHNE MÄNGELGEWÄHR UND OHNE JEGLICHE AUSDRÜCKLICHE ODER
 STILLSCHWEIGENDE GEWÄHRLEISTUNG BEREITGESTELLT. DIE AUTOREN ÜBERNEHMEN KEINE
 HAFTUNG FÜR SCHÄDEN, DIE DURCH DIE VERWENDUNG DIESER SOFTWARE ENTSTEHEN.
+
+---
+
+DRITTANBIETER-DATEN UND -DIENSTE
+
+Diese Lizenz gilt für den Quellcode von klopilot.ch. Sie erstreckt sich NICHT
+auf Daten und Dienste Dritter, die jeweils eigenen Lizenzen unterliegen:
+
+1. Toiletten-Standortdaten stammen teilweise aus OpenStreetMap und sind
+   © OpenStreetMap-Mitwirkende, lizenziert unter der Open Database License
+   (ODbL) 1.0 — https://www.openstreetmap.org/copyright. Wer abgeleitete
+   Datenbanken verbreitet, muss die ODbL-Bedingungen (Attribution, Share-Alike)
+   einhalten.
+
+2. Kartenkacheln werden von MapTiler bzw. Esri unter deren jeweiligen
+   Nutzungsbedingungen bezogen.
+
+3. Nutzergenerierte Inhalte (Bewertungen, Fotos) verbleiben bei ihren
+   Urhebern; siehe AGB und Datenschutzerklärung auf klopilot.ch.
