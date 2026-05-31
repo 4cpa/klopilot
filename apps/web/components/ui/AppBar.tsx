@@ -37,6 +37,7 @@ export function AppBar({
 
   return (
     <header
+      role="banner"
       className="absolute top-0 left-0 right-0 z-20 px-3 py-2.5 flex items-center gap-2"
       style={{ background: 'transparent' }}
     >

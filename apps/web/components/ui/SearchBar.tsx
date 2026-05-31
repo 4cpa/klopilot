@@ -183,6 +183,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
         <ul
           role="listbox"
           aria-label="Suchergebnisse"
+          data-testid="search-results"
           className="absolute top-full mt-2 left-0 right-0 rounded-xl overflow-hidden z-50"
           style={{
             background: 'var(--surface)',
