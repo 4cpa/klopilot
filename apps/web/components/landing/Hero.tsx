@@ -130,7 +130,7 @@ export function Hero() {
           marginBottom: 32,
         }}
       >
-        🌸 Community-Toiletten-Guide · klopilot.ch
+        🌸 {t('landing.hero_badge')} · klopilot.ch
       </div>
 
       {/* Headline */}

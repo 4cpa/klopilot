@@ -119,7 +119,10 @@ export function LangDropdown({ compact = false }: { compact?: boolean }) {
             borderRadius: 10,
             boxShadow: '0 8px 28px rgba(15,23,42,0.16)',
             zIndex: 200,
-            overflow: 'hidden',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            maxHeight: 'min(70vh, 440px)',
+            overscrollBehavior: 'contain',
           }}
         >
           {LANG_OPTIONS.map((opt) => {
@@ -340,7 +343,7 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile dropdown */}
+      {/* Mobile dropdown — scrollbar, damit alle Sprachen erreichbar sind */}
       {menuOpen && (
         <div
           style={{
@@ -350,6 +353,9 @@ export function Navbar() {
             display: 'flex',
             flexDirection: 'column',
             gap: 8,
+            maxHeight: 'calc(100dvh - 64px)',
+            overflowY: 'auto',
+            WebkitOverflowScrolling: 'touch',
           }}
         >
           {[
@@ -385,9 +391,19 @@ export function Navbar() {
                 marginBottom: 8,
               }}
             >
-              Sprache / Langue / Lingua
+              Sprache / Langue / Lingua · {LANG_OPTIONS.length}
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: 8,
+                maxHeight: '46dvh',
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                paddingRight: 2,
+              }}
+            >
               {LANG_OPTIONS.map((opt) => {
                 const isActive = currentCode === opt.code;
                 return (
