@@ -20,6 +20,18 @@ import { reindexMeili } from './reindex-meili';
 const prisma = new PrismaClient();
 const DRY_RUN = process.argv.includes('--dry-run');
 
+// --only=Name1,Name2 → nur passende Regionen importieren (Substring, case-insensitive).
+// Damit lässt sich gezielt eine Region nachimportieren (z. B. --only=Griechenland),
+// ohne den ganzen Europa-Lauf. Die globalen Phasen 2/3/7/8 (Eurokey/Nette/HBf/Coop)
+// werden dann übersprungen.
+const ONLY = (process.argv.find((a) => a.startsWith('--only=')) ?? '')
+  .replace('--only=', '')
+  .split(',')
+  .map((s) => s.trim().toLowerCase())
+  .filter(Boolean);
+const regionMatches = (name: string) =>
+  ONLY.length === 0 || ONLY.some((o) => name.toLowerCase().includes(o));
+
 // ── Bounding-Boxes ────────────────────────────────────────────────────────────
 // Format: [south, west, north, east]
 const REGIONS: Array<{ name: string; bbox: [number, number, number, number] }> = [
@@ -105,7 +117,51 @@ const REGIONS: Array<{ name: string; bbox: [number, number, number, number] }> =
   { name: 'Azoren', bbox: [36.9, -31.3, 39.9, -24.8] as [number, number, number, number] },
   // Korsika (FR): Ajaccio, Bastia
   { name: 'Korsika', bbox: [41.3, 8.5, 43.1, 9.6] as [number, number, number, number] },
+
+  // ── Griechenland (Festland + Inseln: Athen, Thessaloniki, Kreta, Rhodos …) ───
+  // Festland/Peloponnes + Ägäis bis Dodekanes; Kreta im Süden (ab ~34.8°N).
+  {
+    name: 'Griechenland-Festland',
+    bbox: [37.0, 19.3, 41.8, 26.6] as [number, number, number, number],
+  },
+  {
+    name: 'Griechenland-Süd/Inseln',
+    bbox: [34.7, 22.0, 39.4, 28.4] as [number, number, number, number],
+  },
 ];
+
+// Aktive Regionen unter Berücksichtigung von --only (Phasen 1/4/5/6).
+const ACTIVE_REGIONS = REGIONS.filter((r) => regionMatches(r.name));
+
+// ── Nicht-europäische Treffer ausschliessen ──────────────────────────────────
+// Rechteckige Import-Bboxen ragen an den Rändern in Nachbarländer (z. B. der
+// Südrand der Italien-Bbox nach Tunesien). Solche Toiletten werden übersprungen.
+// EU-Aussengebiete (Kanaren, Zypern, …) bleiben bewusst erhalten.
+const EXCLUDE_BBOXES: Array<[number, number, number, number]> = [
+  // [south, west, north, east]
+  [30.0, 7.5, 37.4, 11.6], // Tunesien (Südrand Italien-S); Lampedusa/Pantelleria (lng>12) bleiben
+];
+// ISO-3166-1-alpha-2 nicht-europäischer Länder (via OSM addr:country)
+const NON_EU_COUNTRIES = new Set([
+  'TN',
+  'MA',
+  'DZ',
+  'LY',
+  'EG',
+  'TR',
+  'SY',
+  'LB',
+  'IL',
+  'PS',
+  'JO',
+  'IQ',
+  'SA',
+]);
+function isNonEuropeanLocation(lat: number, lng: number, tags: Record<string, string>): boolean {
+  const cc = (tags['addr:country'] ?? '').trim().toUpperCase();
+  if (cc.length === 2 && NON_EU_COUNTRIES.has(cc)) return true;
+  return EXCLUDE_BBOXES.some(([s, w, n, e]) => lat >= s && lat <= n && lng >= w && lng <= e);
+}
 
 // ── Adresse aus OSM-Tags ──────────────────────────────────────────────────────
 function buildAddress(tags: Record<string, string>): string | undefined {
@@ -226,6 +282,12 @@ async function upsertToilet(
     return;
   }
 
+  // Ausserhalb Europas (Bbox-Ränder ragen in Nachbarländer) → überspringen
+  if (isNonEuropeanLocation(item.lat, item.lng, tags)) {
+    counters.skipped++;
+    return;
+  }
+
   try {
     await persistToilet(item, systemUserId, forceCat);
     counters.imported++;
@@ -332,7 +394,7 @@ async function main() {
 
   // ── Phase 1: Standard-Import (alle amenity=toilets) ──────────────────────────
   console.log('\n── Phase 1: Standard-Toiletten ──────────────────────');
-  for (const region of REGIONS) {
+  for (const region of ACTIVE_REGIONS) {
     console.log(`\n📍 Region: ${region.name}`);
     try {
       const items = await queryOverpass(region.bbox);
@@ -369,7 +431,7 @@ async function main() {
     'way["amenity"="toilets"]["centralkey"="eurokey"]({BBOX});' +
     'node["amenity"="toilets"]["key:eurokey"="yes"]({BBOX});';
 
-  for (const region of EUROKEY_REGIONS) {
+  for (const region of ONLY.length ? [] : EUROKEY_REGIONS) {
     console.log(`\n♿ Eurokey-Region: ${region.name}`);
     try {
       const items = await queryOverpass(region.bbox, EUROKEY_FILTER);
@@ -391,16 +453,24 @@ async function main() {
     'way[~"^(toilets:scheme|nette_toilette)$"~"nette_toilette|yes"]({BBOX});' +
     'node["amenity"]["operator"~"nette.toilette",i]({BBOX});';
 
-  for (const region of [
-    { name: 'CH-NetteToi', bbox: [45.8, 5.9, 47.8, 10.5] as [number, number, number, number] },
-    { name: 'DE-S-NetteToi', bbox: [47.2, 5.8, 51.0, 15.1] as [number, number, number, number] },
-    { name: 'DE-N-NetteToi', bbox: [51.0, 5.8, 55.1, 15.1] as [number, number, number, number] },
-    { name: 'AT-NetteToi', bbox: [46.3, 9.5, 48.8, 17.2] as [number, number, number, number] },
-    { name: 'NL-NetteToi', bbox: [50.7, 3.3, 53.6, 7.3] as [number, number, number, number] },
-    { name: 'BE-NetteToi', bbox: [49.5, 2.5, 51.6, 6.5] as [number, number, number, number] },
-    { name: 'LU-NetteToi', bbox: [49.4, 5.7, 50.2, 6.6] as [number, number, number, number] },
-    { name: 'FR-NetteToi', bbox: [41.3, -5.5, 51.5, 9.6] as [number, number, number, number] },
-  ]) {
+  for (const region of ONLY.length
+    ? []
+    : [
+        { name: 'CH-NetteToi', bbox: [45.8, 5.9, 47.8, 10.5] as [number, number, number, number] },
+        {
+          name: 'DE-S-NetteToi',
+          bbox: [47.2, 5.8, 51.0, 15.1] as [number, number, number, number],
+        },
+        {
+          name: 'DE-N-NetteToi',
+          bbox: [51.0, 5.8, 55.1, 15.1] as [number, number, number, number],
+        },
+        { name: 'AT-NetteToi', bbox: [46.3, 9.5, 48.8, 17.2] as [number, number, number, number] },
+        { name: 'NL-NetteToi', bbox: [50.7, 3.3, 53.6, 7.3] as [number, number, number, number] },
+        { name: 'BE-NetteToi', bbox: [49.5, 2.5, 51.6, 6.5] as [number, number, number, number] },
+        { name: 'LU-NetteToi', bbox: [49.4, 5.7, 50.2, 6.6] as [number, number, number, number] },
+        { name: 'FR-NetteToi', bbox: [41.3, -5.5, 51.5, 9.6] as [number, number, number, number] },
+      ]) {
     console.log(`\n🤝 Nette Toilette Region: ${region.name}`);
     try {
       const items = await queryOverpass(region.bbox, NETTE_FILTER);
@@ -423,7 +493,7 @@ async function main() {
     'node["amenity"="toilets"][~"^location$"~"station|airport|railway|transit",i]({BBOX});' +
     'way["amenity"="toilets"][~"^location$"~"station|airport|railway|transit",i]({BBOX});';
 
-  for (const region of REGIONS) {
+  for (const region of ACTIVE_REGIONS) {
     console.log(`\n🚉 Bahnhofs-Region: ${region.name}`);
     try {
       const items = await queryOverpass(region.bbox, STATION_FILTER);
@@ -457,7 +527,7 @@ async function main() {
 );
 out center body;`.trim();
 
-  for (const region of REGIONS) {
+  for (const region of ACTIVE_REGIONS) {
     console.log(`\n🚉 Station-Bereich: ${region.name}`);
     try {
       const items = await queryOverpass(region.bbox, STATION_AREA_QUERY, true);
@@ -489,7 +559,7 @@ out center body;`.trim();
 );
 out center body;`.trim();
 
-  for (const region of REGIONS) {
+  for (const region of ACTIVE_REGIONS) {
     console.log(`\n🏬 Mall-Bereich: ${region.name}`);
     try {
       const items = await queryOverpass(region.bbox, MALL_AREA_QUERY, true);
@@ -656,7 +726,7 @@ out center body;`.trim();
   ];
 
   // Baue eine Overpass-Abfrage für jeden Bahnhof: alle Toiletten in r Metern
-  for (const station of MAJOR_STATIONS) {
+  for (const station of ONLY.length ? [] : MAJOR_STATIONS) {
     const r = station.r;
     const query = `
 [out:json][timeout:30];
@@ -688,30 +758,32 @@ out center body;`.trim();
   }
 
   // ── Phase 8: Coop/Migros CH (Schweizer Grossverteiler) ──────────────────────
-  console.log('\n── Phase 8: Coop/Migros CH ───────────────────────────');
-  const CH_BBOX: [number, number, number, number] = [45.8, 5.9, 47.8, 10.5];
+  // Schweiz-spezifisch → bei --only übersprungen.
+  if (!ONLY.length) {
+    console.log('\n── Phase 8: Coop/Migros CH ───────────────────────────');
+    const CH_BBOX: [number, number, number, number] = [45.8, 5.9, 47.8, 10.5];
 
-  // 8a: Toiletten die explizit Coop/Migros als Operator nennen.
-  // Reine Statement-Liste (wie EUROKEY_FILTER) — queryOverpass kapselt sie selbst
-  // in [out:json];(…);out center body;. KEINE eigenen Klammern / kein out hier,
-  // sonst entsteht doppeltes "out" → Overpass-400.
-  const COOP_MIGROS_OP_FILTER =
-    'node["amenity"="toilets"]["operator"~"^(Coop|Migros)",i]({BBOX});' +
-    'way["amenity"="toilets"]["operator"~"^(Coop|Migros)",i]({BBOX});';
-  try {
-    const cmOpItems = await queryOverpass(CH_BBOX, COOP_MIGROS_OP_FILTER);
-    console.log(`  8a Operator-Tag: ${cmOpItems.length} Treffer`);
-    for (const item of cmOpItems) {
-      await upsertToilet(item, systemUserId, counters, 'mall');
+    // 8a: Toiletten die explizit Coop/Migros als Operator nennen.
+    // Reine Statement-Liste (wie EUROKEY_FILTER) — queryOverpass kapselt sie selbst
+    // in [out:json];(…);out center body;. KEINE eigenen Klammern / kein out hier,
+    // sonst entsteht doppeltes "out" → Overpass-400.
+    const COOP_MIGROS_OP_FILTER =
+      'node["amenity"="toilets"]["operator"~"^(Coop|Migros)",i]({BBOX});' +
+      'way["amenity"="toilets"]["operator"~"^(Coop|Migros)",i]({BBOX});';
+    try {
+      const cmOpItems = await queryOverpass(CH_BBOX, COOP_MIGROS_OP_FILTER);
+      console.log(`  8a Operator-Tag: ${cmOpItems.length} Treffer`);
+      for (const item of cmOpItems) {
+        await upsertToilet(item, systemUserId, counters, 'mall');
+      }
+      await sleep(2000);
+    } catch (err) {
+      console.error('  ❌ Phase 8a:', (err as Error).message);
+      await sleep(3000);
     }
-    await sleep(2000);
-  } catch (err) {
-    console.error('  ❌ Phase 8a:', (err as Error).message);
-    await sleep(3000);
-  }
 
-  // 8b: Toiletten in/um Coop/Migros-Läden (Bereichsabfrage, 150 m)
-  const COOP_MIGROS_AREA_QUERY = `
+    // 8b: Toiletten in/um Coop/Migros-Läden (Bereichsabfrage, 150 m)
+    const COOP_MIGROS_AREA_QUERY = `
 [out:json][timeout:180];
 (
   node["shop"~"supermarket|department_store|mall"]["brand"~"^(Coop|Migros)",i]({BBOX});
@@ -727,20 +799,20 @@ out center body;`.trim();
 );
 out center body;
 `;
-  try {
-    const cmAreaItems = await queryOverpass(CH_BBOX, COOP_MIGROS_AREA_QUERY, true);
-    console.log(`  8b Bereichsabfrage 150m: ${cmAreaItems.length} Treffer`);
-    for (const item of cmAreaItems) {
-      await upsertToilet(item, systemUserId, counters, 'mall');
+    try {
+      const cmAreaItems = await queryOverpass(CH_BBOX, COOP_MIGROS_AREA_QUERY, true);
+      console.log(`  8b Bereichsabfrage 150m: ${cmAreaItems.length} Treffer`);
+      for (const item of cmAreaItems) {
+        await upsertToilet(item, systemUserId, counters, 'mall');
+      }
+      await sleep(2000);
+    } catch (err) {
+      console.error('  ❌ Phase 8b:', (err as Error).message);
+      await sleep(3000);
     }
-    await sleep(2000);
-  } catch (err) {
-    console.error('  ❌ Phase 8b:', (err as Error).message);
-    await sleep(3000);
-  }
 
-  // 8c: Eurokey-Toiletten in Coop/Migros-Nähe (Schlüsselkiosk-Konzept)
-  const COOP_MIGROS_EUROKEY_QUERY = `
+    // 8c: Eurokey-Toiletten in Coop/Migros-Nähe (Schlüsselkiosk-Konzept)
+    const COOP_MIGROS_EUROKEY_QUERY = `
 [out:json][timeout:120];
 (
   node["shop"~"supermarket|department_store|mall"]["brand"~"^(Coop|Migros)",i]({BBOX});
@@ -756,17 +828,18 @@ out center body;
 );
 out center body;
 `;
-  try {
-    const cmEurokeyItems = await queryOverpass(CH_BBOX, COOP_MIGROS_EUROKEY_QUERY, true);
-    console.log(`  8c Eurokey-Nähe: ${cmEurokeyItems.length} Treffer`);
-    for (const item of cmEurokeyItems) {
-      await upsertToilet(item, systemUserId, counters, 'mall');
+    try {
+      const cmEurokeyItems = await queryOverpass(CH_BBOX, COOP_MIGROS_EUROKEY_QUERY, true);
+      console.log(`  8c Eurokey-Nähe: ${cmEurokeyItems.length} Treffer`);
+      for (const item of cmEurokeyItems) {
+        await upsertToilet(item, systemUserId, counters, 'mall');
+      }
+      await sleep(2000);
+    } catch (err) {
+      console.error('  ❌ Phase 8c:', (err as Error).message);
+      await sleep(3000);
     }
-    await sleep(2000);
-  } catch (err) {
-    console.error('  ❌ Phase 8c:', (err as Error).message);
-    await sleep(3000);
-  }
+  } // Ende Phase 8 (--only-Gate)
 
   console.log(`\n✅ OSM-Import abgeschlossen`);
   console.log(`   Importiert/aktualisiert: ${counters.imported}`);
