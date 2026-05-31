@@ -103,17 +103,17 @@ function buildClusterElement(count: number, label: string): HTMLDivElement {
   el.innerHTML = `
     <div style="
       position:absolute;width:${size}px;height:${size}px;border-radius:50%;
-      background:rgba(45,168,79,0.10);
+      background:rgba(45,168,79,0.05);
     "></div>
     <div style="
       position:relative;width:${size - 10}px;height:${size - 10}px;border-radius:50%;
-      background:rgba(45,168,79,0.50);
-      border:1.5px solid rgba(255,255,255,0.7);
-      box-shadow:0 1px 6px rgba(0,0,0,.25);
+      background:rgba(45,168,79,0.25);
+      border:1.5px solid rgba(255,255,255,0.55);
+      box-shadow:0 1px 4px rgba(0,0,0,.18);
       display:flex;align-items:center;justify-content:center;
       color:white;font-family:Inter,sans-serif;font-weight:800;
       font-size:${count < 200 ? 12 : 14}px;line-height:1;
-      text-shadow:0 1px 3px rgba(0,0,0,.6);
+      text-shadow:0 1px 3px rgba(0,0,0,.8);
     ">${label}</div>`;
   return el;
 }
