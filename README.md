@@ -20,7 +20,7 @@ Community-Plattform zur Bewertung öffentlich zugänglicher Toiletten — kosten
 | Magic-Link + OAuth Login                            |  ✓  |   ✓    |
 | Cross-Device Magic-Link Polling                     |  ✓  |   —    |
 | Dark Mode / Light / System                          |  ✓  |   ✓    |
-| i18n (DE/FR/IT/EN)                                  |  ✓  |   ✓    |
+| i18n (31 Sprachen, inkl. RTL Arabisch/Hebräisch)    |  ✓  |   ✓    |
 | Karten-Filter (Gratis, Barrierefrei, Kategorie)     |  ✓  |   ✓    |
 | Toilet direkt per Karten-Klick hinzufügen           |  ✓  |   —    |
 | Admin-Panel (Moderation, Verwaltung)                |  ✓  |   —    |
@@ -129,7 +129,7 @@ klopilot/
 │   └── mobile/                 # Expo React Native
 ├── packages/
 │   ├── shared-types/           # Zod-Schemas, DTOs, gemeinsame TS-Typen
-│   ├── i18n/                   # Übersetzungen (DE/FR/IT/EN)
+│   ├── i18n/                   # Übersetzungen (31 Sprachen, inkl. RTL)
 │   └── config/                 # ESLint, tsconfig, prettier
 ├── infra/
 │   ├── docker-compose.yml      # Lokale Infrastruktur
@@ -140,7 +140,10 @@ klopilot/
 │   ├── DESIGN.md               # Design-Tokens, Farben, Typografie
 │   ├── ROADMAP.md              # Feature-Phasen P1–P4
 │   ├── MAINTENANCE.md          # Wartung & Betrieb
+│   ├── MONETIZATION.md         # Geschäftsmodell (B2B-only)
+│   ├── INTERNATIONALIZATION.md # i18n: 31 Sprachen, RTL, Sprache hinzufügen
 │   ├── TESTING.md              # Test-Strategie & Anleitung
+│   ├── adr/                    # Architecture Decision Records
 │   └── api/openapi.yaml        # OpenAPI-Spec
 ├── .github/
 │   ├── workflows/              # CI + Release + Deploy
@@ -264,4 +267,8 @@ Sicherheitslücken bitte **nicht** als öffentliches Issue melden, sondern vertr
 ## Lizenz
 
 Copyright © 2026 Transivroom Division. Alle Rechte vorbehalten.  
-Nicht-kommerzielle Nutzung gestattet mit Quellenangabe.
+Nicht-kommerzielle Nutzung gestattet mit Quellenangabe — vollständige Bedingungen in [LICENSE.md](./LICENSE.md).
+
+**Drittanbieter-Daten:** Ein Teil der Toiletten-Standorte stammt aus OpenStreetMap
+(© OpenStreetMap-Mitwirkende, [ODbL](https://www.openstreetmap.org/copyright)).
+Kartenkacheln von MapTiler/Esri unterliegen deren Bedingungen.

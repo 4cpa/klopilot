@@ -10,7 +10,6 @@ Versionierung nach [Semantic Versioning](https://semver.org/).
 
 _Nächste geplante Features (P2/P3):_
 
-- i18n: vollständige Übersetzungen FR/IT/EN für alle neuen UI-Texte
 - Mobile: Admin-Panel (Foto-Moderation, Toiletten-Verwaltung)
 - Mobile: EAS Build + OTA-Updates einrichten
 - Push-Benachrichtigungen: Foto genehmigt / Bewertung erhalten
@@ -18,6 +17,56 @@ _Nächste geplante Features (P2/P3):_
 - Privat-Toiletten: Einladungsflow Web
 - Public API: öffentliche Dokumentation + API-Keys
 - DNS: `minio.klopilot.ch` + `minio-api.klopilot.ch` A-Records setzen
+
+---
+
+## [0.6.0] — 2026-06-01
+
+### Added
+
+**Internationalisierung — 31 Sprachen (inkl. RTL)**
+
+- 18 neue Locales: Polnisch, Tschechisch, Slowakisch, Ungarisch, Rumänisch,
+  Bulgarisch, Estnisch, Lettisch, Litauisch, Ukrainisch, Mazedonisch,
+  Slowenisch, Kroatisch, Serbisch, Bosnisch, Albanisch sowie **Arabisch** und
+  **Hebräisch** — damit 31 Sprachen gesamt
+- Rechts-nach-links-Darstellung (RTL) für Arabisch/Hebräisch: `RTL_LOCALES`-Export,
+  `<html dir/lang>` wird nach der Hydration im `I18nProvider` gesetzt
+- Teilbare Vorschaulinks per `?lang=`-Query (z. B. `klopilot.ch/?lang=uk`)
+- Sprachenzahl auf der Landing-Page dynamisch aus `SUPPORTED_LOCALES.length`
+  (Feature-Karte „{{langCount}} Sprachen")
+
+**Daten — Europaweiter + mediterraner OSM-Import**
+
+- Seed erweitert auf gesamten Balkan, Mittel-/Osteuropa, Baltikum und die
+  Ukraine (mit bewusstem Abstand zu Russland/Belarus) sowie die Mittelmeer-
+  Küstenregionen (Marokko, Algerien, Tunesien, Libyen, Ägypten, Libanon, Israel)
+- `--only`-Filter (Substring) für gezielten Nachimport einzelner Regionen
+- Meilisearch-Reindex in den Seed-Lauf gebündelt (Voll-Resync, ~167 000 Toiletten)
+
+**Landing-Page & Hilfe**
+
+- Hero-Statistik „39 Länder in Europa"; Hero-Badge „Community-Toiletten-Guide"
+  ist nun übersetzbar (`landing.hero_badge`, alle 31 Sprachen)
+- Hilfe-Overlay um „Internationale Abdeckung" und „Sprache wählen" erweitert
+- Sprach-Auswahl in Navbar (Desktop-Dropdown) und Hamburger-Menü scrollbar —
+  alle 31 Sprachen erreichbar
+
+### Changed
+
+- **Hosting auf Infomaniak (CH)** korrigiert: Impressum (neuer Hosting-Abschnitt),
+  Datenschutz (§4 Auftragsverarbeiter, §8 Angemessenheitsbeschluss CH statt
+  Server in DE), sowie Doku (SECURITY, MAINTENANCE, DEPLOYMENT, README, …)
+- AGB international gehärtet: anwendbares Recht, Gerichtsstand/Schiedsklausel,
+  Sanktionen/Exportkontrolle, salvatorische Klausel, massgebliche Sprachfassung
+- Datenschutz: revDSG/DSGVO/UK-GDPR als weltweiter Mindeststandard, ODbL-Hinweis
+
+### Tests & Docs
+
+- i18n-Integritätstest (`apps/api/src/common/i18n-locales.spec.ts`): jede der 31
+  Locales muss deckungsgleiche Schlüssel und `{{platzhalter}}` wie `de.json` haben
+- Neue Doku `docs/INTERNATIONALIZATION.md`, erste ADRs unter `docs/adr/`
+- LICENSE/LICENSE.md um Drittanbieter-/ODbL-Attribution ergänzt
 
 ---
 

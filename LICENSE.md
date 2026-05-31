@@ -44,6 +44,23 @@ HAFTUNG FÜR SCHÄDEN, DIE DURCH DIE VERWENDUNG DIESER SOFTWARE ENTSTEHEN.
 
 ---
 
+## Drittanbieter-Daten und -Dienste
+
+Diese Lizenz gilt für den **Quellcode** von klopilot.ch. Sie erstreckt sich
+**nicht** auf Daten und Dienste Dritter, die jeweils eigenen Lizenzen unterliegen:
+
+| Quelle                            | Lizenz / Bedingungen                                                                                                  |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **OpenStreetMap** (Standorte)     | © OpenStreetMap-Mitwirkende, [ODbL 1.0](https://www.openstreetmap.org/copyright) — Attribution + Share-Alike          |
+| **MapTiler / Esri** (Kacheln)     | Jeweilige Nutzungsbedingungen der Anbieter                                                                            |
+| **Nutzerinhalte** (Reviews/Fotos) | Verbleiben bei den Urhebern — siehe [AGB](https://klopilot.ch/agb) und [Datenschutz](https://klopilot.ch/datenschutz) |
+
+Ein Teil der Toiletten-Standorte wird per OSM-Import (`apps/api/prisma/seed-osm.ts`)
+eingespielt. Wer eine abgeleitete **Datenbank** verbreitet, muss die ODbL-Bedingungen
+einhalten.
+
+---
+
 ## Kontakt
 
 Für kommerzielle Lizenzen oder Kooperationen:  

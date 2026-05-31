@@ -87,6 +87,7 @@ pnpm --filter api test -- --coverage
 - **Ratings-Service:** Bewertungsvalidierung (flowers/flies, 0–5, nie beides)
 - **Guards:** `JwtAuthGuard`, `RolesGuard` — Payload-Extraktion, Rollenprüfung
 - **Utils:** `normalizeScore`, `roundCoordinates`, EXIF-Entfernung
+- **i18n-Integrität:** Deckungsgleichheit aller 31 Locales (siehe 3.5)
 
 ### 3.4 Mocking
 
@@ -98,6 +99,27 @@ import { PrismaClient } from '@prisma/client';
 const prisma = mockDeep<PrismaClient>();
 // prisma.toilet.findMany.mockResolvedValue([...])
 ```
+
+### 3.5 i18n-Integritätstest
+
+**Datei:** `apps/api/src/common/i18n-locales.spec.ts`
+
+Mit mittlerweile **31 Sprachen** driften Übersetzungen schnell auseinander
+(vergessener Schlüssel, kaputte `{{interpolation}}`). Der Test liest
+`SUPPORTED_LOCALES` / `RTL_LOCALES` aus `packages/i18n/src/index.ts` und alle
+Locale-JSONs und prüft:
+
+- für jede `SUPPORTED_LOCALE` existiert genau eine Locale-Datei (keine Waisen),
+- jede Locale hat **dieselbe Schlüsselmenge** wie die Referenz `de.json`,
+- die `{{platzhalter}}` sind je Schlüssel identisch,
+- `RTL_LOCALES` (`ar`, `he`) sind eine Teilmenge von `SUPPORTED_LOCALES`.
+
+```bash
+pnpm --filter api test -- src/common/i18n-locales.spec.ts
+```
+
+Schlägt der Test fehl, listet er pro Sprache die `missing`/`extra`-Schlüssel
+bzw. die abweichenden Platzhalter auf. Hintergrund: `docs/INTERNATIONALIZATION.md`.
 
 ---
 
@@ -404,4 +426,4 @@ Bevor ein Feature als fertig gilt:
 
 ---
 
-— Stand: v0.3.0 · 2026-05-25 · © 2026 Transivroom Division
+— Stand: v0.6.0 · 2026-06-01 · © 2026 Transivroom Division
