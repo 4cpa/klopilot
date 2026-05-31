@@ -269,8 +269,9 @@ jobs:
       API_PORT: '3101'
       S3_ENDPOINT: http://localhost:9000
       S3_BUCKET: klopilot-media
-      S3_KEY: minioadmin
-      S3_SECRET: minioadmin
+      S3_PUBLIC_URL: http://localhost:9000/klopilot-media
+      S3_ACCESS_KEY: minioadmin
+      S3_SECRET_KEY: minioadmin
       MAIL_FROM: ci@klopilot.ch
       MAIL_HOST: localhost
       MAIL_PORT: '1025'

@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   S3Client,
@@ -10,6 +10,7 @@ import {
 
 @Injectable()
 export class S3Service implements OnModuleInit {
+  private readonly logger = new Logger(S3Service.name);
   private client: S3Client;
   private bucket: string;
   private publicUrl: string;
@@ -29,10 +30,19 @@ export class S3Service implements OnModuleInit {
   }
 
   async onModuleInit() {
+    // Bucket sicherstellen, aber Boot nicht am Object-Storage scheitern lassen
+    // (wie Meili/Redis). Ist S3 nicht erreichbar, schlagen erst spätere Uploads
+    // fehl — die API serviert Reads/Suche/Karte trotzdem (z. B. CI/E2E).
     try {
       await this.client.send(new HeadBucketCommand({ Bucket: this.bucket }));
     } catch {
-      await this.client.send(new CreateBucketCommand({ Bucket: this.bucket }));
+      try {
+        await this.client.send(new CreateBucketCommand({ Bucket: this.bucket }));
+      } catch (e) {
+        this.logger.warn(
+          `Object-Storage beim Start nicht erreichbar — Uploads deaktiviert: ${(e as Error).message}`,
+        );
+      }
     }
   }
 
