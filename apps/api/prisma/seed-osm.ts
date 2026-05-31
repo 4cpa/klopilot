@@ -5,7 +5,9 @@
  *   - OpenStreetMap (openstreetmap.org) — lizenziert unter ODbL
  *   - Overpass API (overpass-api.de) — kostenlos, kein API-Key nötig
  *
- * Regionen: Schweiz + angrenzende Gebiete (D/A/F/I je ~30 km)
+ * Regionen: Europa (West/Nord/Süd/Ost inkl. Balkan, Baltikum, Ukraine) sowie
+ * küstennahe Mittelmeer-Anrainer (Nordafrika, Levante, Israel). Russland/Belarus
+ * bleiben ausgeschlossen.
  *
  * Aufruf:
  *   pnpm --filter api db:seed-osm
@@ -128,39 +130,70 @@ const REGIONS: Array<{ name: string; bbox: [number, number, number, number] }> =
     name: 'Griechenland-Süd/Inseln',
     bbox: [34.7, 22.0, 39.4, 28.4] as [number, number, number, number],
   },
+
+  // ── Mitteleuropa / Osteuropa ─────────────────────────────────────────────────
+  { name: 'Polen', bbox: [49.0, 14.1, 54.9, 24.2] as [number, number, number, number] },
+  { name: 'Tschechien', bbox: [48.5, 12.0, 51.1, 18.9] as [number, number, number, number] },
+  { name: 'Slowakei', bbox: [47.7, 16.8, 49.7, 22.6] as [number, number, number, number] },
+  { name: 'Ungarn', bbox: [45.7, 16.1, 48.6, 22.9] as [number, number, number, number] },
+  { name: 'Rumänien', bbox: [43.6, 20.2, 48.3, 29.7] as [number, number, number, number] },
+  { name: 'Moldau', bbox: [45.4, 26.6, 48.5, 30.2] as [number, number, number, number] },
+  { name: 'Bulgarien', bbox: [41.2, 22.3, 44.2, 28.7] as [number, number, number, number] },
+
+  // ── Baltikum ─────────────────────────────────────────────────────────────────
+  { name: 'Estland', bbox: [57.5, 21.7, 59.7, 28.1] as [number, number, number, number] },
+  { name: 'Lettland', bbox: [55.6, 20.9, 58.1, 28.1] as [number, number, number, number] },
+  { name: 'Litauen', bbox: [53.8, 20.9, 56.5, 26.9] as [number, number, number, number] },
+
+  // ── Ukraine (2 Teile; Krim ausgespart, Russland via addr:country) ────────────
+  { name: 'Ukraine-West', bbox: [46.3, 22.1, 52.4, 33.0] as [number, number, number, number] },
+  { name: 'Ukraine-Ost', bbox: [46.3, 33.0, 50.6, 40.2] as [number, number, number, number] },
+
+  // ── Westbalkan ───────────────────────────────────────────────────────────────
+  { name: 'Slowenien', bbox: [45.4, 13.3, 46.9, 16.6] as [number, number, number, number] },
+  { name: 'Kroatien', bbox: [42.3, 13.4, 46.6, 19.5] as [number, number, number, number] },
+  {
+    name: 'Bosnien-Herzegowina',
+    bbox: [42.5, 15.7, 45.3, 19.7] as [number, number, number, number],
+  },
+  { name: 'Serbien', bbox: [42.2, 18.8, 46.2, 23.0] as [number, number, number, number] },
+  { name: 'Montenegro', bbox: [41.8, 18.4, 43.6, 20.4] as [number, number, number, number] },
+  { name: 'Kosovo', bbox: [41.8, 20.0, 43.3, 21.8] as [number, number, number, number] },
+  { name: 'Nordmazedonien', bbox: [40.8, 20.4, 42.4, 23.1] as [number, number, number, number] },
+  { name: 'Albanien', bbox: [39.6, 19.1, 42.7, 21.1] as [number, number, number, number] },
+
+  // ── Mittelmeer-Anrainer (Küstennah): Nordafrika + Levante + Israel ───────────
+  { name: 'Marokko-Küste', bbox: [30.4, -10.0, 36.0, -1.8] as [number, number, number, number] },
+  { name: 'Algerien-Küste', bbox: [34.5, -1.8, 37.2, 8.7] as [number, number, number, number] },
+  { name: 'Tunesien', bbox: [33.0, 8.0, 37.6, 11.6] as [number, number, number, number] },
+  { name: 'Libyen-Küste', bbox: [30.5, 11.0, 33.5, 25.2] as [number, number, number, number] },
+  {
+    name: 'Ägypten (Küste/Nil)',
+    bbox: [29.5, 24.7, 31.7, 34.3] as [number, number, number, number],
+  },
+  { name: 'Libanon', bbox: [33.0, 35.1, 34.7, 36.6] as [number, number, number, number] },
+  { name: 'Israel/Palästina', bbox: [29.5, 34.2, 33.3, 35.9] as [number, number, number, number] },
 ];
 
 // Aktive Regionen unter Berücksichtigung von --only (Phasen 1/4/5/6).
 const ACTIVE_REGIONS = REGIONS.filter((r) => regionMatches(r.name));
 
-// ── Nicht-europäische Treffer ausschliessen ──────────────────────────────────
-// Rechteckige Import-Bboxen ragen an den Rändern in Nachbarländer (z. B. der
-// Südrand der Italien-Bbox nach Tunesien). Solche Toiletten werden übersprungen.
-// EU-Aussengebiete (Kanaren, Zypern, …) bleiben bewusst erhalten.
+// ── Ausgeschlossene Gebiete ──────────────────────────────────────────────────
+// Russland (und Belarus) bewusst aussen vor — auch an Bbox-Rändern der östlichen
+// Regionen (Baltikum/Polen/Ukraine). Türkei bleibt aussen vor; die zwei Türkei-
+// Bboxen schützen die griechischen Inseln vor Festland-Spillover.
 const EXCLUDE_BBOXES: Array<[number, number, number, number]> = [
   // [south, west, north, east]
-  [30.0, 7.5, 37.4, 11.6], // Tunesien (Südrand Italien-S); Lampedusa/Pantelleria (lng>12) bleiben
-  // Türkisches Festland (Ostrand der Griechenland-Süd-Bbox). Sorgfältig so
-  // gewählt, dass die grossen griechischen Inseln draussen bleiben:
+  // Türkisches Festland (Ostrand der Griechenland-Süd-Bbox) — griechische Inseln bleiben:
   [38.0, 26.85, 39.5, 28.5], // Izmir/Manisa — Lesbos/Chios (lng<26.85) bleiben
   [36.6, 27.2, 38.0, 28.6], // Muğla/Bodrum/Marmaris — Kos/Samos (lng<27.2), Rhodos (lat<36.6) bleiben
+  // Russland fernhalten (Russland/Belarus sonst über addr:country, da Land-
+  // grenzen mit UA/Baltikum eine saubere Bbox-Trennung verhindern):
+  [54.2, 19.5, 55.4, 23.0], // Kaliningrad (RU-Exklave zwischen PL/LT)
 ];
-// ISO-3166-1-alpha-2 nicht-europäischer Länder (via OSM addr:country)
-const NON_EU_COUNTRIES = new Set([
-  'TN',
-  'MA',
-  'DZ',
-  'LY',
-  'EG',
-  'TR',
-  'SY',
-  'LB',
-  'IL',
-  'PS',
-  'JO',
-  'IQ',
-  'SA',
-]);
+// ISO-3166-1-alpha-2 ausgeschlossener Länder (via OSM addr:country):
+// Russland, Belarus (Distanz zu Russland) und Türkei (nicht im Zielbestand).
+const NON_EU_COUNTRIES = new Set(['RU', 'BY', 'TR']);
 function isNonEuropeanLocation(lat: number, lng: number, tags: Record<string, string>): boolean {
   const cc = (tags['addr:country'] ?? '').trim().toUpperCase();
   if (cc.length === 2 && NON_EU_COUNTRIES.has(cc)) return true;
