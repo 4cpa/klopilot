@@ -214,7 +214,7 @@ _Nächste geplante Features (P2/P3):_
 **Infrastruktur**
 
 - Docker-Images für API + Web nach GHCR gepusht (CI bei `main`-Push)
-- Produktions-Setup: Traefik v3, Let's Encrypt TLS, Hetzner VPS
+- Produktions-Setup: Traefik v3, Let's Encrypt TLS, Infomaniak VPS (CH)
 - GitHub Actions: lint → typecheck → test → Docker-Build → Deploy
 - `docker-compose.prod.yml` mit Secrets-Handling über `.env.prod`
 

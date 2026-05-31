@@ -24,21 +24,21 @@ mit Berücksichtigung lokaler Gepflogenheiten.
 
 ## 2. Tech-Stack (verbindlich)
 
-| Schicht | Technologie |
-|---|---|
-| Monorepo | Turborepo + pnpm Workspaces |
-| Backend | NestJS 10 (TypeScript), Prisma ORM |
-| Datenbank | PostgreSQL 16 + PostGIS 3 |
-| Cache / Rate-Limit | Redis 7 |
-| Suche | Meilisearch |
-| Object Storage | MinIO (lokal) / S3-kompatibel (prod) |
-| Web-Frontend | Next.js 14 (App Router), TailwindCSS, MapLibre GL JS |
-| Mobile | Expo SDK 51 + React Native, react-native-maps |
-| Auth | Auth.js (Web), eigener JWT-Flow (Mobile), OAuth Google/Apple, E-Mail Magic Link |
-| Validation | Zod (shared in `packages/shared-types`) |
-| Tests | Vitest (unit), Playwright (web e2e), Detox (mobile e2e) |
-| CI/CD | GitHub Actions |
-| Container | Docker / Docker Compose (lokal); Hetzner/Fly.io (prod) |
+| Schicht            | Technologie                                                                     |
+| ------------------ | ------------------------------------------------------------------------------- |
+| Monorepo           | Turborepo + pnpm Workspaces                                                     |
+| Backend            | NestJS 10 (TypeScript), Prisma ORM                                              |
+| Datenbank          | PostgreSQL 16 + PostGIS 3                                                       |
+| Cache / Rate-Limit | Redis 7                                                                         |
+| Suche              | Meilisearch                                                                     |
+| Object Storage     | MinIO (lokal) / S3-kompatibel (prod)                                            |
+| Web-Frontend       | Next.js 14 (App Router), TailwindCSS, MapLibre GL JS                            |
+| Mobile             | Expo SDK 51 + React Native, react-native-maps                                   |
+| Auth               | Auth.js (Web), eigener JWT-Flow (Mobile), OAuth Google/Apple, E-Mail Magic Link |
+| Validation         | Zod (shared in `packages/shared-types`)                                         |
+| Tests              | Vitest (unit), Playwright (web e2e), Detox (mobile e2e)                         |
+| CI/CD              | GitHub Actions                                                                  |
+| Container          | Docker / Docker Compose (lokal); Infomaniak CH (prod)                           |
 
 ## 3. Repo-Struktur
 
@@ -82,10 +82,12 @@ klopilot/
 ## 5. Domänenmodell
 
 ### Bewertungslogik
+
 Pro Kriterium **entweder** Blümchen 🌸 (0–5) **oder** Fliegen 🪰 (0–5), nie beides.
 Aggregierter Score je Kriterium = `flowers - flies`. Gesamtscore = Summe normalisiert.
 
 ### Kriterien (Standard MVP)
+
 1. Zugänglichkeit (Auffindbarkeit, Barrierefreiheit, Öffnungszeit)
 2. Sauberkeit
 3. Hygiene (Seife, Desinfektion, Geruch)
@@ -98,9 +100,11 @@ Aggregierter Score je Kriterium = `flowers - flies`. Gesamtscore = Summe normali
 10. Kinder­freundlichkeit
 
 ### Kategorien
+
 `public` · `nette_toilette` · `gastronomy` · `transport` · `mall` · `event` · `private`
 
 ### Sichtbarkeit
+
 - `public` — auf Karte für alle
 - `nette_toilette` — auf Karte, mit Partner-Badge
 - `private` — **nicht auf öffentlicher Karte**, Standort gerundet auf 100 m,
@@ -162,21 +166,21 @@ pnpm build
 
 Vollständige Liste in `.env.example`. Wichtigste:
 
-| Key | Zweck |
-|---|---|
-| `DATABASE_URL` | Postgres + PostGIS |
-| `REDIS_URL` | Redis |
-| `S3_ENDPOINT` / `S3_BUCKET` / `S3_KEY` / `S3_SECRET` | Object Storage |
-| `MEILI_HOST` / `MEILI_KEY` | Suche |
-| `MAPTILER_KEY` | Satellitenkarten |
-| `JWT_SECRET` | API-Auth |
-| `OAUTH_GOOGLE_*`, `OAUTH_APPLE_*` | OAuth |
-| `MAIL_*` | Magic-Link-Mails |
-| `MODERATION_NSFW_ENDPOINT` | Bild-Moderation |
+| Key                                                  | Zweck              |
+| ---------------------------------------------------- | ------------------ |
+| `DATABASE_URL`                                       | Postgres + PostGIS |
+| `REDIS_URL`                                          | Redis              |
+| `S3_ENDPOINT` / `S3_BUCKET` / `S3_KEY` / `S3_SECRET` | Object Storage     |
+| `MEILI_HOST` / `MEILI_KEY`                           | Suche              |
+| `MAPTILER_KEY`                                       | Satellitenkarten   |
+| `JWT_SECRET`                                         | API-Auth           |
+| `OAUTH_GOOGLE_*`, `OAUTH_APPLE_*`                    | OAuth              |
+| `MAIL_*`                                             | Magic-Link-Mails   |
+| `MODERATION_NSFW_ENDPOINT`                           | Bild-Moderation    |
 
 ## 9. Sicherheit & Datenschutz (verbindlich)
 
-- DSGVO/revDSG: CH-/EU-Hosting bevorzugt (Exoscale, Infomaniak, Hetzner DE)
+- DSGVO/revDSG: CH-Hosting bei Infomaniak (Genf); Server ausschliesslich in der Schweiz
 - EXIF-Daten von Uploads **immer** entfernen, vor Persistenz
 - Privat­toiletten: Geocoding wird vor Speicherung auf ~100 m gerastert
 - Eine Bewertung pro `(user, toilet)`-Paar (editierbar)
@@ -220,14 +224,14 @@ Public API
 
 ## 13. Externe Services
 
-| Service | Plan / Status |
-|---|---|
-| MapTiler | Free Tier MVP, später Pay-as-you-go |
-| OpenStreetMap (Geocoding) | Nominatim (self-hosted ab P3) |
-| hCaptcha | Free Tier |
-| DeepL | für Übersetzung der Reviews on demand |
-| Sentry | Error-Tracking |
-| Plausible | datenschutz­freundliche Analytics |
+| Service                   | Plan / Status                         |
+| ------------------------- | ------------------------------------- |
+| MapTiler                  | Free Tier MVP, später Pay-as-you-go   |
+| OpenStreetMap (Geocoding) | Nominatim (self-hosted ab P3)         |
+| hCaptcha                  | Free Tier                             |
+| DeepL                     | für Übersetzung der Reviews on demand |
+| Sentry                    | Error-Tracking                        |
+| Plausible                 | datenschutz­freundliche Analytics     |
 
 ## 14. Wenn unklar
 

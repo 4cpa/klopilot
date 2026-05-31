@@ -7,7 +7,7 @@ GitHub Actions (CI → Deploy)
         │
         │ SSH → deploy.sh
         ▼
-Hetzner VPS (Ubuntu 24.04)
+Infomaniak VPS — CH (Ubuntu 24.04)
   ├── Traefik v3  (Reverse Proxy, Let's Encrypt)
   ├── PostgreSQL 16 + PostGIS 3.4
   ├── Redis 7
@@ -30,7 +30,7 @@ Hetzner VPS (Ubuntu 24.04)
 
 ### Voraussetzungen
 
-- Hetzner CX21 oder grösser (Ubuntu 24.04, 2 vCPU, 4 GB RAM)
+- Infomaniak VPS / Public Cloud, CH (Ubuntu 24.04, ≥ 2 vCPU, ≥ 4 GB RAM)
 - Domain `klopilot.ch` mit DNS-Zugang
 - GitHub-Konto mit Schreibzugriff auf `4cpa/klopilot`
 
@@ -39,7 +39,7 @@ Hetzner VPS (Ubuntu 24.04)
 ```bash
 # Lokaler Rechner
 ssh-keygen -t ed25519 -C "deploy@klopilot.ch" -f ~/.ssh/klopilot_deploy
-# Public Key beim Hetzner-Server als Root-Key hinterlegen (bei Server-Erstellung)
+# Public Key beim Infomaniak-Server als Root-Key hinterlegen (bei Server-Erstellung)
 ```
 
 ### Schritt 2 — DNS-Records setzen
@@ -278,7 +278,7 @@ docker exec klopilot-postgres pg_dump -U klopilot klopilot \
 find /opt/backups -name "*.sql.gz" -mtime +30 -delete
 ```
 
-MinIO-Backup: Hetzner Object Storage als Secondary via `mc mirror`.
+MinIO-Backup: Infomaniak Swiss Backup / Object Storage als Secondary via `mc mirror`.
 
 ---
 
