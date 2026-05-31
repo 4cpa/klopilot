@@ -80,8 +80,9 @@ function toiletsToGeoJSON(toilets: Toilet[]): GeoJSON.FeatureCollection {
 
 /** Eurokey-artige, halbtransparente Cluster-Bubble mit Anzahl. */
 function buildClusterElement(count: number, label: string): HTMLDivElement {
-  // Grösse skaliert sanft mit der Anzahl
-  const size = count < 10 ? 40 : count < 50 ? 50 : count < 200 ? 60 : 70;
+  // Grösse skaliert sanft mit der Anzahl (etwas kompakter, damit beim Rauszoomen
+  // die Karte zwischen den Bubbles lesbar bleibt)
+  const size = count < 10 ? 34 : count < 50 ? 42 : count < 200 ? 50 : 58;
   const el = document.createElement('div');
   el.className = 'klo-cluster';
   el.setAttribute('role', 'button');
@@ -90,21 +91,23 @@ function buildClusterElement(count: number, label: string): HTMLDivElement {
   el.style.cssText = `
     width:${size}px;height:${size}px;cursor:pointer;
     display:flex;align-items:center;justify-content:center;`;
-  // Äusserer Halo (sehr transparent) + innere Scheibe (halbtransparentes Grün)
+  // Deutlich transparenter, damit sich überlappende Cluster den Kontinent nicht
+  // zudecken — Karte bleibt lesbar. Zahl bleibt durch weissen Ring + Textschatten
+  // gut erkennbar.
   el.innerHTML = `
     <div style="
       position:absolute;width:${size}px;height:${size}px;border-radius:50%;
-      background:rgba(45,168,79,0.22);
+      background:rgba(45,168,79,0.10);
     "></div>
     <div style="
-      position:relative;width:${size - 12}px;height:${size - 12}px;border-radius:50%;
-      background:rgba(45,168,79,0.78);
-      border:2px solid rgba(255,255,255,0.9);
-      box-shadow:0 2px 10px rgba(0,0,0,.35);
+      position:relative;width:${size - 10}px;height:${size - 10}px;border-radius:50%;
+      background:rgba(45,168,79,0.50);
+      border:1.5px solid rgba(255,255,255,0.7);
+      box-shadow:0 1px 6px rgba(0,0,0,.25);
       display:flex;align-items:center;justify-content:center;
       color:white;font-family:Inter,sans-serif;font-weight:800;
-      font-size:${count < 200 ? 13 : 15}px;line-height:1;
-      text-shadow:0 1px 2px rgba(0,0,0,.3);
+      font-size:${count < 200 ? 12 : 14}px;line-height:1;
+      text-shadow:0 1px 3px rgba(0,0,0,.6);
     ">${label}</div>`;
   return el;
 }

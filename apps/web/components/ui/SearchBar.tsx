@@ -184,8 +184,10 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
           role="listbox"
           aria-label="Suchergebnisse"
           data-testid="search-results"
-          className="absolute top-full mt-2 left-0 right-0 rounded-xl overflow-hidden z-50"
+          className="absolute top-full mt-2 left-0 rounded-xl overflow-hidden z-50"
           style={{
+            // Breiter als das Suchfeld, damit längere Namen lesbar sind
+            width: 'min(440px, 92vw)',
             background: 'var(--surface)',
             border: '1px solid var(--line)',
             boxShadow: '0 12px 40px rgba(15,23,42,.15)',
@@ -207,7 +209,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
                   </span>
                   <span className="flex-1 min-w-0">
                     <span
-                      className="block text-sm font-semibold truncate"
+                      className="block text-sm font-semibold line-clamp-2"
                       style={{ color: 'var(--ink)' }}
                     >
                       {toilet.name}
@@ -236,8 +238,9 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
       {/* Kein Ergebnis */}
       {open && !loading && query.trim() && results.length === 0 && (
         <div
-          className="absolute top-full mt-2 left-0 right-0 rounded-xl px-4 py-6 text-center z-50"
+          className="absolute top-full mt-2 left-0 rounded-xl px-4 py-6 text-center z-50"
           style={{
+            width: 'min(440px, 92vw)',
             background: 'var(--surface)',
             border: '1px solid var(--line)',
             color: 'var(--muted)',
