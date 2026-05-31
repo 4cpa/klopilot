@@ -66,6 +66,12 @@ const TOILET_PROBE_LAYER = 'klo-toilets-probe';
 const CLUSTER_MAX_ZOOM = 16;
 /** Cluster-Radius in Pixeln (Supercluster). */
 const CLUSTER_RADIUS = 60;
+/**
+ * Ab diesem Zoom ist das Platzieren einer neuen Toilette per Karten-Klick aktiv.
+ * Darunter (Region/Kontinent) ergibt ein Marker-Drop keinen Sinn — ein Klick
+ * würde sonst verwirrend z. B. das Login-Fenster öffnen.
+ */
+const ADD_TOILET_MIN_ZOOM = 13;
 
 function toiletsToGeoJSON(toilets: Toilet[]): GeoJSON.FeatureCollection {
   return {
@@ -524,6 +530,9 @@ export default function MapView({
     // ── Map Click: Marker-Drop für AddToilet ──────────────────────────────
     const handleMapClick = (e: maplibregl.MapMouseEvent) => {
       if (!onMapClickRef.current) return;
+      // Nur ab sinnvollem Zoom: weit rausgezoomt (Region/Kontinent) macht das
+      // Platzieren einer Toilette keinen Sinn — Klick ignorieren.
+      if ((mapRef.current?.getZoom() ?? 0) < ADD_TOILET_MIN_ZOOM) return;
       // Klick auf einen Marker oder eine Cluster-Bubble ignorieren
       const target = e.originalEvent.target as HTMLElement;
       if (target.closest('.klo-marker, .klo-cluster')) return;
