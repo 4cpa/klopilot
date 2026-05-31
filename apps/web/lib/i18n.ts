@@ -2,12 +2,45 @@
 
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { de, fr, it, en, es, pt, da, sv, no, fi, nl, is, el } from '@klopilot/i18n';
+import {
+  de,
+  fr,
+  it,
+  en,
+  es,
+  pt,
+  da,
+  sv,
+  no,
+  fi,
+  nl,
+  is,
+  el,
+  SUPPORTED_LOCALES,
+} from '@klopilot/i18n';
 
 const LANG_KEY = 'klo-language';
 
+// Initiale Sprache bestimmen: URL-Param `?lang=` (bzw. `?lng=`) hat Vorrang —
+// damit funktionieren teilbare Vorschaulinks (z. B. klopilot.ch/?lang=el) und die
+// Wahl wird gemerkt. Danach localStorage, sonst Default 'de'.
+function detectInitialLang(): string {
+  if (typeof window === 'undefined') return 'de';
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const q = (params.get('lang') ?? params.get('lng') ?? '').toLowerCase();
+    if (q && (SUPPORTED_LOCALES as string[]).includes(q)) {
+      localStorage.setItem(LANG_KEY, q);
+      return q;
+    }
+    return localStorage.getItem(LANG_KEY) ?? 'de';
+  } catch {
+    return 'de';
+  }
+}
+
 i18next.use(initReactI18next).init({
-  lng: (typeof window !== 'undefined' ? localStorage.getItem(LANG_KEY) : null) ?? 'de',
+  lng: detectInitialLang(),
   fallbackLng: 'de',
   resources: {
     de: { translation: de },
