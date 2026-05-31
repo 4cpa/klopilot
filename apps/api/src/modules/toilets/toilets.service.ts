@@ -4,6 +4,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { RatingsService } from '../ratings/ratings.service';
 import { MeilisearchService } from '../search/meilisearch.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { RedisService } from '../../redis/redis.service';
 import { computeScore } from '../../common/utils/score.util';
 import { z } from 'zod';
 
@@ -39,11 +40,19 @@ export type ToiletUpdate = z.infer<typeof ToiletUpdateSchema>;
 
 @Injectable()
 export class ToiletsService {
+  /** Max. Einzel-Toiletten pro Viewport bevor serverseitig geclustert wird. */
+  private static readonly VIEWPORT_DETAIL_LIMIT = 1500;
+  /** Zellen pro Achse für die Cluster-Aggregation. */
+  private static readonly VIEWPORT_GRID = 14;
+  /** TTL des Viewport-Caches in Sekunden (Counts/Scores ändern sich selten). */
+  private static readonly VIEWPORT_CACHE_TTL = 60;
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly ratingsService: RatingsService,
     private readonly meili: MeilisearchService,
     private readonly notifications: NotificationsService,
+    private readonly redis: RedisService,
   ) {}
 
   // ── Geo-Suche via PostGIS ST_DWithin ────────────────────────────────────────
@@ -104,6 +113,124 @@ export class ToiletsService {
         distanceM: distMap.get(t.id) ?? 0,
         score: scoreMap.get(t.id) ?? { flowers: 0, flies: 0, net: 0, count: 0 },
       }));
+  }
+
+  // ── Viewport-Aggregation (Bbox) ─────────────────────────────────────────────
+  // Liefert für das sichtbare Rechteck entweder Einzel-Toiletten (wenig dicht)
+  // oder serverseitig aggregierte Cluster-Zellen mit exakter Anzahl (dicht).
+  // So zeigt die Karte beim weiten Rauszoomen den echten Gesamtbestand, nicht
+  // nur die geladene Teilmenge.
+  async findInViewport(
+    minLng: number,
+    minLat: number,
+    maxLng: number,
+    maxLat: number,
+    filters: { category?: string[] } = {},
+    grid = ToiletsService.VIEWPORT_GRID,
+  ) {
+    const lngSpan = maxLng - minLng;
+    const latSpan = maxLat - minLat;
+    if (!(lngSpan > 0) || !(latSpan > 0)) {
+      return { mode: 'detail' as const, toilets: [] };
+    }
+
+    const g = Math.min(Math.max(Math.round(grid), 4), 24);
+    const cellW = lngSpan / g;
+    const cellH = latSpan / g;
+    const cats = (filters.category ?? []).filter(Boolean);
+
+    // ── Cache: gerundete Bbox + Kategorien + Grid. Counts/Scores ändern sich
+    // selten, daher kurzer TTL — entschärft den Seq-Scan bei weit rausgezoomten
+    // (Europa-)Viewports, die sonst pro Pan/Zoom ~150 ms kosten. ──────────────
+    const r = (n: number) => Math.round(n * 1000) / 1000;
+    const cacheKey = `viewport:${r(minLng)},${r(minLat)},${r(maxLng)},${r(maxLat)}:${g}:${[...cats]
+      .sort()
+      .join('|')}`;
+    const cached = await this.redis.get(cacheKey).catch(() => null);
+    if (cached) return JSON.parse(cached);
+
+    // Kategorie-Filter konsistent in ALLE Queries (Aggregation + Detail), damit
+    // total/Schwelle und die gelieferten Daten zur gefilterten Menge passen.
+    // category ist ein PG-Enum → über ::text vergleichen (kein Enum-Cast nötig).
+    const catSql = cats.length ? Prisma.sql`AND category::text = ANY(${cats})` : Prisma.empty;
+    const envelope = Prisma.sql`geom && ST_MakeEnvelope(${minLng}, ${minLat}, ${maxLng}, ${maxLat}, 4326)::geography`;
+
+    // Grid-Aggregation komplett in der DB (GIST-Index via geom &&) — billig,
+    // liefert höchstens g² Zeilen. avg() = Zentroid der Zelle.
+    const cells = await this.prisma.$queryRaw<{ lng: number; lat: number; count: number }[]>(
+      Prisma.sql`
+        SELECT avg(longitude)::float8 AS lng,
+               avg(latitude)::float8  AS lat,
+               count(*)::int          AS count
+        FROM   toilets
+        WHERE  status     = 'active'
+          AND  visibility <> 'private'
+          AND  ${envelope}
+          ${catSql}
+        GROUP  BY floor((longitude - ${minLng}) / ${cellW}),
+                  floor((latitude  - ${minLat}) / ${cellH})
+      `,
+    );
+
+    const total = cells.reduce((sum, c) => sum + c.count, 0);
+
+    let result:
+      | { mode: 'detail'; toilets: Awaited<ReturnType<ToiletsService['hydrateToilets']>> }
+      | {
+          mode: 'clusters';
+          total: number;
+          clusters: { lng: number; lat: number; count: number }[];
+        };
+
+    if (total === 0) {
+      result = { mode: 'detail', toilets: [] };
+    } else if (total <= ToiletsService.VIEWPORT_DETAIL_LIMIT) {
+      // Genug Platz → Einzel-Toiletten mit Score liefern (Client clustert smooth).
+      const idRows = await this.prisma.$queryRaw<{ id: string }[]>(
+        Prisma.sql`
+          SELECT id
+          FROM   toilets
+          WHERE  status     = 'active'
+            AND  visibility <> 'private'
+            AND  ${envelope}
+            ${catSql}
+          LIMIT  ${ToiletsService.VIEWPORT_DETAIL_LIMIT}
+        `,
+      );
+      const toilets = await this.hydrateToilets(idRows.map((row) => row.id));
+      result = { mode: 'detail', toilets };
+    } else {
+      // Zu dicht → aggregierte Cluster (Zentroid + exakte Anzahl).
+      result = {
+        mode: 'clusters',
+        total,
+        clusters: cells
+          .map((c) => ({ lng: c.lng, lat: c.lat, count: c.count }))
+          .sort((a, b) => b.count - a.count),
+      };
+    }
+
+    await this.redis
+      .set(cacheKey, JSON.stringify(result), 'EX', ToiletsService.VIEWPORT_CACHE_TTL)
+      .catch(() => undefined);
+    return result;
+  }
+
+  /** IDs → Toilet-DTOs inkl. Partner, Rating-Count und Score (kein N+1). */
+  private async hydrateToilets(ids: string[]) {
+    if (!ids.length) return [];
+    const toilets = await this.prisma.toilet.findMany({
+      where: { id: { in: ids } },
+      include: {
+        partner: { select: { id: true, name: true, type: true, logoKey: true } },
+        _count: { select: { ratings: true } },
+      },
+    });
+    const scoreMap = await this.ratingsService.computeScoreMap(toilets.map((t) => t.id));
+    return toilets.map((t) => ({
+      ...t,
+      score: scoreMap.get(t.id) ?? { flowers: 0, flies: 0, net: 0, count: 0 },
+    }));
   }
 
   // ── Detail (mit Score) ────────────────────────────────────────────────────

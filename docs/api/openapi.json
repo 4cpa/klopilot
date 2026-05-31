@@ -300,6 +300,117 @@
         "tags": ["toilets"]
       }
     },
+    "/toilets/viewport": {
+      "get": {
+        "operationId": "ToiletsController_findInViewport",
+        "parameters": [
+          {
+            "name": "minLng",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minLat",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxLng",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxLat",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Diskriminierte Union: Einzel-Toiletten (≤ 1500 im Bbox) oder aggregierte Cluster-Zellen (Zentroid + exakte Anzahl) bei dichten Viewports.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "required": ["mode", "toilets"],
+                      "properties": {
+                        "mode": {
+                          "type": "string",
+                          "enum": ["detail"]
+                        },
+                        "toilets": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "required": ["mode", "total", "clusters"],
+                      "properties": {
+                        "mode": {
+                          "type": "string",
+                          "enum": ["clusters"]
+                        },
+                        "total": {
+                          "type": "integer"
+                        },
+                        "clusters": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": ["lng", "lat", "count"],
+                            "properties": {
+                              "lng": {
+                                "type": "number"
+                              },
+                              "lat": {
+                                "type": "number"
+                              },
+                              "count": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": ["toilets"]
+      }
+    },
     "/toilets/private": {
       "get": {
         "operationId": "ToiletsController_findPrivate",

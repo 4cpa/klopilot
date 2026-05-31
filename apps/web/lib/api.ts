@@ -137,11 +137,38 @@ export const auth = {
 
 // ── Toilets ───────────────────────────────────────────────────────────────────
 
+/** Aggregierte Cluster-Zelle (serverseitig) — Zentroid + exakte WC-Anzahl. */
+export interface ToiletCluster {
+  lng: number;
+  lat: number;
+  count: number;
+}
+
+/** Antwort von /toilets/viewport: entweder Einzel-Toiletten oder Cluster. */
+export type ViewportResult =
+  | { mode: 'detail'; toilets: Toilet[] }
+  | { mode: 'clusters'; total: number; clusters: ToiletCluster[] };
+
 export const toilets = {
   nearby: (lng: number, lat: number, radius = 2000, category?: string[]) => {
     const p = new URLSearchParams({ lng: String(lng), lat: String(lat), radius: String(radius) });
     if (category?.length) category.forEach((c) => p.append('category', c));
     return request<Toilet[]>(`/toilets?${p}`);
+  },
+
+  /** Bbox-Aggregation: Einzel-Toiletten (dünn) oder Cluster-Zellen (dicht). */
+  viewport: (
+    bbox: { minLng: number; minLat: number; maxLng: number; maxLat: number },
+    category?: string[],
+  ) => {
+    const p = new URLSearchParams({
+      minLng: String(bbox.minLng),
+      minLat: String(bbox.minLat),
+      maxLng: String(bbox.maxLng),
+      maxLat: String(bbox.maxLat),
+    });
+    if (category?.length) category.forEach((c) => p.append('category', c));
+    return request<ViewportResult>(`/toilets/viewport?${p}`);
   },
 
   get: (id: string) =>
