@@ -21,6 +21,52 @@ _Nächste geplante Features (P2/P3):_
 
 ---
 
+## [0.5.0] — 2026-05-31
+
+### Added
+
+**Karte — Clustering (Eurokey-Stil)**
+
+- Geclusterte GeoJSON-Quelle (`cluster: true`) statt eines DOM-Markers pro Toilette
+- Beim Rauszoomen: halbtransparente Cluster-Bubbles mit WC-Anzahl; Klick zoomt per
+  `getClusterExpansionZoom` bis zum Aufbruch hinein
+- Beim Reinzoomen: exakt 1:1 positionierte Einzelmarker (Pool nach Toilet-ID →
+  keine Positionsdrift/kein Flackern beim Zoomen)
+- Marker-Sync auf `idle`-Event (nicht jeden Frame) → kein Flackern bei Tile-Loading
+
+**API — Viewport-Aggregation**
+
+- Neuer Endpoint `GET /toilets/viewport` (Bbox): liefert Einzel-Toiletten (≤ 1500)
+  oder serverseitig aggregierte Cluster-Zellen (Zentroid + exakte Anzahl) bei
+  dichten/weit rausgezoomten Viewports → echter Gesamtbestand statt geladener Teilmenge
+- Kategorie-Filter konsistent in allen Viewport-Queries (Aggregation + Detail)
+- Redis-Cache (gerundete Bbox + Kategorie + Grid, 60 s TTL) gegen Seq-Scan-Last
+- OpenAPI-Spec (`docs/api/openapi.json`) enthält den Endpoint
+
+### Fixed
+
+**OSM-Import — Kategorisierung**
+
+- Restaurants/Cafés wurden fälschlich als `transport` (Bahnhof/Flughafen)
+  klassifiziert. Transport wird jetzt nur aus strukturierten Tags abgeleitet
+  (nicht aus Namens-Substrings); Gastronomie hat Vorrang (Tags + Lokalname mit
+  Wortgrenzen-Erkennung). Näherungs-Phasen (Bahnhof/Mall-Umkreis) überschreiben
+  erkannte Venues nicht mehr (`resolveCategory`)
+- `mapFee`: Fremdwährungs-/Artefakt-Beträge (z. B. `200 CZK`, `1500 HUF`)
+  erzeugten `numeric(6,2)`-Overflow → Plausibilitätsgrenze; ein einzelner Fehlsatz
+  bricht nicht mehr die ganze Import-Region ab
+- Phase-6 Mall-Query: fehlende `way[...]`-Zeile ergänzt (Mall-Toiletten als OSM-way
+  wurden übersehen); Phase-8a Overpass-Query (doppeltes `out` → HTTP 400) korrigiert
+- Klassifikationslogik in testbare Module ausgelagert (`osm-category`, `osm-fee`),
+  24 Unit-Tests
+
+**Karte**
+
+- serverseitige Cluster-Bubbles und Heatmap-Farbverlauf gingen nach Kartenstil-Wechsel
+  verloren → werden in `onStyleData` korrekt neu aufgebaut
+
+---
+
 ## [0.4.0] — 2026-05-25
 
 ### Added

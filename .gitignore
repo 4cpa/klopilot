@@ -9,6 +9,9 @@ dist/
 out/
 build/
 
+# TypeScript incremental build info
+*.tsbuildinfo
+
 # Turborepo
 .turbo/
 

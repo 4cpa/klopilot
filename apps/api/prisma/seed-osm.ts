@@ -13,6 +13,8 @@
  */
 
 import { PrismaClient } from '@prisma/client';
+import { type OsmCategory, resolveCategory } from '../src/common/utils/osm-category';
+import { mapFee } from '../src/common/utils/osm-fee';
 
 const prisma = new PrismaClient();
 const DRY_RUN = process.argv.includes('--dry-run');
@@ -104,116 +106,6 @@ const REGIONS: Array<{ name: string; bbox: [number, number, number, number] }> =
   { name: 'Korsika', bbox: [41.3, 8.5, 43.1, 9.6] as [number, number, number, number] },
 ];
 
-// ── Transport-Schlüsselwörter (6 Sprachen) ────────────────────────────────────
-const TRANSPORT_KEYWORDS = [
-  // Deutsch
-  'bahnhof',
-  'hauptbahnhof',
-  'hbf',
-  'flughafen',
-  'busbahnhof',
-  'zentralbahnhof',
-  // Französisch
-  'gare',
-  'aéroport',
-  'gare centrale',
-  'gare routière',
-  // Italienisch
-  'stazione',
-  'aeroporto',
-  'stazione centrale',
-  // Englisch
-  'station',
-  'airport',
-  'bus terminal',
-  'railway',
-  'transit',
-  // Spanisch / Portugiesisch
-  'estación',
-  'estacao',
-  'aeropuerto',
-  'aeroporto',
-  // Skandinavisch
-  'togstation',
-  'järnvägsstation',
-  'togstasjon',
-  'rautatieasema',
-  'lufthavn',
-  'flygplats',
-  'flyplass',
-  'lentokenttä',
-  // Weitere
-  'bahnsteig',
-  'perron',
-  'terminal',
-];
-
-// ── OSM-Tag → unsere Kategorie ────────────────────────────────────────────────
-function mapCategory(
-  tags: Record<string, string>,
-): 'public' | 'nette_toilette' | 'gastronomy' | 'transport' | 'mall' | 'event' {
-  const name = (tags['name'] ?? tags['description'] ?? '').toLowerCase();
-  const loc = (tags['location'] ?? '').toLowerCase();
-  const op = (tags['operator:type'] ?? tags['operator'] ?? '').toLowerCase();
-  const acc = (tags['access'] ?? '').toLowerCase();
-
-  // Transport: Tags + Name-basiert (alle Sprachen)
-  const isTransport =
-    !!tags['public_transport'] ||
-    !!tags['railway'] ||
-    TRANSPORT_KEYWORDS.some((kw) => loc.includes(kw) || name.includes(kw));
-  if (isTransport) return 'transport';
-
-  // Mall / Einkaufszentrum
-  if (
-    loc.includes('mall') ||
-    loc.includes('shopping') ||
-    !!tags['shop'] ||
-    name.includes('einkaufszentrum') ||
-    name.includes('center') ||
-    name.includes('centre commercial') ||
-    name.includes('centro commerciale')
-  )
-    return 'mall';
-
-  // Nette Toilette Projekt (vor Gastronomie prüfen!)
-  if (
-    tags['nette_toilette'] === 'yes' ||
-    tags['toilets:scheme'] === 'nette_toilette' ||
-    op.includes('nette toilette') ||
-    name.includes('nette toilette')
-  )
-    return 'nette_toilette';
-
-  // Gastronomie: Restaurants/Cafés die ihre Toilette öffnen
-  if (
-    acc === 'customers' ||
-    loc.includes('restaurant') ||
-    loc.includes('cafe') ||
-    loc.includes('bar') ||
-    tags['amenity'] === 'restaurant' ||
-    tags['amenity'] === 'cafe' ||
-    tags['amenity'] === 'bar'
-  )
-    return 'gastronomy';
-
-  // Öffentlich (Gemeinde/Stadt)
-  if (
-    op.includes('gemeinde') ||
-    op.includes('stadt') ||
-    op.includes('canton') ||
-    op.includes('municipality') ||
-    op.includes('mairie') ||
-    op.includes('commune') ||
-    op.includes('ville') ||
-    op.includes('città') ||
-    op.includes('comune')
-  )
-    return 'public';
-
-  return 'public';
-}
-
 // ── Adresse aus OSM-Tags ──────────────────────────────────────────────────────
 function buildAddress(tags: Record<string, string>): string | undefined {
   const parts: string[] = [];
@@ -228,20 +120,6 @@ function buildAddress(tags: Record<string, string>): string | undefined {
     parts.push(tags['addr:city']);
   }
   return parts.length > 0 ? parts.join(', ') : undefined;
-}
-
-// ── Gebühr aus OSM-Tags ───────────────────────────────────────────────────────
-function mapFee(tags: Record<string, string>): number | undefined {
-  if (tags['fee'] === 'no') return 0;
-  if (tags['fee'] === 'yes' || tags['fee:conditional']) {
-    const amount = tags['charge'] ?? tags['fee:amount'];
-    if (amount) {
-      const n = parseFloat(amount.replace(/[^0-9.]/g, ''));
-      if (!isNaN(n)) return n;
-    }
-    return 0.5; // Fallback: 50 Rappen
-  }
-  return undefined; // unbekannt
 }
 
 // ── Zugänglichkeit aus OSM-Tags ───────────────────────────────────────────────
@@ -336,8 +214,8 @@ async function queryOverpass(
 async function upsertToilet(
   item: { osmId: string; lat: number; lng: number; tags: Record<string, string> },
   systemUserId: string,
-  counters: { imported: number; skipped: number },
-  forceCat?: 'public' | 'nette_toilette' | 'gastronomy' | 'transport' | 'mall' | 'event',
+  counters: { imported: number; skipped: number; failed: number },
+  forceCat?: OsmCategory,
 ) {
   const tags = item.tags;
 
@@ -347,13 +225,33 @@ async function upsertToilet(
     return;
   }
 
+  try {
+    await persistToilet(item, systemUserId, forceCat);
+    counters.imported++;
+  } catch (err) {
+    // Einzelner Datensatz darf den restlichen Regions-Import nicht abbrechen
+    counters.failed++;
+    if (counters.failed <= 20) {
+      console.warn(`  ⚠ Überspringe ${item.osmId}: ${(err as Error).message.split('\n')[0]}`);
+    }
+  }
+}
+
+// Eigentliches Persistieren (wirft bei DB-Fehlern → vom Aufrufer abgefangen)
+async function persistToilet(
+  item: { osmId: string; lat: number; lng: number; tags: Record<string, string> },
+  systemUserId: string,
+  forceCat?: OsmCategory,
+) {
+  const tags = item.tags;
+
   const city = tags['addr:city'] ?? tags['addr:municipality'] ?? '';
   const name =
     tags['name'] ??
     tags['description'] ??
     (city ? `Öffentliche Toilette ${city}` : 'Öffentliche Toilette');
 
-  const category = forceCat ?? mapCategory(tags);
+  const category = resolveCategory(tags, forceCat);
   const address = buildAddress(tags);
   const feeChf = mapFee(tags);
   const accessibility = mapAccessibility(tags);
@@ -364,7 +262,6 @@ async function upsertToilet(
     console.log(
       `    [DRY] ${item.osmId}: ${name} (${category})${eurokey}${wc} @ ${item.lat},${item.lng}`,
     );
-    counters.imported++;
     return;
   }
 
@@ -400,8 +297,6 @@ async function upsertToilet(
     WHERE  id   = ${toilet.id}::uuid
       AND  geom IS NULL
   `;
-
-  counters.imported++;
 }
 
 // ── Hilfsfunktion: Schlafe ────────────────────────────────────────────────────
@@ -432,7 +327,7 @@ async function main() {
     if (deleted.count > 0) console.log(`  🗑️  ${deleted.count} Beispiel-Toiletten entfernt`);
   }
 
-  const counters = { imported: 0, skipped: 0 };
+  const counters = { imported: 0, skipped: 0, failed: 0 };
 
   // ── Phase 1: Standard-Import (alle amenity=toilets) ──────────────────────────
   console.log('\n── Phase 1: Standard-Toiletten ──────────────────────');
@@ -587,7 +482,10 @@ out center body;`.trim();
   node["shop"="supermarket"]["name"~"Coop|Migros|Globus|Manor|Breuninger|Galeria|Kaufhof",i]({BBOX});
   way["shop"="supermarket"]["name"~"Coop City|Migros City|Globus",i]({BBOX});
 )->.malls;
-node["amenity"="toilets"](around.malls:200)({BBOX});
+(
+  node["amenity"="toilets"](around.malls:200)({BBOX});
+  way["amenity"="toilets"](around.malls:200)({BBOX});
+);
 out center body;`.trim();
 
   for (const region of REGIONS) {
@@ -792,14 +690,13 @@ out center body;`.trim();
   console.log('\n── Phase 8: Coop/Migros CH ───────────────────────────');
   const CH_BBOX: [number, number, number, number] = [45.8, 5.9, 47.8, 10.5];
 
-  // 8a: Toiletten die explizit Coop/Migros als Operator nennen
-  const COOP_MIGROS_OP_FILTER = `
-(
-  node["amenity"="toilets"]["operator"~"Coop|Migros",i]({BBOX});
-  way["amenity"="toilets"]["operator"~"Coop|Migros",i]({BBOX});
-);
-out center body;
-`;
+  // 8a: Toiletten die explizit Coop/Migros als Operator nennen.
+  // Reine Statement-Liste (wie EUROKEY_FILTER) — queryOverpass kapselt sie selbst
+  // in [out:json];(…);out center body;. KEINE eigenen Klammern / kein out hier,
+  // sonst entsteht doppeltes "out" → Overpass-400.
+  const COOP_MIGROS_OP_FILTER =
+    'node["amenity"="toilets"]["operator"~"^(Coop|Migros)",i]({BBOX});' +
+    'way["amenity"="toilets"]["operator"~"^(Coop|Migros)",i]({BBOX});';
   try {
     const cmOpItems = await queryOverpass(CH_BBOX, COOP_MIGROS_OP_FILTER);
     console.log(`  8a Operator-Tag: ${cmOpItems.length} Treffer`);
@@ -873,6 +770,7 @@ out center body;
   console.log(`\n✅ OSM-Import abgeschlossen`);
   console.log(`   Importiert/aktualisiert: ${counters.imported}`);
   console.log(`   Übersprungen (privat):   ${counters.skipped}`);
+  console.log(`   Fehlgeschlagen:          ${counters.failed}`);
 
   // Abschluss-Statistik pro Kategorie
   if (!DRY_RUN) {

@@ -8,6 +8,7 @@ import {
   heatmap as heatmapApi,
   type Toilet,
   type HeatmapPoint,
+  type ToiletCluster,
 } from '@/lib/api';
 import { useGeoLocation, useAuth } from '@/lib/hooks';
 import { AppBar } from '@/components/ui/AppBar';
@@ -43,7 +44,12 @@ function KarteInner() {
   const { pos } = useGeoLocation();
   const { user } = useAuth();
   const [toiletList, setToiletList] = useState<Toilet[]>([]);
+  // Serverseitig aggregierte Cluster (aktiv wenn Viewport zu dicht für Details)
+  const [serverClusters, setServerClusters] = useState<ToiletCluster[]>([]);
   const [filters, setFilters] = useState<MapFilters>(DEFAULT_FILTERS);
+  // Aktuelle Filter als Ref (für handleMoveEnd ohne stale closure)
+  const filtersRef = useRef(filters);
+  filtersRef.current = filters;
   const [profileOpen, setProfileOpen] = useState(false);
   // Deep-Link: ?t=<toiletId> direkt beim Init auflösen
   const deepLinkId = searchParams.get('t');
@@ -76,16 +82,41 @@ function KarteInner() {
   }, [mapCenter]);
 
   // ── Nachladen bei Karten-Bewegung (MoveEnd, debounced in MapView) ─────────
+  // Bbox-Aggregation: dünn → Einzel-Toiletten (Client clustert), dicht →
+  // serverseitige Cluster mit exakter Anzahl. Immer nur einer der beiden aktiv.
+  // Der Kategorie-Filter wird serverseitig angewandt (damit auch Cluster-Counts
+  // ihn berücksichtigen); die Boolean-Filter (gratis/barrierefrei/Dusche) wirken
+  // nur im Detail-Modus über `visibleToilets`.
+  const loadViewport = useCallback((bounds: MapBounds, categories: string[]) => {
+    toiletsApi
+      .viewport(bounds, categories.length ? categories : undefined)
+      .then((res) => {
+        if (res.mode === 'clusters') {
+          setServerClusters(res.clusters);
+          setToiletList([]);
+        } else {
+          setToiletList(res.toilets);
+          setServerClusters([]);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const handleMoveEnd = useCallback(
-    (center: [number, number], radiusM: number, bounds: MapBounds) => {
+    (_center: [number, number], _radiusM: number, bounds: MapBounds) => {
       setMapBounds(bounds);
-      toiletsApi
-        .nearby(center[0], center[1], radiusM)
-        .then(setToiletList)
-        .catch(() => {});
+      loadViewport(bounds, [...filtersRef.current.categories]);
     },
-    [],
+    [loadViewport],
   );
+
+  // Kategorie-Filter geändert → mit aktuellem Viewport neu laden (Counts/Cluster
+  // serverseitig konsistent). Boolean-Filter brauchen keinen Refetch (Client).
+  const categoryKey = [...filters.categories].sort().join(',');
+  useEffect(() => {
+    if (mapBounds) loadViewport(mapBounds, categoryKey ? categoryKey.split(',') : []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoryKey]);
 
   // ── Karten-Klick: Standort für neue Toilette setzen / direkt hinzufügen ──
   const handleMapClick = useCallback(
@@ -264,6 +295,7 @@ function KarteInner() {
 
       <MapView
         toilets={visibleToilets}
+        serverClusters={serverClusters}
         center={pos ?? undefined}
         flyTarget={flyTarget}
         zoom={DEFAULT_ZOOM}

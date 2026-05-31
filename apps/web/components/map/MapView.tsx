@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
-import type { Toilet, HeatmapPoint } from '@/lib/api';
+import type { Toilet, HeatmapPoint, ToiletCluster } from '@/lib/api';
 
 /** Zoom-Level → sinnvoller Suchradius in Metern */
 function zoomToRadius(zoom: number): number {
@@ -49,6 +49,298 @@ function scoreColor(score?: Toilet['score']) {
 const HEATMAP_SOURCE = 'klo-heatmap';
 const HEATMAP_LAYER = 'klo-heatmap-layer';
 
+// ── Clustering (Eurokey-Stil) ───────────────────────────────────────────────
+// Eine geclusterte GeoJSON-Quelle hält alle sichtbaren Toiletten. Aus ihr
+// werden per `querySourceFeatures` HTML-Marker abgeleitet: aggregierte
+// Cluster-Bubbles (transparente Anzahl) beim Rauszoomen, exakt positionierte
+// Einzelmarker beim Reinzoomen. Einzelmarker sind an ihre `[lng,lat]` gepinnt
+// und werden über die Toilet-ID wiederverwendet → keine Positionsdrift beim
+// Zoomen, kein Neu-Rendern.
+const TOILET_SOURCE = 'klo-toilets';
+/** Ab diesem Zoom werden Cluster aufgelöst → alle WCs einzeln, exakt 1:1. */
+const CLUSTER_MAX_ZOOM = 16;
+/** Cluster-Radius in Pixeln (Supercluster). */
+const CLUSTER_RADIUS = 60;
+
+function toiletsToGeoJSON(toilets: Toilet[]): GeoJSON.FeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: toilets.map((t) => ({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [t.longitude, t.latitude] },
+      properties: { id: t.id },
+    })),
+  };
+}
+
+/** Eurokey-artige, halbtransparente Cluster-Bubble mit Anzahl. */
+function buildClusterElement(count: number, label: string): HTMLDivElement {
+  // Grösse skaliert sanft mit der Anzahl
+  const size = count < 10 ? 40 : count < 50 ? 50 : count < 200 ? 60 : 70;
+  const el = document.createElement('div');
+  el.className = 'klo-cluster';
+  el.setAttribute('role', 'button');
+  el.setAttribute('tabindex', '0');
+  el.setAttribute('aria-label', `${count} Toiletten — zum Vergrössern klicken`);
+  el.style.cssText = `
+    width:${size}px;height:${size}px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;`;
+  // Äusserer Halo (sehr transparent) + innere Scheibe (halbtransparentes Grün)
+  el.innerHTML = `
+    <div style="
+      position:absolute;width:${size}px;height:${size}px;border-radius:50%;
+      background:rgba(45,168,79,0.22);
+    "></div>
+    <div style="
+      position:relative;width:${size - 12}px;height:${size - 12}px;border-radius:50%;
+      background:rgba(45,168,79,0.78);
+      border:2px solid rgba(255,255,255,0.9);
+      box-shadow:0 2px 10px rgba(0,0,0,.35);
+      display:flex;align-items:center;justify-content:center;
+      color:white;font-family:Inter,sans-serif;font-weight:800;
+      font-size:${count < 200 ? 13 : 15}px;line-height:1;
+      text-shadow:0 1px 2px rgba(0,0,0,.3);
+    ">${label}</div>`;
+  return el;
+}
+
+/** Rich-Einzelmarker (Score-Raute bzw. WC-Pin + Badges). */
+function buildMarkerElement(t: Toilet): HTMLDivElement {
+  const el = document.createElement('div');
+  el.className = 'klo-marker';
+  el.setAttribute('aria-label', t.name);
+  el.setAttribute('role', 'button');
+  el.setAttribute('tabindex', '0');
+  el.style.position = 'relative';
+  el.style.display = 'inline-block';
+
+  const color = scoreColor(t.score);
+  const count = t.score?.count ?? 0;
+  const hasScore = count > 0;
+
+  const isNetteToilette = t.category === 'nette_toilette';
+  const isAccessible = t.accessibility?.wheelchair === true || t.accessibility?.step_free === true;
+  const isEuroKey = t.accessibility?.euro_key === true;
+
+  const border = isNetteToilette ? '2.5px solid #2DA84F' : '2px solid rgba(255,255,255,0.9)';
+
+  const wheelchairBadge = isAccessible
+    ? `<div title="${t.accessibility?.wheelchair ? 'Rollstuhlgerecht' : 'Stufenlos zugänglich'}" style="
+         position:absolute;top:-5px;right:-7px;
+         background:#1D6FA4;border-radius:50%;
+         width:17px;height:17px;
+         display:flex;align-items:center;justify-content:center;
+         border:1.5px solid white;
+         box-shadow:0 1px 4px rgba(0,0,0,.5);
+         font-size:9px;line-height:1;z-index:2;
+       ">♿</div>`
+    : '';
+  const euroKeyBadge = isEuroKey
+    ? `<div title="Eurokey" style="
+         position:absolute;top:-5px;left:-7px;
+         background:#C97D0E;border-radius:50%;
+         width:17px;height:17px;
+         display:flex;align-items:center;justify-content:center;
+         border:1.5px solid white;
+         box-shadow:0 1px 4px rgba(0,0,0,.5);
+         font-size:9px;line-height:1;z-index:2;
+       ">🔑</div>`
+    : '';
+
+  if (hasScore) {
+    el.innerHTML = `
+      <div style="
+        background:${color};color:white;
+        border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+        width:36px;height:36px;
+        display:flex;align-items:center;justify-content:center;
+        box-shadow:0 3px 10px rgba(0,0,0,.3);cursor:pointer;
+        border:${border};
+        font-size:11px;font-weight:700;font-family:Inter,sans-serif;
+      ">
+        <span style="transform:rotate(45deg)">${t.score!.net.toFixed(1)}</span>
+      </div>
+      ${wheelchairBadge}${euroKeyBadge}`;
+  } else {
+    const bg = isNetteToilette ? '#2DA84F' : '#5B6B82';
+    el.innerHTML = `
+      <div style="
+        background:${bg};
+        border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+        width:30px;height:30px;
+        display:flex;align-items:center;justify-content:center;
+        box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer;
+        border:${border};
+      ">
+        <span style="transform:rotate(45deg);font-size:14px;line-height:1;">🚽</span>
+      </div>
+      ${wheelchairBadge}${euroKeyBadge}`;
+  }
+  return el;
+}
+
+/** Toilet-Quelle (geclustert) anlegen oder aktualisieren. */
+function ensureToiletSource(map: maplibregl.Map, data: GeoJSON.FeatureCollection) {
+  const existing = map.getSource(TOILET_SOURCE) as maplibregl.GeoJSONSource | undefined;
+  if (existing) {
+    existing.setData(data);
+    return;
+  }
+  map.addSource(TOILET_SOURCE, {
+    type: 'geojson',
+    data,
+    cluster: true,
+    clusterRadius: CLUSTER_RADIUS,
+    clusterMaxZoom: CLUSTER_MAX_ZOOM,
+  });
+}
+
+/**
+ * Leitet aus der geclusterten Quelle HTML-Marker ab: Cluster-Bubbles +
+ * exakt positionierte Einzelmarker. Marker werden über ihren Key (Cluster-ID
+ * bzw. Toilet-ID) gepoolt und wiederverwendet — dadurch bleiben Einzel-WCs beim
+ * Zoomen positionsstabil und flackern nicht.
+ */
+function syncMarkers(
+  map: maplibregl.Map,
+  pool: Record<string, maplibregl.Marker>,
+  onScreenRef: { current: Record<string, maplibregl.Marker> },
+  lookup: Map<string, Toilet>,
+  onSelectRef: { current: (id: string) => void },
+) {
+  const source = map.getSource(TOILET_SOURCE);
+  if (!source || !map.isSourceLoaded(TOILET_SOURCE)) return;
+
+  const onScreen = onScreenRef.current;
+  const next: Record<string, maplibregl.Marker> = {};
+  const features = map.querySourceFeatures(TOILET_SOURCE);
+
+  for (const f of features) {
+    if (f.geometry.type !== 'Point') continue;
+    const coords = f.geometry.coordinates as [number, number];
+    const props = f.properties ?? {};
+
+    if (props.cluster) {
+      const key = `c${props.cluster_id}`;
+      if (next[key]) continue; // Tile-Überlappung → Duplikat überspringen
+      let marker = pool[key];
+      if (!marker) {
+        const el = buildClusterElement(
+          props.point_count as number,
+          String(props.point_count_abbreviated ?? props.point_count),
+        );
+        const clusterId = props.cluster_id as number;
+        const expand = () => {
+          (source as maplibregl.GeoJSONSource)
+            .getClusterExpansionZoom(clusterId)
+            .then((zoom) => map.easeTo({ center: coords, zoom: Math.min(zoom, 20), duration: 500 }))
+            .catch(() => {});
+        };
+        el.addEventListener('click', expand);
+        el.addEventListener('keydown', (e) => {
+          if ((e as KeyboardEvent).key === 'Enter') expand();
+        });
+        marker = pool[key] = new maplibregl.Marker({ element: el }).setLngLat(coords);
+      }
+      next[key] = marker;
+      if (!onScreen[key]) marker.addTo(map);
+    } else {
+      const id = props.id as string;
+      if (!id || next[id]) continue;
+      let marker = pool[id];
+      if (!marker) {
+        const toilet = lookup.get(id);
+        if (!toilet) continue;
+        const el = buildMarkerElement(toilet);
+        el.addEventListener('click', () => onSelectRef.current(id));
+        el.addEventListener('keydown', (e) => {
+          if ((e as KeyboardEvent).key === 'Enter') onSelectRef.current(id);
+        });
+        marker = pool[id] = new maplibregl.Marker({ element: el, anchor: 'bottom' }).setLngLat(
+          coords,
+        );
+      }
+      next[id] = marker;
+      if (!onScreen[id]) marker.addTo(map);
+    }
+  }
+
+  // Nicht mehr sichtbare Marker von der Karte nehmen (im Pool belassen für Reuse)
+  for (const key in onScreen) {
+    if (!next[key]) onScreen[key].remove();
+  }
+  onScreenRef.current = next;
+}
+
+/** Heatmap-Source + -Layer (inkl. Farbverlauf) setzen; leere Punkte = entfernen. */
+function applyHeatmap(map: maplibregl.Map, points: HeatmapPoint[]) {
+  if (map.getLayer(HEATMAP_LAYER)) map.removeLayer(HEATMAP_LAYER);
+  if (map.getSource(HEATMAP_SOURCE)) map.removeSource(HEATMAP_SOURCE);
+  if (points.length === 0) return;
+
+  map.addSource(HEATMAP_SOURCE, {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: points.map((p) => ({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
+        properties: { weight: p.weight ?? 1 },
+      })),
+    },
+  });
+  map.addLayer({
+    id: HEATMAP_LAYER,
+    type: 'heatmap',
+    source: HEATMAP_SOURCE,
+    paint: {
+      'heatmap-weight': ['interpolate', ['linear'], ['get', 'weight'], 0, 0, 5, 1],
+      'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 7, 1, 15, 3],
+      'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 7, 20, 15, 40],
+      'heatmap-opacity': 0.72,
+      'heatmap-color': [
+        'interpolate',
+        ['linear'],
+        ['heatmap-density'],
+        0,
+        'rgba(0,0,0,0)',
+        0.2,
+        'rgba(6,214,160,0.6)',
+        0.4,
+        'rgba(255,210,63,0.7)',
+        0.6,
+        'rgba(255,107,53,0.8)',
+        0.8,
+        'rgba(239,71,111,0.9)',
+        1.0,
+        'rgba(239,71,111,1)',
+      ],
+    },
+  });
+}
+
+/** Serverseitige Cluster-Bubbles als eigene Marker (re)rendern. */
+function renderServerClusters(
+  map: maplibregl.Map,
+  clusters: ToiletCluster[],
+  store: { current: maplibregl.Marker[] },
+) {
+  store.current.forEach((m) => m.remove());
+  store.current = [];
+  for (const c of clusters) {
+    const label =
+      c.count >= 1000 ? `${(c.count / 1000).toFixed(c.count < 10_000 ? 1 : 0)}k` : String(c.count);
+    const el = buildClusterElement(c.count, label);
+    const zoomIn = () =>
+      map.easeTo({ center: [c.lng, c.lat], zoom: Math.min(map.getZoom() + 3, 20), duration: 500 });
+    el.addEventListener('click', zoomIn);
+    el.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Enter') zoomIn();
+    });
+    store.current.push(new maplibregl.Marker({ element: el }).setLngLat([c.lng, c.lat]).addTo(map));
+  }
+}
+
 export interface MapBounds {
   minLng: number;
   minLat: number;
@@ -58,6 +350,8 @@ export interface MapBounds {
 
 interface Props {
   toilets: Toilet[];
+  /** Serverseitig aggregierte Cluster (weit rausgezoomt, sehr dicht). */
+  serverClusters?: ToiletCluster[];
   center?: [number, number];
   flyTarget?: [number, number] | null;
   zoom?: number;
@@ -77,6 +371,7 @@ interface Props {
 
 export default function MapView({
   toilets,
+  serverClusters = [],
   center,
   flyTarget,
   zoom = 14,
@@ -91,11 +386,25 @@ export default function MapView({
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
-  const markersRef = useRef<maplibregl.Marker[]>([]);
+  // Marker-Pool (id → Marker) für Wiederverwendung + aktuell sichtbare Marker.
+  // Cluster-Keys: `c<cluster_id>`, Einzelmarker-Keys: Toilet-ID.
+  const markersRef = useRef<Record<string, maplibregl.Marker>>({});
+  const markersOnScreenRef = useRef<Record<string, maplibregl.Marker>>({});
+  // id → Toilet, damit der Render-Sync die Rich-Marker bauen kann
+  const toiletLookupRef = useRef<Map<string, Toilet>>(new Map());
+  // Aktuelle Toiletten (für den 'load'-Handler im Init-Effekt)
+  const toiletsRef = useRef<Toilet[]>(toilets);
+  // id → optische Signatur, um geänderte Marker neu zu bauen
+  const builtSigRef = useRef<Map<string, string>>(new Map());
+  // Serverseitige Cluster-Bubbles (eigene Marker, unabhängig vom Detail-Pool)
+  const serverMarkersRef = useRef<maplibregl.Marker[]>([]);
+  // Aktuelle Server-Cluster (damit onStyleData sie nach Style-Wechsel neu rendert)
+  const serverClustersRef = useRef<ToiletCluster[]>(serverClusters);
   const moveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onMoveEndRef = useRef(onMoveEnd);
   const onMapClickRef = useRef(onMapClick);
   const onBearingChangeRef = useRef(onBearingChange);
+  const onSelectRef = useRef(onSelect);
   // Ref für Heatmap-Zustand — wird nach Style-Wechsel neu angewendet
   const heatmapStateRef = useRef({ show: showHeatmap, points: heatmapPoints });
 
@@ -104,6 +413,7 @@ export default function MapView({
     onMoveEndRef.current = onMoveEnd;
     onMapClickRef.current = onMapClick;
     onBearingChangeRef.current = onBearingChange;
+    onSelectRef.current = onSelect;
   });
 
   // Init map once
@@ -158,6 +468,35 @@ export default function MapView({
     };
     mapRef.current.on('moveend', handleMoveEnd);
 
+    // ── Cluster-Quelle + Marker-Sync ──────────────────────────────────────
+    const initSource = () => {
+      const map = mapRef.current;
+      if (!map) return;
+      ensureToiletSource(map, toiletsToGeoJSON(toiletsRef.current));
+    };
+    mapRef.current.on('load', initSource);
+    // Erstes Laden: Viewport-Bounds melden, sobald die Karte bereit ist
+    mapRef.current.on('load', handleMoveEnd);
+
+    // Marker aus der Quelle ableiten, sobald die Karte zur Ruhe kommt ('idle':
+    // Bewegung beendet UND alle Tiles geladen). Bewusst NICHT bei jedem 'render'-
+    // Frame: Während Tiles nachladen liefert querySourceFeatures unvollständige
+    // Ergebnisse → Marker würden kurz entfernt und wieder hinzugefügt (Flackern).
+    // Einzelmarker sind an [lng,lat] gepinnt und werden von MapLibre ohnehin jeden
+    // Frame korrekt re-projiziert; ein Sync pro Ruhephase genügt.
+    const handleIdle = () => {
+      const map = mapRef.current;
+      if (!map) return;
+      syncMarkers(
+        map,
+        markersRef.current,
+        markersOnScreenRef,
+        toiletLookupRef.current,
+        onSelectRef,
+      );
+    };
+    mapRef.current.on('idle', handleIdle);
+
     // ── Bearing-Tracking: für Custom-Kompass ──────────────────────────────
     const handleRotate = () => {
       onBearingChangeRef.current?.(mapRef.current?.getBearing() ?? 0);
@@ -168,9 +507,9 @@ export default function MapView({
     // ── Map Click: Marker-Drop für AddToilet ──────────────────────────────
     const handleMapClick = (e: maplibregl.MapMouseEvent) => {
       if (!onMapClickRef.current) return;
-      // Klick auf einen Marker ignorieren
+      // Klick auf einen Marker oder eine Cluster-Bubble ignorieren
       const target = e.originalEvent.target as HTMLElement;
-      if (target.closest('.klo-marker')) return;
+      if (target.closest('.klo-marker, .klo-cluster')) return;
       onMapClickRef.current(e.lngLat.lng, e.lngLat.lat);
     };
     mapRef.current.on('click', handleMapClick);
@@ -250,144 +589,76 @@ export default function MapView({
     };
   }, [compassEnabled]);
 
-  // Update markers when toilets change
+  // Toiletten-Daten → geclusterte Quelle aktualisieren.
+  // Die Marker selbst werden im 'render'-Handler (syncMarkers) abgeleitet.
   useEffect(() => {
+    toiletsRef.current = toilets;
+
+    // Lookup + Signaturen neu aufbauen (id → Toilet)
+    const lookup = new Map<string, Toilet>();
+    const validIds = new Set<string>();
+    for (const t of toilets) {
+      lookup.set(t.id, t);
+      validIds.add(t.id);
+    }
+    toiletLookupRef.current = lookup;
+
+    // Pool aufräumen: Cluster immer verwerfen (cluster_ids ändern sich bei jeder
+    // Daten-/Zoom-Neuberechnung), Einzelmarker nur wenn entfernt ODER wenn sich
+    // die optische Signatur geändert hat (Score/Badges) → Neuaufbau.
+    const sigOf = (t: Toilet) =>
+      `${t.name}|${t.category}|${t.score?.net ?? ''}|${t.score?.count ?? 0}` +
+      `|${t.accessibility?.wheelchair ?? ''}|${t.accessibility?.step_free ?? ''}` +
+      `|${t.accessibility?.euro_key ?? ''}`;
+    for (const key of Object.keys(markersRef.current)) {
+      const stale =
+        key.startsWith('c') ||
+        !validIds.has(key) ||
+        builtSigRef.current.get(key) !== sigOf(lookup.get(key)!);
+      if (stale) {
+        markersRef.current[key].remove();
+        delete markersRef.current[key];
+        delete markersOnScreenRef.current[key];
+      }
+    }
+    builtSigRef.current = new Map(toilets.map((t) => [t.id, sigOf(t)]));
+
     const map = mapRef.current;
     if (!map) return;
+    const apply = () => ensureToiletSource(map, toiletsToGeoJSON(toilets));
+    if (map.isStyleLoaded()) apply();
+    else map.once('load', apply);
+  }, [toilets]);
 
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = [];
-
-    const addMarkers = () => {
-      toilets.forEach((t) => {
-        const el = document.createElement('div');
-        el.className = 'klo-marker';
-        el.setAttribute('aria-label', t.name);
-        el.setAttribute('role', 'button');
-        el.setAttribute('tabindex', '0');
-        // position:relative damit Badges absolut positioniert werden können
-        el.style.position = 'relative';
-        el.style.display = 'inline-block';
-
-        const color = scoreColor(t.score);
-        const count = t.score?.count ?? 0;
-        const hasScore = count > 0;
-
-        const isNetteToilette = t.category === 'nette_toilette';
-        // Badge konsistent mit "barrierefrei"-Filter (wheelchair ODER step_free)
-        const isAccessible =
-          t.accessibility?.wheelchair === true || t.accessibility?.step_free === true;
-        const isEuroKey = t.accessibility?.euro_key === true;
-
-        // Rahmenfarbe: Nette Toilette = grün, sonst weiss
-        const border = isNetteToilette ? '2.5px solid #2DA84F' : '2px solid rgba(255,255,255,0.9)';
-
-        // Badges (♿ oben-rechts, 🔑 oben-links)
-        const wheelchairBadge = isAccessible
-          ? `<div title="${t.accessibility?.wheelchair ? 'Rollstuhlgerecht' : 'Stufenlos zugänglich'}" style="
-               position:absolute;top:-5px;right:-7px;
-               background:#1D6FA4;border-radius:50%;
-               width:17px;height:17px;
-               display:flex;align-items:center;justify-content:center;
-               border:1.5px solid white;
-               box-shadow:0 1px 4px rgba(0,0,0,.5);
-               font-size:9px;line-height:1;z-index:2;
-             ">♿</div>`
-          : '';
-        const euroKeyBadge = isEuroKey
-          ? `<div title="Eurokey" style="
-               position:absolute;top:-5px;left:-7px;
-               background:#C97D0E;border-radius:50%;
-               width:17px;height:17px;
-               display:flex;align-items:center;justify-content:center;
-               border:1.5px solid white;
-               box-shadow:0 1px 4px rgba(0,0,0,.5);
-               font-size:9px;line-height:1;z-index:2;
-             ">🔑</div>`
-          : '';
-
-        if (hasScore) {
-          // Bewerteter Marker: Raute mit Score-Zahl
-          el.innerHTML = `
-            <div style="
-              background:${color};color:white;
-              border-radius:50% 50% 50% 0;transform:rotate(-45deg);
-              width:36px;height:36px;
-              display:flex;align-items:center;justify-content:center;
-              box-shadow:0 3px 10px rgba(0,0,0,.3);cursor:pointer;
-              border:${border};
-              font-size:11px;font-weight:700;font-family:Inter,sans-serif;
-            ">
-              <span style="transform:rotate(45deg)">${t.score!.net.toFixed(1)}</span>
-            </div>
-            ${wheelchairBadge}${euroKeyBadge}`;
-        } else {
-          // Unbewerteter Marker: kompakter Pin mit WC-Symbol
-          const bg = isNetteToilette ? '#2DA84F' : '#5B6B82';
-          el.innerHTML = `
-            <div style="
-              background:${bg};
-              border-radius:50% 50% 50% 0;transform:rotate(-45deg);
-              width:30px;height:30px;
-              display:flex;align-items:center;justify-content:center;
-              box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer;
-              border:${border};
-            ">
-              <span style="transform:rotate(45deg);font-size:14px;line-height:1;">🚽</span>
-            </div>
-            ${wheelchairBadge}${euroKeyBadge}`;
-        }
-
-        el.addEventListener('click', () => onSelect(t.id));
-        el.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') onSelect(t.id);
-        });
-
-        markersRef.current.push(
-          new maplibregl.Marker({ element: el, anchor: 'bottom' })
-            .setLngLat([t.longitude, t.latitude])
-            .addTo(map),
-        );
-      });
-    };
-
-    if (map.isStyleLoaded()) addMarkers();
-    else map.once('load', addMarkers);
-  }, [toilets, onSelect]);
+  // Serverseitige Cluster-Bubbles (nur wenn der Viewport zu dicht für Details
+  // ist). Eigene Marker — maplibre hält sie beim Zoomen/Schwenken positionsstabil.
+  useEffect(() => {
+    serverClustersRef.current = serverClusters;
+    const map = mapRef.current;
+    if (!map) return;
+    const render = () => renderServerClusters(map, serverClusters, serverMarkersRef);
+    if (map.isStyleLoaded()) render();
+    else map.once('styledata', render);
+  }, [serverClusters]);
 
   // Kartenstil wechseln (nach Init)
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
     const newStyle = buildStyleUrl(mapStyle);
-    // Nach Style-Wechsel Heatmap-Layer neu anwenden
+    // Nach Style-Wechsel Heatmap-Layer + Toilet-Quelle neu anwenden
     const onStyleData = () => {
+      // setStyle verwirft Sources/Layer → Toilet-Quelle, Marker-Pool, Heatmap und
+      // Server-Cluster neu aufbauen.
+      ensureToiletSource(map, toiletsToGeoJSON(toiletsRef.current));
+      // Marker-Pool leeren → im nächsten 'idle' frisch ableiten (keine Geister)
+      for (const key of Object.keys(markersRef.current)) markersRef.current[key].remove();
+      markersRef.current = {};
+      markersOnScreenRef.current = {};
+
       const { show, points } = heatmapStateRef.current;
-      if (!show || points.length === 0) return;
-      if (map.getLayer(HEATMAP_LAYER)) map.removeLayer(HEATMAP_LAYER);
-      if (map.getSource(HEATMAP_SOURCE)) map.removeSource(HEATMAP_SOURCE);
-      map.addSource(HEATMAP_SOURCE, {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: points.map((p) => ({
-            type: 'Feature',
-            geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
-            properties: { weight: p.weight ?? 1 },
-          })),
-        },
-      });
-      map.addLayer({
-        id: HEATMAP_LAYER,
-        type: 'heatmap',
-        source: HEATMAP_SOURCE,
-        paint: {
-          'heatmap-weight': ['interpolate', ['linear'], ['get', 'weight'], 0, 0, 5, 1],
-          'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 7, 1, 15, 3],
-          'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 7, 20, 15, 40],
-          'heatmap-opacity': 0.72,
-        },
-      });
+      applyHeatmap(map, show ? points : []);
+      renderServerClusters(map, serverClustersRef.current, serverMarkersRef);
     };
     map.once('styledata', onStyleData);
     map.setStyle(newStyle);
@@ -406,55 +677,7 @@ export default function MapView({
     const map = mapRef.current;
     if (!map) return;
 
-    const apply = () => {
-      // Remove existing heatmap layer/source
-      if (map.getLayer(HEATMAP_LAYER)) map.removeLayer(HEATMAP_LAYER);
-      if (map.getSource(HEATMAP_SOURCE)) map.removeSource(HEATMAP_SOURCE);
-
-      if (!showHeatmap || heatmapPoints.length === 0) return;
-
-      map.addSource(HEATMAP_SOURCE, {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: heatmapPoints.map((p) => ({
-            type: 'Feature',
-            geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
-            properties: { weight: p.weight ?? 1 },
-          })),
-        },
-      });
-
-      map.addLayer({
-        id: HEATMAP_LAYER,
-        type: 'heatmap',
-        source: HEATMAP_SOURCE,
-        paint: {
-          'heatmap-weight': ['interpolate', ['linear'], ['get', 'weight'], 0, 0, 5, 1],
-          'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 7, 1, 15, 3],
-          'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 7, 20, 15, 40],
-          'heatmap-opacity': 0.72,
-          'heatmap-color': [
-            'interpolate',
-            ['linear'],
-            ['heatmap-density'],
-            0,
-            'rgba(0,0,0,0)',
-            0.2,
-            'rgba(6,214,160,0.6)',
-            0.4,
-            'rgba(255,210,63,0.7)',
-            0.6,
-            'rgba(255,107,53,0.8)',
-            0.8,
-            'rgba(239,71,111,0.9)',
-            1.0,
-            'rgba(239,71,111,1)',
-          ],
-        },
-      });
-    };
-
+    const apply = () => applyHeatmap(map, showHeatmap ? heatmapPoints : []);
     if (map.isStyleLoaded()) apply();
     else map.once('load', apply);
   }, [showHeatmap, heatmapPoints]);

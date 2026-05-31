@@ -11,7 +11,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { ToiletsService, ToiletInputSchema, ToiletUpdateSchema } from './toilets.service';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -37,6 +37,62 @@ export class ToiletsController {
     return this.toilets.findNearby(+lng, +lat, Math.min(+radius, 5000), {
       category: cats,
     });
+  }
+
+  // GET /toilets/viewport?minLng=&minLat=&maxLng=&maxLat=&category=
+  // Bbox-Aggregation: liefert Einzel-Toiletten ODER aggregierte Cluster-Zellen
+  @Get('viewport')
+  @ApiQuery({ name: 'minLng', type: Number })
+  @ApiQuery({ name: 'minLat', type: Number })
+  @ApiQuery({ name: 'maxLng', type: Number })
+  @ApiQuery({ name: 'maxLat', type: Number })
+  @ApiQuery({ name: 'category', type: [String], required: false })
+  @ApiOkResponse({
+    description:
+      'Diskriminierte Union: Einzel-Toiletten (≤ 1500 im Bbox) oder aggregierte ' +
+      'Cluster-Zellen (Zentroid + exakte Anzahl) bei dichten Viewports.',
+    schema: {
+      oneOf: [
+        {
+          type: 'object',
+          required: ['mode', 'toilets'],
+          properties: {
+            mode: { type: 'string', enum: ['detail'] },
+            toilets: { type: 'array', items: { type: 'object' } },
+          },
+        },
+        {
+          type: 'object',
+          required: ['mode', 'total', 'clusters'],
+          properties: {
+            mode: { type: 'string', enum: ['clusters'] },
+            total: { type: 'integer' },
+            clusters: {
+              type: 'array',
+              items: {
+                type: 'object',
+                required: ['lng', 'lat', 'count'],
+                properties: {
+                  lng: { type: 'number' },
+                  lat: { type: 'number' },
+                  count: { type: 'integer' },
+                },
+              },
+            },
+          },
+        },
+      ],
+    },
+  })
+  findInViewport(
+    @Query('minLng') minLng: string,
+    @Query('minLat') minLat: string,
+    @Query('maxLng') maxLng: string,
+    @Query('maxLat') maxLat: string,
+    @Query('category') category?: string | string[],
+  ) {
+    const cats = category ? (Array.isArray(category) ? category : [category]) : [];
+    return this.toilets.findInViewport(+minLng, +minLat, +maxLng, +maxLat, { category: cats });
   }
 
   // GET /toilets/private  — eigene + eingeladene Privat-Toiletten
