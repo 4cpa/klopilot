@@ -102,7 +102,7 @@ Rolle-Downgrade).
 
 - TLS 1.3 erzwungen (HSTS, `max-age=63072000; includeSubDomains; preload`).
 - Traefik v3 verwaltet Let's-Encrypt-Zertifikate automatisch.
-- Datenbank: TDE/At-Rest-Verschlüsselung (LUKS bei Hetzner).
+- Datenbank: TDE/At-Rest-Verschlüsselung (LUKS bei Infomaniak, CH).
 - Object Storage: Server-Side Encryption (AES-256, MinIO / S3).
 - Backups verschlüsselt, getrennte Region. RTO 4 h, RPO 24 h für MVP.
 
@@ -259,7 +259,7 @@ localhost:3102  (dev)
 | MapTiler / Esri | Karten-Tiles                 | IP, Tile-Anfrage      | berechtigtes Interesse    |
 | Google          | OAuth-Login, (optional Maps) | E-Mail                | Vertrag (Auftragsverarb.) |
 | Apple           | OAuth-Login                  | E-Mail                | Vertrag (Auftragsverarb.) |
-| Hetzner         | VPS-Hosting                  | Alle Server-Daten     | Vertrag (Auftragsverarb.) |
+| Infomaniak (CH) | VPS-Hosting (CH)             | Alle Server-Daten     | Vertrag (Auftragsverarb.) |
 | DeepL           | Übersetzung on demand        | Review-Text           | Einwilligung              |
 | Sentry          | Fehler-Telemetrie            | Stacktrace ohne PII   | berechtigtes Interesse    |
 | Plausible       | Analytics (anonym)           | aggregierte Statistik | berechtigtes Interesse    |

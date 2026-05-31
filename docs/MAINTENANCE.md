@@ -9,7 +9,7 @@
 
 | Komponente           | Wo               | Details                                 |
 | -------------------- | ---------------- | --------------------------------------- |
-| VPS                  | Hetzner          | Ubuntu 24.04 LTS, `/opt/klopilot`       |
+| VPS                  | Infomaniak (CH)  | Ubuntu 24.04 LTS, `/opt/klopilot`       |
 | Reverse Proxy        | Traefik v3       | Port 80/443, Auto-TLS via Let's Encrypt |
 | API                  | Docker Container | `ghcr.io/4cpa/klopilot-api:latest`      |
 | Web                  | Docker Container | `ghcr.io/4cpa/klopilot-web:latest`      |
@@ -300,7 +300,7 @@ docker compose exec postgres psql -U klopilot -d klopilot \
 
 ## 11. DNS-Konfiguration
 
-Benötigte A-Records (Hetzner DNS):
+Benötigte A-Records (Infomaniak DNS-Verwaltung):
 
 | Hostname                | Typ | Ziel   |
 | ----------------------- | --- | ------ |
@@ -316,12 +316,12 @@ Benötigte A-Records (Hetzner DNS):
 
 ## 12. Notfall-Kontakte
 
-| Situation           | Kontakt                                |
-| ------------------- | -------------------------------------- |
-| VPS / Infrastruktur | Hetzner Support: console.hetzner.cloud |
-| Sicherheitsvorfall  | admin@4cpa.ch, Sentry-Alert            |
-| DNS                 | Hetzner DNS: dns.hetzner.com           |
-| E-Mail (SMTP)       | Provider-Dashboard                     |
+| Situation           | Kontakt                                    |
+| ------------------- | ------------------------------------------ |
+| VPS / Infrastruktur | Infomaniak Support: manager.infomaniak.com |
+| Sicherheitsvorfall  | admin@4cpa.ch, Sentry-Alert                |
+| DNS                 | Infomaniak Manager: manager.infomaniak.com |
+| E-Mail (SMTP)       | Provider-Dashboard                         |
 
 ---
 

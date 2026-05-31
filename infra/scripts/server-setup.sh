@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # klopilot.ch — Einmaliger Server-Bootstrap
-# Ausführen als root auf einem frischen Hetzner-Ubuntu-24.04-Server:
+# Ausführen als root auf einem frischen Infomaniak-Ubuntu-24.04-Server (CH):
 #   curl -fsSL https://raw.githubusercontent.com/4cpa/klopilot/main/infra/scripts/server-setup.sh | bash
 set -euo pipefail
 

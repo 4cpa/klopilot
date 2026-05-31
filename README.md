@@ -43,7 +43,7 @@ Community-Plattform zur Bewertung öffentlich zugänglicher Toiletten — kosten
 | Mobile             | Expo SDK 51 · React Native · react-native-maps                       |
 | Auth               | JWT (15 min) · Refresh-Token (7 d) · Magic Link · OAuth Google/Apple |
 | Validation         | Zod (shared-types package)                                           |
-| CI/CD              | GitHub Actions → GHCR → Hetzner VPS                                  |
+| CI/CD              | GitHub Actions → GHCR → Infomaniak VPS (CH)                          |
 | Reverse Proxy      | Traefik v3 + Let's Encrypt                                           |
 
 ---

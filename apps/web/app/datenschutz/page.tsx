@@ -74,7 +74,7 @@ export default function DatenschutzPage() {
       <p>Wir verkaufen keine persönlichen Daten. Eine Weitergabe an Dritte erfolgt nur:</p>
       <ul>
         <li>
-          An unsere Hosting-Anbieter (Hetzner, Schweiz/Deutschland) im Rahmen der
+          An unseren Hosting-Anbieter Infomaniak Network SA (Genf, Schweiz) im Rahmen der
           Auftragsverarbeitung
         </li>
         <li>Bei gesetzlicher Verpflichtung</li>
@@ -110,12 +110,14 @@ export default function DatenschutzPage() {
 
       <h2>8. Internationale Datenübermittlung</h2>
       <p>
-        Unsere Server stehen in der Schweiz und in Deutschland (EU). Die Plattform ist international
-        zugänglich. Werden Daten von Nutzerinnen und Nutzern ausserhalb der Schweiz bzw. des EWR
-        verarbeitet, erfolgt eine Übermittlung an unsere Auftragsverarbeiter auf Grundlage der
-        EU-Standardvertragsklauseln (SCC) bzw. eines Angemessenheitsbeschlusses, soweit ein solcher
-        besteht. Unabhängig vom Aufenthaltsort der Nutzer wenden wir durchgängig das Schutzniveau
-        von revDSG und DSGVO als Mindeststandard an.
+        Unsere Server stehen ausschliesslich in der Schweiz (Infomaniak Network SA, Genf). Die
+        Plattform ist international zugänglich. Für Nutzerinnen und Nutzer aus der EU bzw. dem EWR
+        gilt: Die Schweiz verfügt über einen Angemessenheitsbeschluss der EU-Kommission, sodass die
+        Verarbeitung durch unseren schweizerischen Auftragsverarbeiter ohne zusätzliche Garantien
+        zulässig ist. Soweit darüber hinaus ausnahmsweise Daten in ein Drittland übermittelt werden,
+        erfolgt dies nur auf Grundlage geeigneter Garantien (insbesondere
+        EU-Standardvertragsklauseln). Unabhängig vom Aufenthaltsort der Nutzer wenden wir
+        durchgängig das Schutzniveau von revDSG und DSGVO als Mindeststandard an.
       </p>
       <p>
         Die in der App dargestellten Toiletten-Standorte beruhen auf öffentlich zugänglichen

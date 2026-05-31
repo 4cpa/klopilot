@@ -25,6 +25,13 @@ export default function ImpressumPage() {
         Transivroom Division, kontaktierbar unter <a href="mailto:admin@4cpa.ch">admin@4cpa.ch</a>.
       </p>
 
+      <h2>Hosting</h2>
+      <p>
+        Diese Plattform wird gehostet bei der <strong>Infomaniak Network SA</strong>, Rue Eugène
+        Marziano 25, 1227 Genf (Schweiz). Sämtliche Server und Daten befinden sich ausschliesslich
+        in der Schweiz.
+      </p>
+
       <h2>Nutzergenerierte Inhalte</h2>
       <p>
         Bewertungen, Kommentare und sonstige nutzergenerierte Inhalte auf klopilot.ch geben die
