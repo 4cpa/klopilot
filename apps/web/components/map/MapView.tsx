@@ -57,6 +57,11 @@ const HEATMAP_LAYER = 'klo-heatmap-layer';
 // und werden über die Toilet-ID wiederverwendet → keine Positionsdrift beim
 // Zoomen, kein Neu-Rendern.
 const TOILET_SOURCE = 'klo-toilets';
+// Unsichtbarer Layer auf der Quelle: MapLibre lädt/parst Quell-Tiles nur, wenn
+// mindestens ein Layer sie referenziert. Ohne ihn liefert querySourceFeatures()
+// dauerhaft 0 → keine Marker. Die Darstellung machen die HTML-Marker; dieser
+// Layer ist rein der Tile-Trigger (radius/opacity 0, unsichtbar).
+const TOILET_PROBE_LAYER = 'klo-toilets-probe';
 /** Ab diesem Zoom werden Cluster aufgelöst → alle WCs einzeln, exakt 1:1. */
 const CLUSTER_MAX_ZOOM = 16;
 /** Cluster-Radius in Pixeln (Supercluster). */
@@ -193,6 +198,15 @@ function ensureToiletSource(map: maplibregl.Map, data: GeoJSON.FeatureCollection
     clusterRadius: CLUSTER_RADIUS,
     clusterMaxZoom: CLUSTER_MAX_ZOOM,
   });
+  // Unsichtbarer Tile-Trigger (s. Kommentar bei TOILET_PROBE_LAYER)
+  if (!map.getLayer(TOILET_PROBE_LAYER)) {
+    map.addLayer({
+      id: TOILET_PROBE_LAYER,
+      type: 'circle',
+      source: TOILET_SOURCE,
+      paint: { 'circle-radius': 0, 'circle-opacity': 0 },
+    });
+  }
 }
 
 /**
@@ -636,9 +650,10 @@ export default function MapView({
     serverClustersRef.current = serverClusters;
     const map = mapRef.current;
     if (!map) return;
-    const render = () => renderServerClusters(map, serverClusters, serverMarkersRef);
-    if (map.isStyleLoaded()) render();
-    else map.once('styledata', render);
+    // HTML-Marker sind DOM-Overlays und brauchen KEINE geladene Style — direkt
+    // rendern (kein isStyleLoaded/styledata-Gate, das bei reinem Kamera-Move
+    // nicht erneut feuert und das Rendern verschluckt).
+    renderServerClusters(map, serverClusters, serverMarkersRef);
   }, [serverClusters]);
 
   // Kartenstil wechseln (nach Init)
