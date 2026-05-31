@@ -40,6 +40,16 @@ const SECTIONS = [
     body: 'Kein Konto nötig zum Stöbern. Fotos werden ohne GPS-Metadaten (EXIF) gespeichert. Private Toiletten sind auf der Karte nur für Eingeladene sichtbar.',
   },
   {
+    icon: '🌍',
+    title: 'Internationale Abdeckung',
+    body: '39 Länder in Europa — von West- und Nordeuropa über Mittel- und Osteuropa und den ganzen Balkan — sowie die Küstenregionen des Mittelmeers. Daten stammen aus OpenStreetMap und der Community.',
+  },
+  {
+    icon: '🗣️',
+    title: 'Sprache wählen',
+    body: 'Verfügbar in 31 Sprachen, inklusive Arabisch und Hebräisch mit Rechts-nach-links-Darstellung. Wechsle über das Sprachmenü oder direkt per Link, z. B. klopilot.ch/?lang=uk.',
+  },
+  {
     icon: '⌨️',
     title: 'Tastaturkürzel',
     body: 'Tab: Fokus bewegen · Enter/Leertaste: Aktion ausführen · Escape: Dialog schliessen · ←/→: Fotos blättern · ↑/↓: Karte zoomen (wenn Fokus auf Karte)',
