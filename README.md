@@ -259,6 +259,18 @@ Generator: `apps/web/scripts/generate-report.mjs`.
 
 ---
 
+## Lokales Backup
+
+```bash
+pnpm backup                 # Git-Bundle (Historie) + Worktree-Tarball nach ./backup/
+BACKUP_KEEP=10 pnpm backup  # Retention: wie viele Backups behalten (Default 5)
+```
+
+`./backup/` ist gitignored (nicht committet). Wiederherstellung und Details in der
+automatisch erzeugten `backup/RESTORE.md`. Skript: `scripts/backup.sh`.
+
+---
+
 ## Beitragen
 
 Siehe [CONTRIBUTING.md](.github/CONTRIBUTING.md).
