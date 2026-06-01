@@ -19,7 +19,11 @@ mit Berücksichtigung lokaler Gepflogenheiten.
 - **Karten­basis:** satellitenbasiert (MapTiler Satellite oder Esri World Imagery)
 - **Bewertungs­symbole:** Blümchen 🌸 (positiv, 0–5) und Fliegen 🪰 (negativ, 0–5)
 - **Privat­toiletten:** stark eingeschränkt (Adresse unscharf, nur eingeladene Nutzer)
-- **Sprachen MVP:** DE, FR, IT, EN
+- **Sprachen:** 31 (inkl. RTL Arabisch/Hebräisch), Default DE — Kern DE/FR/IT/EN.
+  Details `docs/INTERNATIONALIZATION.md`
+- **Datenbestand (Prod, Stand 2026-06):** ~167 000 Toiletten in 39 europäischen
+  Ländern (West-/Nord-/Mittel-/Osteuropa, gesamter Balkan) plus Mittelmeer-
+  Küstenregionen; Standorte teils aus OpenStreetMap (ODbL)
 - **Tonalität & Design:** frech, farbenfroh, Dark-Mode first-class — siehe `docs/DESIGN.md`
 
 ## 2. Tech-Stack (verbindlich)
@@ -160,6 +164,13 @@ pnpm format
 
 # Build
 pnpm build
+
+# Statistik-Report (DE/EN HTML+PDF nach apps/web/public/reports/, verlinkt von /impressum)
+pnpm report                # frische Prod-Zahlen ziehen + neu rendern
+
+# Prod-Daten (im laufenden API-Container, via sudo docker exec klopilot-api)
+node apps/api/dist/scripts/seed-osm.js --only=<ascii-substring>  # Region (nach-)importieren
+node apps/api/dist/scripts/reindex-meili.js                      # Suche neu aufbauen
 ```
 
 ## 8. Umgebungs­variablen (Auszug)
@@ -207,8 +218,8 @@ Vollständige Liste in `.env.example`. Wichtigste:
 
 **P2**: alle 10 Kriterien · Moderation · Filter & Suche · Mobile Beta
 
-**P3**: i18n DE/FR/IT/EN · Push · verifizierte Beiträge · Privat­toiletten ·
-Public API
+**P3**: i18n (✅ 31 Sprachen inkl. RTL) · Push · verifizierte Beiträge ·
+Privat­toiletten · Public API
 
 **P4**: Gamification · Heatmap "Toiletten-Wüsten" · Partner­programm
 
@@ -220,6 +231,11 @@ Public API
 - Map-Komponente: `apps/web/components/map/`
 - Mobile-Screens: `apps/mobile/app/(tabs)/...`
 - Geteilte Schemas: `packages/shared-types/src/schemas/`
+- i18n-Übersetzungen: `packages/i18n/src/locales/<code>.json` (Quelle: `de.json`),
+  Registrierung in `packages/i18n/src/index.ts`; Integritätstest
+  `apps/api/src/common/i18n-locales.spec.ts`
+- OSM-Seed / Reindex: `apps/api/prisma/seed-osm.ts`, `apps/api/prisma/reindex-meili.ts`
+- Statistik-Report-Generator: `apps/web/scripts/generate-report.mjs`
 - ADRs (Architecture Decision Records): `docs/adr/`
 
 ## 13. Externe Services
@@ -242,8 +258,11 @@ Public API
   - `docs/ROADMAP.md` — was gehört zu welcher Phase
   - `docs/MONETIZATION.md` — Geschäftsmodell, was erlaubt / was nicht
   - `docs/IMPRESSUM.md` — rechtliche Angaben
+  - `docs/INTERNATIONALIZATION.md` — i18n (31 Sprachen, RTL, Sprache hinzufügen)
+  - `docs/TESTING.md` — Test-Strategie & Anleitung
+  - `docs/adr/` — Architektur-Entscheide (i18n/RTL, Hosting Infomaniak, OSM-Seed)
 - Bei Unsicherheit: kleinerer, reversibler Schritt schlägt großen Wurf.
 - Geo-/Datenschutz-relevante Änderungen nie ohne Review.
 - Kein Schreiben auf `main` — immer PR.
 
-— Stand: P1-Initial · Version 0.1.0 · © 2026 Transivroom Division
+— Stand: 2026-06-01 · P2/P3 (31 Sprachen, europaweiter Datenbestand) · © 2026 Transivroom Division
