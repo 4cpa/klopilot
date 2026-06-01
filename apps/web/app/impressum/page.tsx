@@ -76,6 +76,31 @@ export default function ImpressumPage() {
         . Die Nutzung unterliegt den Bedingungen gemäss <a href="/licence">LICENSE</a>.
       </p>
 
+      <h2>Statistik-Report</h2>
+      <p>
+        Aktueller Bestands-Report (Toiletten nach Ländern und Rubriken, mit Datenquellen) als PDF:
+      </p>
+      <ul>
+        <li>
+          <a
+            href="/reports/klopilot-statistik-2026-06-01.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Statistik-Report (Deutsch, PDF)
+          </a>
+        </li>
+        <li>
+          <a
+            href="/reports/klopilot-statistics-2026-06-01.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Statistics Report (English, PDF)
+          </a>
+        </li>
+      </ul>
+
       <h2>Streitbeilegung</h2>
       <p>
         Transivroom Division ist weder verpflichtet noch bereit, an einem Streitbeilegungsverfahren
