@@ -13,7 +13,8 @@
     "db:migrate": "pnpm --filter api db:migrate",
     "db:studio": "pnpm --filter api db:studio",
     "db:seed": "pnpm --filter api db:seed",
-    "db:reset": "pnpm --filter api db:reset"
+    "db:reset": "pnpm --filter api db:reset",
+    "report": "pnpm --filter web report"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",

@@ -82,20 +82,12 @@ export default function ImpressumPage() {
       </p>
       <ul>
         <li>
-          <a
-            href="/reports/klopilot-statistik-2026-06-01.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="/reports/klopilot-statistik.pdf" target="_blank" rel="noopener noreferrer">
             Statistik-Report (Deutsch, PDF)
           </a>
         </li>
         <li>
-          <a
-            href="/reports/klopilot-statistics-2026-06-01.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="/reports/klopilot-statistics.pdf" target="_blank" rel="noopener noreferrer">
             Statistics Report (English, PDF)
           </a>
         </li>
