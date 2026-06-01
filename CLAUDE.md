@@ -168,6 +168,9 @@ pnpm build
 # Statistik-Report (DE/EN HTML+PDF nach apps/web/public/reports/, verlinkt von /impressum)
 pnpm report                # frische Prod-Zahlen ziehen + neu rendern
 
+# Lokales Repo-Backup nach ./backup/ (gitignored): Git-Bundle + Worktree-Tarball
+pnpm backup                # BACKUP_KEEP=<n> steuert die Retention (Default 5)
+
 # Prod-Daten (im laufenden API-Container, via sudo docker exec klopilot-api)
 node apps/api/dist/scripts/seed-osm.js --only=<ascii-substring>  # Region (nach-)importieren
 node apps/api/dist/scripts/reindex-meili.js                      # Suche neu aufbauen
