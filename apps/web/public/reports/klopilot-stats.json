@@ -1,0 +1,260 @@
+{
+  "total": 167085,
+  "generatedAt": "2026-06-01",
+  "categories": [
+    {
+      "category": "public",
+      "n": 125769
+    },
+    {
+      "category": "transport",
+      "n": 25860
+    },
+    {
+      "category": "gastronomy",
+      "n": 14442
+    },
+    {
+      "category": "mall",
+      "n": 812
+    },
+    {
+      "category": "nette_toilette",
+      "n": 202
+    }
+  ],
+  "countries": [
+    {
+      "code": "FR",
+      "name": "Frankreich",
+      "n": 27385
+    },
+    {
+      "code": "DE",
+      "name": "Deutschland",
+      "n": 16794
+    },
+    {
+      "code": "GB",
+      "name": "Vereinigtes Königreich",
+      "n": 13446
+    },
+    {
+      "code": "ES",
+      "name": "Spanien",
+      "n": 10355
+    },
+    {
+      "code": "CH",
+      "name": "Schweiz",
+      "n": 9505
+    },
+    {
+      "code": "IT",
+      "name": "Italien",
+      "n": 8917
+    },
+    {
+      "code": "AT",
+      "name": "Österreich",
+      "n": 7700
+    },
+    {
+      "code": "PL",
+      "name": "Polen",
+      "n": 7501
+    },
+    {
+      "code": "FI",
+      "name": "Finnland",
+      "n": 6114
+    },
+    {
+      "code": "SE",
+      "name": "Schweden",
+      "n": 5783
+    },
+    {
+      "code": "DK",
+      "name": "Dänemark",
+      "n": 5353
+    },
+    {
+      "code": "CZ",
+      "name": "Tschechien",
+      "n": 5315
+    },
+    {
+      "code": "NL",
+      "name": "Niederlande",
+      "n": 4850
+    },
+    {
+      "code": "UA",
+      "name": "Ukraine",
+      "n": 4567
+    },
+    {
+      "code": "PT",
+      "name": "Portugal",
+      "n": 4039
+    },
+    {
+      "code": "HU",
+      "name": "Ungarn",
+      "n": 3664
+    },
+    {
+      "code": "BE",
+      "name": "Belgien",
+      "n": 3406
+    },
+    {
+      "code": "SK",
+      "name": "Slowakei",
+      "n": 3116
+    },
+    {
+      "code": "NO",
+      "name": "Norwegen",
+      "n": 2246
+    },
+    {
+      "code": "IE",
+      "name": "Irland",
+      "n": 1639
+    },
+    {
+      "code": "GR",
+      "name": "Griechenland",
+      "n": 1576
+    },
+    {
+      "code": "SI",
+      "name": "Slowenien",
+      "n": 1409
+    },
+    {
+      "code": "HR",
+      "name": "Kroatien",
+      "n": 1243
+    },
+    {
+      "code": "LT",
+      "name": "Litauen",
+      "n": 1185
+    },
+    {
+      "code": "RO",
+      "name": "Rumänien",
+      "n": 1067
+    },
+    {
+      "code": "LV",
+      "name": "Lettland",
+      "n": 1064
+    },
+    {
+      "code": "EE",
+      "name": "Estland",
+      "n": 974
+    },
+    {
+      "code": "IL",
+      "name": "Israel/Palästina",
+      "n": 966
+    },
+    {
+      "code": "BG",
+      "name": "Bulgarien",
+      "n": 959
+    },
+    {
+      "code": "MD",
+      "name": "Moldau",
+      "n": 597
+    },
+    {
+      "code": "BA",
+      "name": "Bosnien-Herzegowina",
+      "n": 569
+    },
+    {
+      "code": "CY",
+      "name": "Zypern",
+      "n": 533
+    },
+    {
+      "code": "RS",
+      "name": "Serbien",
+      "n": 510
+    },
+    {
+      "code": "IS",
+      "name": "Island",
+      "n": 430
+    },
+    {
+      "code": "LU",
+      "name": "Luxemburg",
+      "n": 404
+    },
+    {
+      "code": "MA",
+      "name": "Marokko",
+      "n": 361
+    },
+    {
+      "code": "DZ",
+      "name": "Algerien",
+      "n": 333
+    },
+    {
+      "code": "ME",
+      "name": "Montenegro",
+      "n": 201
+    },
+    {
+      "code": "AL",
+      "name": "Albanien",
+      "n": 172
+    },
+    {
+      "code": "MT",
+      "name": "Malta",
+      "n": 171
+    },
+    {
+      "code": "LB",
+      "name": "Libanon",
+      "n": 152
+    },
+    {
+      "code": "TN",
+      "name": "Tunesien",
+      "n": 105
+    },
+    {
+      "code": "MK",
+      "name": "Nordmazedonien",
+      "n": 86
+    },
+    {
+      "code": "EG",
+      "name": "Ägypten",
+      "n": 86
+    },
+    {
+      "code": "XK",
+      "name": "Kosovo",
+      "n": 82
+    },
+    {
+      "code": "LY",
+      "name": "Libyen",
+      "n": 42
+    }
+  ],
+  "countryCount": 46,
+  "unassigned": 113
+}

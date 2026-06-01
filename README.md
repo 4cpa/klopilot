@@ -240,6 +240,25 @@ bash deploy.sh
 
 ---
 
+## Statistik-Report
+
+Zweisprachiges (DE/EN) Statistik-Dokument (Toiletten nach Ländern und Rubriken, Logo,
+Impressum/Datenquellen) als HTML + PDF unter `apps/web/public/reports/`, verlinkt von `/impressum`.
+
+```bash
+pnpm report                 # frische Prod-Zahlen ziehen + HTML/PDF neu rendern
+pnpm --filter web report -- --no-pdf                       # nur HTML + JSON
+pnpm --filter web report -- --from-json apps/web/public/reports/klopilot-stats.json
+```
+
+Datenquelle ist standardmässig die Prod-DB über SSH (`sudo docker exec <pg> psql …`),
+konfigurierbar per Env (`REPORT_SSH_HOST`, `REPORT_PG_CONTAINER`, `REPORT_PG_USER`,
+`REPORT_PG_DB`, `REPORT_DATE`). Länder werden geografisch aus den Koordinaten abgeleitet
+(kleinste enthaltende Bounding-Box). Stabile Dateinamen → der Impressum-Link bleibt gültig.
+Generator: `apps/web/scripts/generate-report.mjs`.
+
+---
+
 ## Beitragen
 
 Siehe [CONTRIBUTING.md](.github/CONTRIBUTING.md).

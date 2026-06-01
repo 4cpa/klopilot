@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start -p 3102",
     "lint": "eslint .",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "report": "node scripts/generate-report.mjs"
   },
   "dependencies": {
     "@klopilot/i18n": "workspace:*",
