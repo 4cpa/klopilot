@@ -94,7 +94,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
         className="flex items-center rounded-full px-3 py-1.5 transition-all"
         style={{
           gap: 0,
-          background: open ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.78)',
+          background: open ? 'var(--search-glass-open)' : 'var(--search-glass)',
           backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',
           boxShadow: open
