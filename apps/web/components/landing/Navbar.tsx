@@ -112,7 +112,10 @@ export function LangDropdown({ compact = false }: { compact?: boolean }) {
           style={{
             position: 'absolute',
             top: 'calc(100% + 6px)',
-            right: 0,
+            // Logisch statt physisch: in RTL (ar/he) sitzt der Button links —
+            // mit physischem `right: 0` klappte das Menü nach links aus dem
+            // Viewport. `insetInlineEnd` = right (LTR) bzw. left (RTL).
+            insetInlineEnd: 0,
             minWidth: 175,
             background: 'var(--paper)',
             border: '1px solid var(--line)',
@@ -146,7 +149,7 @@ export function LangDropdown({ compact = false }: { compact?: boolean }) {
                   background: isActive ? 'var(--cream)' : 'transparent',
                   border: 'none',
                   cursor: 'pointer',
-                  textAlign: 'left',
+                  textAlign: 'start',
                   transition: 'background 0.1s',
                 }}
                 onMouseEnter={(e) => {
