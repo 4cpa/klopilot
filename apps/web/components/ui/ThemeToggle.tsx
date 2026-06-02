@@ -1,6 +1,7 @@
 'use client';
 
 import { useTheme } from '@/lib/hooks';
+import { useTranslation } from 'react-i18next';
 
 /* ── SVG-Icons ────────────────────────────────────────────────────────────── */
 function SunIcon() {
@@ -75,12 +76,13 @@ const OPTIONS = [
 
 /* ── Desktop 3-Button-Gruppe ─────────────────────────────────────────────── */
 export function ThemeToggle() {
+  const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
 
   return (
     <div
       role="group"
-      aria-label="Theme wählen"
+      aria-label={t('a11y.theme')}
       style={{
         display: 'flex',
         borderRadius: 10,

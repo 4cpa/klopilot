@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Etusivulle",
+    "logo": "klopilot-logo",
+    "clear_search": "Tyhjennä haku",
+    "search_results": "Hakutulokset",
+    "help": "Ohje ja käyttö",
+    "choose_language": "Valitse kieli",
+    "main_nav": "Päänavigointi",
+    "open_menu": "Avaa valikko",
+    "admin": "Hallintapaneeli",
+    "profile": "Avaa profiili",
+    "user_profile": "Käyttäjäprofiili",
+    "map": "Vessakartta",
+    "theme": "Valitse teema",
+    "filters": "Karttasuodattimet",
+    "reset_filters": "Nollaa suodattimet",
+    "prev_photo": "Edellinen kuva",
+    "next_photo": "Seuraava kuva",
+    "delete_photo": "Poista kuva"
+  },
   "tabs": {
     "map": "Kartta",
     "search": "Etsi",

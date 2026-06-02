@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Aller à l’accueil",
+    "logo": "Logo klopilot",
+    "clear_search": "Effacer la recherche",
+    "search_results": "Résultats de recherche",
+    "help": "Aide et utilisation",
+    "choose_language": "Choisir la langue",
+    "main_nav": "Navigation principale",
+    "open_menu": "Ouvrir le menu",
+    "admin": "Panneau d’administration",
+    "profile": "Ouvrir le profil",
+    "user_profile": "Profil utilisateur",
+    "map": "Carte des toilettes",
+    "theme": "Choisir le thème",
+    "filters": "Filtres de carte",
+    "reset_filters": "Réinitialiser les filtres",
+    "prev_photo": "Photo précédente",
+    "next_photo": "Photo suivante",
+    "delete_photo": "Supprimer la photo"
+  },
   "tabs": {
     "map": "Carte",
     "search": "Recherche",

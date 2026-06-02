@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Naar de startpagina",
+    "logo": "klopilot-logo",
+    "clear_search": "Zoekopdracht wissen",
+    "search_results": "Zoekresultaten",
+    "help": "Help en gebruik",
+    "choose_language": "Taal kiezen",
+    "main_nav": "Hoofdnavigatie",
+    "open_menu": "Menu openen",
+    "admin": "Beheerpaneel",
+    "profile": "Profiel openen",
+    "user_profile": "Gebruikersprofiel",
+    "map": "Toilettenkaart",
+    "theme": "Thema kiezen",
+    "filters": "Kaartfilters",
+    "reset_filters": "Filters opnieuw instellen",
+    "prev_photo": "Vorige foto",
+    "next_photo": "Volgende foto",
+    "delete_photo": "Foto verwijderen"
+  },
   "tabs": {
     "map": "Kaart",
     "search": "Zoeken",

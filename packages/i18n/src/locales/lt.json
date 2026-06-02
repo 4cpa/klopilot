@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Į pradžios puslapį",
+    "logo": "klopilot logotipas",
+    "clear_search": "Išvalyti paiešką",
+    "search_results": "Paieškos rezultatai",
+    "help": "Pagalba ir naudojimas",
+    "choose_language": "Pasirinkti kalbą",
+    "main_nav": "Pagrindinė navigacija",
+    "open_menu": "Atidaryti meniu",
+    "admin": "Administravimo skydelis",
+    "profile": "Atidaryti profilį",
+    "user_profile": "Naudotojo profilis",
+    "map": "Tualetų žemėlapis",
+    "theme": "Pasirinkti temą",
+    "filters": "Žemėlapio filtrai",
+    "reset_filters": "Atstatyti filtrus",
+    "prev_photo": "Ankstesnė nuotrauka",
+    "next_photo": "Kita nuotrauka",
+    "delete_photo": "Ištrinti nuotrauką"
+  },
   "tabs": {
     "map": "Žemėlapis",
     "search": "Paieška",

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ratings, type RatingInput, type ScoreInput } from '@/lib/api';
 import { RatingSlider } from '@/components/ui/RatingSlider';
 
@@ -26,6 +27,7 @@ interface Props {
 type ScoreMap = Record<string, ScoreInput>;
 
 export function RatingSheet({ toiletId, onClose, onSaved }: Props) {
+  const { t } = useTranslation();
   const [scores, setScores] = useState<ScoreMap>({});
   const [comment, setComment] = useState('');
   const [saving, setSaving] = useState(false);
@@ -62,7 +64,7 @@ export function RatingSheet({ toiletId, onClose, onSaved }: Props) {
       <aside
         role="dialog"
         aria-modal="true"
-        aria-label="Bewertung abgeben"
+        aria-label={t('rating.title')}
         className="absolute bottom-0 left-0 right-0 z-40 rounded-t-2xl max-h-[90vh] flex flex-col"
         style={{ background: 'var(--surface)', boxShadow: '0 -8px 40px rgba(15,23,42,.18)' }}
       >
@@ -75,7 +77,7 @@ export function RatingSheet({ toiletId, onClose, onSaved }: Props) {
           <button
             type="button"
             onClick={onClose}
-            aria-label="Schliessen"
+            aria-label={t('common.close')}
             className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--muted)]"
             style={{ background: 'var(--cream)' }}
           >

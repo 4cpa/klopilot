@@ -304,7 +304,7 @@ export function Footer() {
         <div>
           <Link
             href="/"
-            aria-label="klopilot Startseite"
+            aria-label={t('a11y.home')}
             style={{
               display: 'inline-flex',
               alignItems: 'center',

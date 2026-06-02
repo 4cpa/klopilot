@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Til forsiden",
+    "logo": "klopilot-logo",
+    "clear_search": "Tøm søk",
+    "search_results": "Søkeresultater",
+    "help": "Hjelp og bruk",
+    "choose_language": "Velg språk",
+    "main_nav": "Hovednavigasjon",
+    "open_menu": "Åpne meny",
+    "admin": "Administrasjonspanel",
+    "profile": "Åpne profil",
+    "user_profile": "Brukerprofil",
+    "map": "Toalettkart",
+    "theme": "Velg tema",
+    "filters": "Kartfiltre",
+    "reset_filters": "Tilbakestill filtre",
+    "prev_photo": "Forrige bilde",
+    "next_photo": "Neste bilde",
+    "delete_photo": "Slett bilde"
+  },
   "tabs": {
     "map": "Kart",
     "search": "Søk",

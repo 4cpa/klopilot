@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Ir para o início",
+    "logo": "Logótipo klopilot",
+    "clear_search": "Limpar pesquisa",
+    "search_results": "Resultados da pesquisa",
+    "help": "Ajuda e utilização",
+    "choose_language": "Escolher idioma",
+    "main_nav": "Navegação principal",
+    "open_menu": "Abrir menu",
+    "admin": "Painel de administração",
+    "profile": "Abrir perfil",
+    "user_profile": "Perfil de utilizador",
+    "map": "Mapa de casas de banho",
+    "theme": "Escolher tema",
+    "filters": "Filtros do mapa",
+    "reset_filters": "Repor filtros",
+    "prev_photo": "Foto anterior",
+    "next_photo": "Foto seguinte",
+    "delete_photo": "Eliminar foto"
+  },
   "tabs": {
     "map": "Mapa",
     "search": "Pesquisar",

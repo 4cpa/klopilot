@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "La pagina principală",
+    "logo": "Logo klopilot",
+    "clear_search": "Șterge căutarea",
+    "search_results": "Rezultatele căutării",
+    "help": "Ajutor și utilizare",
+    "choose_language": "Alege limba",
+    "main_nav": "Navigare principală",
+    "open_menu": "Deschide meniul",
+    "admin": "Panou de administrare",
+    "profile": "Deschide profilul",
+    "user_profile": "Profil utilizator",
+    "map": "Harta toaletelor",
+    "theme": "Alege tema",
+    "filters": "Filtre hartă",
+    "reset_filters": "Resetează filtrele",
+    "prev_photo": "Fotografia anterioară",
+    "next_photo": "Fotografia următoare",
+    "delete_photo": "Șterge fotografia"
+  },
   "tabs": {
     "map": "Hartă",
     "search": "Căutare",

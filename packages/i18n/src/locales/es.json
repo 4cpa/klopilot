@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Ir al inicio",
+    "logo": "Logotipo de klopilot",
+    "clear_search": "Borrar búsqueda",
+    "search_results": "Resultados de búsqueda",
+    "help": "Ayuda y uso",
+    "choose_language": "Elegir idioma",
+    "main_nav": "Navegación principal",
+    "open_menu": "Abrir menú",
+    "admin": "Panel de administración",
+    "profile": "Abrir perfil",
+    "user_profile": "Perfil de usuario",
+    "map": "Mapa de baños",
+    "theme": "Elegir tema",
+    "filters": "Filtros del mapa",
+    "reset_filters": "Restablecer filtros",
+    "prev_photo": "Foto anterior",
+    "next_photo": "Foto siguiente",
+    "delete_photo": "Eliminar foto"
+  },
   "tabs": {
     "map": "Mapa",
     "search": "Buscar",

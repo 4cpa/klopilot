@@ -155,7 +155,7 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
     <div
       ref={barRef}
       role="toolbar"
-      aria-label="Kartenfilter"
+      aria-label={t('a11y.filters')}
       style={{
         position: 'absolute',
         top: 64,
@@ -215,7 +215,7 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
           <button
             type="button"
             onClick={clearAll}
-            aria-label="Filter zurücksetzen"
+            aria-label={t('a11y.reset_filters')}
             style={{
               display: 'inline-flex',
               alignItems: 'center',

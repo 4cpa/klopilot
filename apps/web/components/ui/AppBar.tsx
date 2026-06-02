@@ -44,7 +44,7 @@ export function AppBar({
       {/* Logo → Startseite */}
       <Link
         href="/"
-        aria-label="klopilot – zur Startseite"
+        aria-label={t('a11y.home')}
         className="flex items-center gap-2 flex-shrink-0"
         style={{ textDecoration: 'none' }}
       >
@@ -80,7 +80,7 @@ export function AppBar({
               <a
                 href="/admin"
                 title="Moderation"
-                aria-label="Admin-Panel"
+                aria-label={t('a11y.admin')}
                 style={{
                   width: 34,
                   height: 34,
@@ -125,7 +125,7 @@ export function AppBar({
               type="button"
               onClick={onProfileClick}
               title={`@${user.handle}`}
-              aria-label="Profil öffnen"
+              aria-label={t('a11y.profile')}
               style={{
                 width: 34,
                 height: 34,

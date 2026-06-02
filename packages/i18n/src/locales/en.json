@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Go to homepage",
+    "logo": "klopilot logo",
+    "clear_search": "Clear search",
+    "search_results": "Search results",
+    "help": "Help & usage",
+    "choose_language": "Choose language",
+    "main_nav": "Main navigation",
+    "open_menu": "Open menu",
+    "admin": "Admin panel",
+    "profile": "Open profile",
+    "user_profile": "User profile",
+    "map": "Toilet map",
+    "theme": "Choose theme",
+    "filters": "Map filters",
+    "reset_filters": "Reset filters",
+    "prev_photo": "Previous photo",
+    "next_photo": "Next photo",
+    "delete_photo": "Delete photo"
+  },
   "tabs": {
     "map": "Map",
     "search": "Search",

@@ -184,7 +184,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
               setOpen(false);
             }}
             className="text-[var(--muted)] hover:text-[var(--ink)] text-sm leading-none ms-1"
-            aria-label="Suche löschen"
+            aria-label={t('a11y.clear_search')}
           >
             ✕
           </button>
@@ -211,7 +211,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
       {open && results.length > 0 && (
         <ul
           role="listbox"
-          aria-label="Suchergebnisse"
+          aria-label={t('a11y.search_results')}
           data-testid="search-results"
           className="absolute top-full mt-2 start-0 rounded-xl overflow-hidden z-50"
           style={{

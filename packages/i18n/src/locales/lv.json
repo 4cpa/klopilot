@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Uz sākumlapu",
+    "logo": "klopilot logotips",
+    "clear_search": "Notīrīt meklēšanu",
+    "search_results": "Meklēšanas rezultāti",
+    "help": "Palīdzība un lietošana",
+    "choose_language": "Izvēlēties valodu",
+    "main_nav": "Galvenā navigācija",
+    "open_menu": "Atvērt izvēlni",
+    "admin": "Administrācijas panelis",
+    "profile": "Atvērt profilu",
+    "user_profile": "Lietotāja profils",
+    "map": "Tualešu karte",
+    "theme": "Izvēlēties motīvu",
+    "filters": "Kartes filtri",
+    "reset_filters": "Atiestatīt filtrus",
+    "prev_photo": "Iepriekšējais foto",
+    "next_photo": "Nākamais foto",
+    "delete_photo": "Dzēst foto"
+  },
   "tabs": {
     "map": "Karte",
     "search": "Meklēt",

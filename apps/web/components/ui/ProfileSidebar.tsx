@@ -221,7 +221,7 @@ export function ProfileSidebar({ open, onClose, onToiletSelect, onLoginClick }: 
 
       {/* Panel */}
       <aside
-        aria-label="Nutzerprofil"
+        aria-label={t('a11y.user_profile')}
         role="complementary"
         style={{
           position: 'fixed',

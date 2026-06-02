@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Na stronę główną",
+    "logo": "Logo klopilot",
+    "clear_search": "Wyczyść wyszukiwanie",
+    "search_results": "Wyniki wyszukiwania",
+    "help": "Pomoc i obsługa",
+    "choose_language": "Wybierz język",
+    "main_nav": "Nawigacja główna",
+    "open_menu": "Otwórz menu",
+    "admin": "Panel administracyjny",
+    "profile": "Otwórz profil",
+    "user_profile": "Profil użytkownika",
+    "map": "Mapa toalet",
+    "theme": "Wybierz motyw",
+    "filters": "Filtry mapy",
+    "reset_filters": "Resetuj filtry",
+    "prev_photo": "Poprzednie zdjęcie",
+    "next_photo": "Następne zdjęcie",
+    "delete_photo": "Usuń zdjęcie"
+  },
   "tabs": {
     "map": "Mapa",
     "search": "Szukaj",
