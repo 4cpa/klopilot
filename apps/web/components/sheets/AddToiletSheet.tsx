@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toilets } from '@/lib/api';
 
 const CATEGORIES = [
@@ -28,6 +29,7 @@ export function AddToiletSheet({
   onClose,
   onCreated,
 }: Props) {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [category, setCategory] = useState('public');
   const [address, setAddress] = useState('');
@@ -96,7 +98,7 @@ export function AddToiletSheet({
       <aside
         role="dialog"
         aria-modal="true"
-        aria-label="Toilette eintragen"
+        aria-label={t('contribute.title')}
         className="absolute bottom-0 left-0 right-0 z-40 rounded-t-2xl max-h-[90vh] flex flex-col"
         style={{ background: 'var(--surface)', boxShadow: '0 -8px 40px rgba(15,23,42,.18)' }}
       >
@@ -109,7 +111,7 @@ export function AddToiletSheet({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Schliessen"
+            aria-label={t('common.close')}
             className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--muted)]"
             style={{ background: 'var(--cream)' }}
           >

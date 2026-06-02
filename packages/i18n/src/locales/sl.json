@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Na domačo stran",
+    "logo": "Logotip klopilot",
+    "clear_search": "Počisti iskanje",
+    "search_results": "Rezultati iskanja",
+    "help": "Pomoč in uporaba",
+    "choose_language": "Izberi jezik",
+    "main_nav": "Glavna navigacija",
+    "open_menu": "Odpri meni",
+    "admin": "Skrbniška plošča",
+    "profile": "Odpri profil",
+    "user_profile": "Uporabniški profil",
+    "map": "Zemljevid stranišč",
+    "theme": "Izberi temo",
+    "filters": "Filtri zemljevida",
+    "reset_filters": "Ponastavi filtre",
+    "prev_photo": "Prejšnja fotografija",
+    "next_photo": "Naslednja fotografija",
+    "delete_photo": "Izbriši fotografijo"
+  },
   "tabs": {
     "map": "Zemljevid",
     "search": "Iskanje",

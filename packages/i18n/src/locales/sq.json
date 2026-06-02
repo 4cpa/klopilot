@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Te ballina",
+    "logo": "Logoja klopilot",
+    "clear_search": "Pastro kërkimin",
+    "search_results": "Rezultatet e kërkimit",
+    "help": "Ndihmë dhe përdorim",
+    "choose_language": "Zgjidh gjuhën",
+    "main_nav": "Navigimi kryesor",
+    "open_menu": "Hap menynë",
+    "admin": "Paneli i administrimit",
+    "profile": "Hap profilin",
+    "user_profile": "Profili i përdoruesit",
+    "map": "Harta e tualeteve",
+    "theme": "Zgjidh temën",
+    "filters": "Filtrat e hartës",
+    "reset_filters": "Rivendos filtrat",
+    "prev_photo": "Fotografia e mëparshme",
+    "next_photo": "Fotografia tjetër",
+    "delete_photo": "Fshi fotografinë"
+  },
   "tabs": {
     "map": "Harta",
     "search": "Kërko",

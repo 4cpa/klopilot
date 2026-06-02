@@ -44,7 +44,7 @@ export const LANG_OPTIONS = [
 
 /** Kompaktes Sprach-Dropdown — wiederverwendbar (Navbar + AppBar) */
 export function LangDropdown({ compact = false }: { compact?: boolean }) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -108,7 +108,7 @@ export function LangDropdown({ compact = false }: { compact?: boolean }) {
       {open && (
         <div
           role="listbox"
-          aria-label="Sprache wählen"
+          aria-label={t('a11y.choose_language')}
           style={{
             position: 'absolute',
             top: 'calc(100% + 6px)',
@@ -206,7 +206,7 @@ export function Navbar() {
 
   return (
     <nav
-      aria-label="Hauptnavigation"
+      aria-label={t('a11y.main_nav')}
       style={{
         position: 'fixed',
         top: 0,
@@ -232,7 +232,7 @@ export function Navbar() {
         {/* Logo */}
         <Link
           href="/"
-          aria-label="klopilot Startseite"
+          aria-label={t('a11y.home')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -329,7 +329,7 @@ export function Navbar() {
           {/* Hamburger — mobile only */}
           <button
             type="button"
-            aria-label="Menü öffnen"
+            aria-label={t('a11y.open_menu')}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((o) => !o)}
             className="show-mobile"

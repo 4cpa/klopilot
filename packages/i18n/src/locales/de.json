@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Zur Startseite",
+    "logo": "klopilot Logo",
+    "clear_search": "Suche löschen",
+    "search_results": "Suchergebnisse",
+    "help": "Hilfe & Bedienung",
+    "choose_language": "Sprache wählen",
+    "main_nav": "Hauptnavigation",
+    "open_menu": "Menü öffnen",
+    "admin": "Admin-Panel",
+    "profile": "Profil öffnen",
+    "user_profile": "Nutzerprofil",
+    "map": "Toilettenkarte",
+    "theme": "Theme wählen",
+    "filters": "Kartenfilter",
+    "reset_filters": "Filter zurücksetzen",
+    "prev_photo": "Vorheriges Foto",
+    "next_photo": "Nächstes Foto",
+    "delete_photo": "Foto löschen"
+  },
   "tabs": {
     "map": "Karte",
     "search": "Suche",

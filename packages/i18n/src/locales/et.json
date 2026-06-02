@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Avalehele",
+    "logo": "klopiloti logo",
+    "clear_search": "Tühjenda otsing",
+    "search_results": "Otsingutulemused",
+    "help": "Abi ja kasutamine",
+    "choose_language": "Vali keel",
+    "main_nav": "Põhinavigatsioon",
+    "open_menu": "Ava menüü",
+    "admin": "Halduspaneel",
+    "profile": "Ava profiil",
+    "user_profile": "Kasutajaprofiil",
+    "map": "Tualettide kaart",
+    "theme": "Vali teema",
+    "filters": "Kaardifiltrid",
+    "reset_filters": "Lähtesta filtrid",
+    "prev_photo": "Eelmine foto",
+    "next_photo": "Järgmine foto",
+    "delete_photo": "Kustuta foto"
+  },
   "tabs": {
     "map": "Kaart",
     "search": "Otsing",

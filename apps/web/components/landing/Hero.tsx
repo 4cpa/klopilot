@@ -67,7 +67,7 @@ export function Hero() {
       {/* Logo + Brand → verlinkt zur Karte */}
       <Link
         href="/karte"
-        aria-label="klopilot – Zur Karte"
+        aria-label={t('nav.open_map')}
         style={{
           marginBottom: 28,
           display: 'flex',

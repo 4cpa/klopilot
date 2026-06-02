@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Na úvodnú stránku",
+    "logo": "Logo klopilot",
+    "clear_search": "Vymazať vyhľadávanie",
+    "search_results": "Výsledky vyhľadávania",
+    "help": "Pomoc a používanie",
+    "choose_language": "Vybrať jazyk",
+    "main_nav": "Hlavná navigácia",
+    "open_menu": "Otvoriť ponuku",
+    "admin": "Administračný panel",
+    "profile": "Otvoriť profil",
+    "user_profile": "Profil používateľa",
+    "map": "Mapa toaliet",
+    "theme": "Vybrať motív",
+    "filters": "Filtre mapy",
+    "reset_filters": "Obnoviť filtre",
+    "prev_photo": "Predchádzajúca fotka",
+    "next_photo": "Ďalšia fotka",
+    "delete_photo": "Odstrániť fotku"
+  },
   "tabs": {
     "map": "Mapa",
     "search": "Hľadať",

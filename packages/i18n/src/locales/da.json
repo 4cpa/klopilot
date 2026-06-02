@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Til forsiden",
+    "logo": "klopilot-logo",
+    "clear_search": "Ryd søgning",
+    "search_results": "Søgeresultater",
+    "help": "Hjælp og brug",
+    "choose_language": "Vælg sprog",
+    "main_nav": "Hovednavigation",
+    "open_menu": "Åbn menu",
+    "admin": "Administrationspanel",
+    "profile": "Åbn profil",
+    "user_profile": "Brugerprofil",
+    "map": "Toiletkort",
+    "theme": "Vælg tema",
+    "filters": "Kortfiltre",
+    "reset_filters": "Nulstil filtre",
+    "prev_photo": "Forrige billede",
+    "next_photo": "Næste billede",
+    "delete_photo": "Slet billede"
+  },
   "tabs": {
     "map": "Kort",
     "search": "Søg",

@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "A kezdőlapra",
+    "logo": "klopilot logó",
+    "clear_search": "Keresés törlése",
+    "search_results": "Találatok",
+    "help": "Súgó és használat",
+    "choose_language": "Nyelv választása",
+    "main_nav": "Fő navigáció",
+    "open_menu": "Menü megnyitása",
+    "admin": "Adminisztrációs panel",
+    "profile": "Profil megnyitása",
+    "user_profile": "Felhasználói profil",
+    "map": "Mosdótérkép",
+    "theme": "Téma választása",
+    "filters": "Térképszűrők",
+    "reset_filters": "Szűrők visszaállítása",
+    "prev_photo": "Előző fénykép",
+    "next_photo": "Következő fénykép",
+    "delete_photo": "Fénykép törlése"
+  },
   "tabs": {
     "map": "Térkép",
     "search": "Keresés",

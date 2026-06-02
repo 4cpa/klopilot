@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Á forsíðu",
+    "logo": "klopilot-merki",
+    "clear_search": "Hreinsa leit",
+    "search_results": "Leitarniðurstöður",
+    "help": "Hjálp og notkun",
+    "choose_language": "Velja tungumál",
+    "main_nav": "Aðalvalmynd",
+    "open_menu": "Opna valmynd",
+    "admin": "Stjórnborð",
+    "profile": "Opna notandasnið",
+    "user_profile": "Notandasnið",
+    "map": "Klósettkort",
+    "theme": "Velja þema",
+    "filters": "Kortasíur",
+    "reset_filters": "Endurstilla síur",
+    "prev_photo": "Fyrri mynd",
+    "next_photo": "Næsta mynd",
+    "delete_photo": "Eyða mynd"
+  },
   "tabs": {
     "map": "Kort",
     "search": "Leita",

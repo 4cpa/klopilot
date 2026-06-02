@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "לדף הבית",
+    "logo": "לוגו klopilot",
+    "clear_search": "נקה חיפוש",
+    "search_results": "תוצאות חיפוש",
+    "help": "עזרה ושימוש",
+    "choose_language": "בחירת שפה",
+    "main_nav": "ניווט ראשי",
+    "open_menu": "פתח תפריט",
+    "admin": "לוח ניהול",
+    "profile": "פתח פרופיל",
+    "user_profile": "פרופיל משתמש",
+    "map": "מפת שירותים",
+    "theme": "בחירת ערכת נושא",
+    "filters": "מסנני מפה",
+    "reset_filters": "איפוס מסננים",
+    "prev_photo": "התמונה הקודמת",
+    "next_photo": "התמונה הבאה",
+    "delete_photo": "מחק תמונה"
+  },
   "tabs": {
     "map": "מפה",
     "search": "חיפוש",

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /* ── Hilfe-Inhalte ─────────────────────────────────────────────────────────── */
 const SECTIONS = [
@@ -84,6 +85,7 @@ function QuestionMarkIcon() {
 
 /* ── HelpButton + Overlay ──────────────────────────────────────────────────── */
 export function HelpButton() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -117,7 +119,7 @@ export function HelpButton() {
         ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
-        aria-label="Hilfe & Bedienung"
+        aria-label={t('a11y.help')}
         aria-expanded={open}
         aria-haspopup="dialog"
         title="Hilfe & Bedienung"
@@ -219,7 +221,7 @@ export function HelpButton() {
                 ref={closeRef}
                 type="button"
                 onClick={() => setOpen(false)}
-                aria-label="Hilfe schliessen"
+                aria-label={t('common.close')}
                 style={{
                   width: 32,
                   height: 32,

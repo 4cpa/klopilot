@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import maplibregl from 'maplibre-gl';
 import type { Toilet, HeatmapPoint, ToiletCluster } from '@/lib/api';
 
@@ -407,6 +408,7 @@ export default function MapView({
   compassEnabled = false,
   onBearingChange,
 }: Props) {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   // Marker-Pool (id → Marker) für Wiederverwendung + aktuell sichtbare Marker.
@@ -723,5 +725,5 @@ export default function MapView({
     }
   }, [flyTarget]);
 
-  return <div ref={containerRef} className="absolute inset-0" aria-label="Toilettenkarte" />;
+  return <div ref={containerRef} className="absolute inset-0" aria-label={t('a11y.map')} />;
 }

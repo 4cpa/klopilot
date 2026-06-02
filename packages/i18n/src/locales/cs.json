@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Na úvodní stránku",
+    "logo": "Logo klopilot",
+    "clear_search": "Vymazat hledání",
+    "search_results": "Výsledky hledání",
+    "help": "Nápověda a použití",
+    "choose_language": "Vybrat jazyk",
+    "main_nav": "Hlavní navigace",
+    "open_menu": "Otevřít nabídku",
+    "admin": "Administrační panel",
+    "profile": "Otevřít profil",
+    "user_profile": "Profil uživatele",
+    "map": "Mapa toalet",
+    "theme": "Vybrat motiv",
+    "filters": "Filtry mapy",
+    "reset_filters": "Obnovit filtry",
+    "prev_photo": "Předchozí fotka",
+    "next_photo": "Další fotka",
+    "delete_photo": "Smazat fotku"
+  },
   "tabs": {
     "map": "Mapa",
     "search": "Hledat",

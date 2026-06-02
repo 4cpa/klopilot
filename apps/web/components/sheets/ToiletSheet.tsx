@@ -43,6 +43,7 @@ function PhotoLightbox({
   startIndex: number;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [idx, setIdx] = useState(startIndex);
 
   const prev = useCallback(() => setIdx((i) => (i - 1 + urls.length) % urls.length), [urls.length]);
@@ -111,7 +112,7 @@ function PhotoLightbox({
             <button
               type="button"
               onClick={prev}
-              aria-label="Vorheriges Foto"
+              aria-label={t('a11y.prev_photo')}
               style={{
                 position: 'absolute',
                 left: -44,
@@ -135,7 +136,7 @@ function PhotoLightbox({
             <button
               type="button"
               onClick={next}
-              aria-label="Nächstes Foto"
+              aria-label={t('a11y.next_photo')}
               style={{
                 position: 'absolute',
                 right: -44,
@@ -162,7 +163,7 @@ function PhotoLightbox({
       <button
         type="button"
         onClick={onClose}
-        aria-label="Schliessen"
+        aria-label={t('common.close')}
         style={{
           position: 'absolute',
           top: 16,
@@ -905,7 +906,7 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                         <button
                           type="button"
                           onClick={() => handleDeletePhoto(photo.id)}
-                          aria-label="Foto löschen"
+                          aria-label={t('a11y.delete_photo')}
                           className="photo-delete-btn"
                           style={{
                             position: 'absolute',

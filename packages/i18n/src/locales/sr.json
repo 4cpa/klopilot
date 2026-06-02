@@ -1,4 +1,24 @@
 {
+  "a11y": {
+    "home": "Na početnu",
+    "logo": "klopilot logo",
+    "clear_search": "Obriši pretragu",
+    "search_results": "Rezultati pretrage",
+    "help": "Pomoć i upotreba",
+    "choose_language": "Izaberi jezik",
+    "main_nav": "Glavna navigacija",
+    "open_menu": "Otvori meni",
+    "admin": "Administratorska tabla",
+    "profile": "Otvori profil",
+    "user_profile": "Korisnički profil",
+    "map": "Mapa toaleta",
+    "theme": "Izaberi temu",
+    "filters": "Filteri mape",
+    "reset_filters": "Poništi filtere",
+    "prev_photo": "Prethodna fotografija",
+    "next_photo": "Sledeća fotografija",
+    "delete_photo": "Obriši fotografiju"
+  },
   "tabs": {
     "map": "Mapa",
     "search": "Pretraga",
