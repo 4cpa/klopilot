@@ -731,11 +731,11 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                         gap: 3,
                         padding: '1px 7px',
                         borderRadius: 999,
-                        background: '#FFF3CD',
-                        border: '1px solid #FFD700',
+                        background: 'var(--verified-bg)',
+                        border: '1px solid var(--verified-border)',
                         fontSize: 10,
                         fontWeight: 700,
-                        color: '#A67C00',
+                        color: 'var(--verified-fg)',
                       }}
                     >
                       ⭐ {t('toilet.verified')}
