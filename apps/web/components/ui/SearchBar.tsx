@@ -143,7 +143,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
           }}
           placeholder={placeholder}
           aria-label={`${wcLabel} ${placeholder}`}
-          className="flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--muted)]"
+          className="flex-1 bg-transparent outline-none placeholder:text-[var(--muted)]"
           style={{
             color: 'var(--ink)',
             border: 'none',
@@ -154,6 +154,16 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
             // damit der Text nicht am linken Rand abgeschnitten wird.
             textAlign: 'start',
             paddingInline: 2,
+            // iOS-Safari-Workaround: Eingabefelder INNERHALB eines
+            // `backdrop-filter`-Containers (Glas-Pill) bekommen auf echten
+            // iPhones manchmal keine Soft-Tastatur. Ein eigener Stacking-
+            // Context (position + z-index) hebt den Input über die gefilterte
+            // Ebene und stellt die Fokus-/Tastatur-Interaktion wieder her.
+            position: 'relative',
+            zIndex: 1,
+            // 16px verhindert zugleich das iOS-Auto-Zoom beim Fokussieren
+            // (Safari zoomt bei <16px-Inputs). text-sm wurde daher entfernt.
+            fontSize: 16,
           }}
         />
         {query && (
