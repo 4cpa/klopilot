@@ -23,6 +23,10 @@
   --rate-fly-bg:     #F3F4F6;
   --radius-md:       12px;
   --shadow-card:     0 6px 24px rgba(15,23,42,.06);
+  /* Frosted-Glass-Pille (Suchleiste über der Karte) — themenabhängig,
+     damit der `--ink`-Text in beiden Modi lesbar bleibt */
+  --search-glass:      rgba(255, 255, 255, 0.78);
+  --search-glass-open: rgba(255, 255, 255, 0.92);
 }
 
 [data-theme="dark"] {
@@ -41,6 +45,9 @@
   --rate-fly:        #9AA4B2;
   --rate-fly-bg:     #1F2630;
   --shadow-card:     0 6px 24px rgba(0,0,0,.35);
+  /* Dunkles Glas statt Weiß → heller --ink-Text bleibt lesbar */
+  --search-glass:      rgba(22, 27, 34, 0.72);
+  --search-glass-open: rgba(22, 27, 34, 0.90);
 }
 
 /* ── Base ──────────────────────────────────────────────────────────────────── */
