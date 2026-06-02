@@ -102,14 +102,21 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
             : '0 2px 8px rgba(15,23,42,.14)',
         }}
       >
-        {/* Lupe + WC eng zusammen */}
-        <span
+        {/* Lupe + WC — als <label>, damit ein Tap auf diese Zone den Input
+            fokussiert (auf dem schmalen Mobile-Layout ist der Input selbst nur
+            wenige px breit und kaum treffbar). */}
+        <label
+          htmlFor="kp-search-input"
           className="flex items-center leading-none select-none"
-          aria-hidden
-          style={{ gap: 2, marginInlineEnd: 6, flexShrink: 0 }}
+          style={{ gap: 2, marginInlineEnd: 6, flexShrink: 0, cursor: 'text' }}
         >
-          <span className="text-sm">{loading ? '⏳' : '🔍'}</span>
+          <span className="text-sm" aria-hidden>
+            {loading ? '⏳' : '🔍'}
+          </span>
+          {/* WC-Text auf Mobile ausgeblendet → mehr Platz für die Eingabe */}
           <span
+            className="hidden sm:inline"
+            aria-hidden
             style={{
               fontSize: 11,
               fontWeight: 800,
@@ -120,10 +127,11 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
           >
             {wcLabel}
           </span>
-        </span>
+        </label>
 
-        {/* Trennlinie */}
+        {/* Trennlinie — nur ab sm (auf Mobile ohne WC-Label sinnlos) */}
         <span
+          className="hidden sm:block"
           style={{
             width: 1,
             height: 14,
@@ -135,6 +143,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
         />
 
         <input
+          id="kp-search-input"
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
