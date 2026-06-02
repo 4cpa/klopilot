@@ -106,7 +106,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
         <span
           className="flex items-center leading-none select-none"
           aria-hidden
-          style={{ gap: 2, marginRight: 6, flexShrink: 0 }}
+          style={{ gap: 2, marginInlineEnd: 6, flexShrink: 0 }}
         >
           <span className="text-sm">{loading ? '⏳' : '🔍'}</span>
           <span
@@ -124,7 +124,13 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
 
         {/* Trennlinie */}
         <span
-          style={{ width: 1, height: 14, background: 'var(--line)', flexShrink: 0, marginRight: 6 }}
+          style={{
+            width: 1,
+            height: 14,
+            background: 'var(--line)',
+            flexShrink: 0,
+            marginInlineEnd: 6,
+          }}
           aria-hidden
         />
 
@@ -144,6 +150,10 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
             appearance: 'none',
             WebkitAppearance: 'none',
             minWidth: 0,
+            // Logische Ausrichtung: folgt dem HTML-`dir` (RTL für ar/he),
+            // damit der Text nicht am linken Rand abgeschnitten wird.
+            textAlign: 'start',
+            paddingInline: 2,
           }}
         />
         {query && (
@@ -154,7 +164,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
               setResults([]);
               setOpen(false);
             }}
-            className="text-[var(--muted)] hover:text-[var(--ink)] text-sm leading-none ml-1"
+            className="text-[var(--muted)] hover:text-[var(--ink)] text-sm leading-none ms-1"
             aria-label="Suche löschen"
           >
             ✕
@@ -184,7 +194,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
           role="listbox"
           aria-label="Suchergebnisse"
           data-testid="search-results"
-          className="absolute top-full mt-2 left-0 rounded-xl overflow-hidden z-50"
+          className="absolute top-full mt-2 start-0 rounded-xl overflow-hidden z-50"
           style={{
             // Breiter als das Suchfeld, damit längere Namen lesbar sind
             width: 'min(440px, 92vw)',
@@ -201,7 +211,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
                   type="button"
                   role="option"
                   aria-selected={false}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--cream)] focus-visible:bg-[var(--cream)]"
+                  className="w-full flex items-center gap-3 px-4 py-3 text-start transition-colors hover:bg-[var(--cream)] focus-visible:bg-[var(--cream)]"
                   onClick={() => handleSelect(toilet)}
                 >
                   <span className="text-xl flex-shrink-0">
@@ -238,7 +248,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
       {/* Kein Ergebnis */}
       {open && !loading && query.trim() && results.length === 0 && (
         <div
-          className="absolute top-full mt-2 left-0 rounded-xl px-4 py-6 text-center z-50"
+          className="absolute top-full mt-2 start-0 rounded-xl px-4 py-6 text-center z-50"
           style={{
             width: 'min(440px, 92vw)',
             background: 'var(--surface)',
