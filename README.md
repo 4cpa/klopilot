@@ -24,9 +24,14 @@ Community-Plattform zur Bewertung öffentlich zugänglicher Toiletten — kosten
 | Karten-Filter (Gratis, Barrierefrei, Kategorie)     |  ✓  |   ✓    |
 | Toilet direkt per Karten-Klick hinzufügen           |  ✓  |   —    |
 | Admin-Panel (Moderation, Verwaltung)                |  ✓  |   —    |
-| Gamification (Punkte, Badges, Leaderboard)          |  —  |   ✓    |
+| Gamification (Punkte, Badges, Leaderboard)          |  ✓  |   ✓    |
 | Push-Benachrichtigungen                             |  —  |   ✓    |
 | Offline-Caching                                     |  —  |   ✓    |
+
+> Die **Kartenansicht** (Marker, Cluster, Heatmap, Suche, Bewerten) läuft sowohl
+> im Web (MapLibre GL) als auch in der Mobile-App (Expo · react-native-maps).
+> Gamification: Web zeigt Punkte + Badges im Profil; die Leaderboard-Ansicht ist
+> aktuell nur in der Mobile-App. „—" = auf dieser Plattform (noch) nicht verfügbar.
 
 ---
 

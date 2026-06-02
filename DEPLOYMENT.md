@@ -17,6 +17,13 @@ Infomaniak VPS — CH (Ubuntu 24.04)
   └── Web  ← ghcr.io/4cpa/klopilot-web:latest
 ```
 
+> **Clients:** Sowohl die **Web-App** (Next.js · MapLibre GL) als auch die
+> **Mobile-App** (Expo · React Native · react-native-maps) konsumieren dieselbe
+> API und bieten den vollen Kernfunktionsumfang — inkl. **Kartenansicht**
+> (Marker, Cluster, Heatmap), Suche und Bewerten. Auf diesem VPS wird nur das
+> Web-Frontend als Container deployt; die Mobile-App wird über **Expo EAS**
+> verteilt (siehe Abschnitt »Mobile (Expo EAS)«).
+
 ### Ablauf nach `git push main`
 
 1. CI-Workflow läuft (lint → typecheck → test → build + Docker-Validate)
