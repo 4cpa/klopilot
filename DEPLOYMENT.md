@@ -257,11 +257,11 @@ EAS-Konfiguration: `apps/mobile/eas.json`
 
 ### Healthchecks
 
-| Endpoint                                | Erwartung         |
-| --------------------------------------- | ----------------- |
-| `https://api.klopilot.ch/api/v1/health` | `{"status":"ok"}` |
-| `https://klopilot.ch`                   | HTTP 200          |
-| `http://<server>:8080` (SSH-Tunnel)     | Traefik Dashboard |
+| Endpoint                            | Erwartung                   |
+| ----------------------------------- | --------------------------- |
+| `https://api.klopilot.ch/health`    | `{"status":"ok","db":"ok"}` |
+| `https://klopilot.ch`               | HTTP 200                    |
+| `http://<server>:8080` (SSH-Tunnel) | Traefik Dashboard           |
 
 ### Disk-Space prüfen
 
