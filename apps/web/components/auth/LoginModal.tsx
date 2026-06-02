@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { auth as authApi } from '@/lib/api';
 import { authStore } from '@/lib/auth-store';
 
@@ -11,6 +12,7 @@ interface Props {
 type Step = 'email' | 'sent' | 'loggedIn';
 
 export function LoginModal({ onClose }: Props) {
+  const { t } = useTranslation();
   const [step, setStep] = useState<Step>('email');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -59,7 +61,7 @@ export function LoginModal({ onClose }: Props) {
       setStep('sent');
       startPolling(sessionId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Fehler beim Senden');
+      setError(err instanceof Error ? err.message : t('profile.send_error'));
     } finally {
       setLoading(false);
     }
@@ -75,18 +77,22 @@ export function LoginModal({ onClose }: Props) {
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Anmelden"
+        aria-label={t('profile.login_title')}
         className="absolute left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm rounded-2xl p-6 shadow-xl"
         style={{ background: 'var(--surface)' }}
       >
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-semibold text-[var(--ink)]">
-            {step === 'email' ? 'Anmelden' : step === 'sent' ? 'Link versendet' : 'Angemeldet!'}
+            {step === 'email'
+              ? t('profile.login_title')
+              : step === 'sent'
+                ? t('profile.sent_title')
+                : t('profile.logged_in_title')}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Schliessen"
+            aria-label={t('common.close')}
             className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--muted)]"
             style={{ background: 'var(--cream)' }}
           >
@@ -96,15 +102,13 @@ export function LoginModal({ onClose }: Props) {
 
         {step === 'email' && (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <p className="text-sm text-[var(--muted)]">
-              Wir senden dir einen Magic Link — kein Passwort nötig.
-            </p>
+            <p className="text-sm text-[var(--muted)]">{t('profile.login_subtitle')}</p>
             <div>
               <label
                 className="block text-sm font-medium text-[var(--ink)] mb-1"
                 htmlFor="login-email"
               >
-                E-Mail-Adresse
+                {t('profile.email_label')}
               </label>
               <input
                 id="login-email"
@@ -113,7 +117,7 @@ export function LoginModal({ onClose }: Props) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="du@beispiel.ch"
+                placeholder={t('profile.email_placeholder')}
                 className="w-full rounded-lg px-3 py-2.5 text-sm border border-[var(--line)] bg-[var(--cream)] text-[var(--ink)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--brand-primary)]"
               />
             </div>
@@ -124,7 +128,7 @@ export function LoginModal({ onClose }: Props) {
               className="w-full py-3 rounded-xl font-semibold text-white transition-all active:scale-95 disabled:opacity-50"
               style={{ background: 'var(--brand-primary)' }}
             >
-              {loading ? 'Wird gesendet…' : '✉️ Magic Link senden'}
+              {loading ? t('profile.sending') : t('profile.send_magic_link')}
             </button>
           </form>
         )}
@@ -132,25 +136,24 @@ export function LoginModal({ onClose }: Props) {
         {step === 'sent' && (
           <div className="space-y-4 text-center">
             <div className="text-5xl">📬</div>
-            <p className="text-sm text-[var(--muted)]">
-              Wir haben einen Link an <strong className="text-[var(--ink)]">{email}</strong>{' '}
-              gesendet. Öffne die Mail auf deinem Handy — diese Seite meldet dich danach automatisch
-              an.
+            <p className="text-sm text-[var(--muted)] whitespace-pre-line">
+              {t('profile.sent_text', { email })}
             </p>
+            <p className="text-sm text-[var(--muted)]">{t('profile.sent_hint')}</p>
             {/* Animierter Pulse zeigt dass aktiv gepollt wird */}
             <div className="flex items-center justify-center gap-2 text-xs text-[var(--muted)]">
               <span
                 className="inline-block w-2 h-2 rounded-full animate-pulse"
                 style={{ background: 'var(--brand-primary)' }}
               />
-              Warte auf Bestätigung…
+              {t('profile.waiting_confirm')}
             </div>
             <button
               type="button"
               onClick={onClose}
               className="text-sm text-[var(--muted)] hover:text-[var(--ink)]"
             >
-              Schliessen
+              {t('common.close')}
             </button>
           </div>
         )}
@@ -158,7 +161,7 @@ export function LoginModal({ onClose }: Props) {
         {step === 'loggedIn' && (
           <div className="space-y-4 text-center">
             <div className="text-5xl">✅</div>
-            <p className="text-sm font-medium text-[var(--ink)]">Erfolgreich angemeldet!</p>
+            <p className="text-sm font-medium text-[var(--ink)]">{t('profile.logged_in_msg')}</p>
           </div>
         )}
       </div>
