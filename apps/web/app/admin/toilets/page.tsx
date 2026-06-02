@@ -78,11 +78,11 @@ function ToiletRow({
                   style={{
                     marginLeft: 5,
                     fontSize: 10,
-                    background: '#FFF3CD',
-                    border: '1px solid #FFD700',
+                    background: 'var(--verified-bg)',
+                    border: '1px solid var(--verified-border)',
                     borderRadius: 999,
                     padding: '1px 5px',
-                    color: '#A67C00',
+                    color: 'var(--verified-fg)',
                     fontWeight: 700,
                   }}
                 >
@@ -222,9 +222,9 @@ function ToiletRow({
             style={{
               padding: '4px 9px',
               borderRadius: 7,
-              border: `1px solid ${toilet.verified ? '#FFD700' : 'var(--line)'}`,
-              background: toilet.verified ? '#FFF9CC' : 'var(--cream)',
-              color: toilet.verified ? '#A07800' : 'var(--muted)',
+              border: `1px solid ${toilet.verified ? 'var(--verified-border)' : 'var(--line)'}`,
+              background: toilet.verified ? 'var(--verified-bg)' : 'var(--cream)',
+              color: toilet.verified ? 'var(--verified-fg)' : 'var(--muted)',
               fontSize: 11,
               fontWeight: 700,
               cursor: busy ? 'not-allowed' : 'pointer',

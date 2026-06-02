@@ -27,6 +27,10 @@
      damit der `--ink`-Text in beiden Modi lesbar bleibt */
   --search-glass:      rgba(255, 255, 255, 0.78);
   --search-glass-open: rgba(255, 255, 255, 0.92);
+  /* „Verifiziert"-Gold-Akzent (Badge in ToiletSheet + Admin) */
+  --verified-bg:       #FFF3CD;
+  --verified-fg:       #A67C00;
+  --verified-border:   #FFD700;
 }
 
 [data-theme="dark"] {
@@ -48,6 +52,10 @@
   /* Dunkles Glas statt Weiß → heller --ink-Text bleibt lesbar */
   --search-glass:      rgba(22, 27, 34, 0.72);
   --search-glass-open: rgba(22, 27, 34, 0.90);
+  /* Gold-Akzent im Dark Mode: transluzent + heller Text statt hellem Kästchen */
+  --verified-bg:       rgba(255, 215, 0, 0.15);
+  --verified-fg:       #FFD86B;
+  --verified-border:   rgba(255, 215, 0, 0.45);
 }
 
 /* ── Base ──────────────────────────────────────────────────────────────────── */
