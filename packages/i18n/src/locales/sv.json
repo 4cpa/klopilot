@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Karta",
+      "body": "Tryck på en markör för att se detaljer. Zooma med nypgest eller mushjulet. Din plats visas som en blå punkt — platsåtkomst är valfritt."
+    },
+    "search": {
+      "title": "Sök",
+      "body": "Ange namn eller adress. Resultaten visas direkt, sorterade efter avstånd. Tryck på Escape för att stänga."
+    },
+    "filter": {
+      "title": "Filter",
+      "body": "Chipsen under rubriken filtrerar kartan i realtid: gratis, tillgängligt eller efter kategori. Flera filter kan kombineras."
+    },
+    "rating": {
+      "title": "Betygssystem",
+      "body": "Ge blommor 🌸 (positivt, 0–5) eller flugor 🪰 (negativt, 0–5) för 10 kriterier. Poäng = blommor minus flugor. Ju grönare, desto bättre."
+    },
+    "contribute": {
+      "title": "Lägg till en toalett",
+      "body": "Logga in så visas knappen ”+ Lägg till” högst upp. Ange namn, kategori och din plats. Kan redigeras när som helst i profilen."
+    },
+    "accessibility": {
+      "title": "Tillgänglighet",
+      "body": "Filtret ”Tillgängligt” visar toaletter med rullstolsåtkomst eller tröskelfri entré. Fler detaljer (Eurokey, skötbord, dusch) i detaljpanelen."
+    },
+    "privacy": {
+      "title": "Integritet",
+      "body": "Inget konto krävs för att bläddra. Foton sparas utan GPS-metadata (EXIF). Privata toaletter syns på kartan endast för inbjudna användare."
+    },
+    "coverage": {
+      "title": "Internationell täckning",
+      "body": "39 länder i Europa — från Väst- och Nordeuropa via Central- och Östeuropa till hela Balkan — samt Medelhavets kustområden. Data från OpenStreetMap och communityn."
+    },
+    "language": {
+      "title": "Välj språk",
+      "body": "Tillgängligt på 31 språk, inklusive arabiska och hebreiska med höger-till-vänster-visning. Byt via språkmenyn eller direkt via länk, t.ex. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Tangentbordsgenvägar",
+      "body": "Tab: flytta fokus · Enter/mellanslag: aktivera · Escape: stäng dialog · ←/→: bläddra bland foton · ↑/↓: zooma kartan (när kartan är i fokus)."
+    },
+    "contact": {
+      "title": "Kontakt & feedback",
+      "body": "Frågor, buggar eller idéer? Skriv till oss: admin@4cpa.ch — eller skapa en issue på GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Till startsidan",
     "logo": "klopilot-logotyp",

@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Kaart",
+      "body": "Tik op een markering om details te zien. Zoom met een knijpgebaar of het muiswiel. Je locatie wordt als een blauwe stip getoond — locatietoegang is optioneel."
+    },
+    "search": {
+      "title": "Zoeken",
+      "body": "Voer een naam of adres in. Resultaten verschijnen direct, gesorteerd op afstand. Druk op Escape om te sluiten."
+    },
+    "filter": {
+      "title": "Filters",
+      "body": "De chips onder de koptekst filteren de kaart in realtime: gratis, toegankelijk of op categorie. Meerdere filters zijn combineerbaar."
+    },
+    "rating": {
+      "title": "Beoordelingssysteem",
+      "body": "Geef bloemen 🌸 (positief, 0–5) of vliegen 🪰 (negatief, 0–5) op 10 criteria. Score = bloemen min vliegen. Hoe groener, hoe beter."
+    },
+    "contribute": {
+      "title": "Toilet toevoegen",
+      "body": "Log in en de knop „+ Toevoegen” verschijnt bovenaan. Geef naam, categorie en je locatie op. Altijd te bewerken in je profiel."
+    },
+    "accessibility": {
+      "title": "Toegankelijkheid",
+      "body": "Het filter „Toegankelijk” toont toiletten met rolstoeltoegang of een drempelloze ingang. Meer details (Eurokey, verschoontafel, douche) in het detailpaneel."
+    },
+    "privacy": {
+      "title": "Privacy",
+      "body": "Geen account nodig om te bladeren. Foto’s worden opgeslagen zonder GPS-metadata (EXIF). Privétoiletten zijn op de kaart alleen zichtbaar voor genodigden."
+    },
+    "coverage": {
+      "title": "Internationale dekking",
+      "body": "39 landen in Europa — van West- en Noord-Europa via Midden- en Oost-Europa tot de hele Balkan — plus de mediterrane kustgebieden. Gegevens van OpenStreetMap en de community."
+    },
+    "language": {
+      "title": "Taal kiezen",
+      "body": "Beschikbaar in 31 talen, waaronder Arabisch en Hebreeuws met weergave van rechts naar links. Wissel via het taalmenu of rechtstreeks via een link, bijv. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Sneltoetsen",
+      "body": "Tab: focus verplaatsen · Enter/spatie: activeren · Escape: dialoog sluiten · ←/→: foto’s bladeren · ↑/↓: kaart zoomen (wanneer de kaart focus heeft)."
+    },
+    "contact": {
+      "title": "Contact & feedback",
+      "body": "Vragen, bugs of ideeën? Schrijf ons: admin@4cpa.ch — of open een issue op GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Naar de startpagina",
     "logo": "klopilot-logo",

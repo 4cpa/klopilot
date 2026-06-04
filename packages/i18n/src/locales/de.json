@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Karte",
+      "body": "Tippe auf einen Marker, um Details zu sehen. Zoome mit Pinch-Geste oder dem Mausrad. Dein Standort wird mit einem blauen Punkt angezeigt — Standort-Zugriff ist optional."
+    },
+    "search": {
+      "title": "Suche",
+      "body": "Gib Name oder Adresse ein. Resultate erscheinen sofort, sortiert nach Distanz. Drücke Escape zum Schliessen."
+    },
+    "filter": {
+      "title": "Filter",
+      "body": "Die Chips unter dem Header filtern die Karte in Echtzeit: Gratis, Barrierefrei oder nach Kategorie. Mehrere Filter sind kombinierbar."
+    },
+    "rating": {
+      "title": "Bewertungssystem",
+      "body": "Vergib Blümchen 🌸 (positiv, 0–5) oder Fliegen 🪰 (negativ, 0–5) für 10 Kriterien. Score = Blümchen minus Fliegen. Je grüner, desto besser."
+    },
+    "contribute": {
+      "title": "Toilette eintragen",
+      "body": "Melde dich an, dann erscheint der „+ Eintragen“-Button oben. Gib Name, Kategorie und deinen Standort an. Jederzeit im Profil bearbeitbar."
+    },
+    "accessibility": {
+      "title": "Barrierefreiheit",
+      "body": "Der Filter „Barrierefrei“ zeigt Toiletten mit Rollstuhlzugang oder stufenlosem Eingang. Weitere Details (Eurokey, Wickeltisch, Dusche) im Detail-Panel."
+    },
+    "privacy": {
+      "title": "Datenschutz",
+      "body": "Kein Konto nötig zum Stöbern. Fotos werden ohne GPS-Metadaten (EXIF) gespeichert. Private Toiletten sind auf der Karte nur für Eingeladene sichtbar."
+    },
+    "coverage": {
+      "title": "Internationale Abdeckung",
+      "body": "39 Länder in Europa — von West- und Nordeuropa über Mittel- und Osteuropa bis zum gesamten Balkan — sowie die Küstenregionen des Mittelmeers. Daten aus OpenStreetMap und der Community."
+    },
+    "language": {
+      "title": "Sprache wählen",
+      "body": "Verfügbar in 31 Sprachen, inklusive Arabisch und Hebräisch mit Rechts-nach-links-Darstellung. Wechsle über das Sprachmenü oder direkt per Link, z. B. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Tastaturkürzel",
+      "body": "Tab: Fokus bewegen · Enter/Leertaste: Aktion ausführen · Escape: Dialog schliessen · ←/→: Fotos blättern · ↑/↓: Karte zoomen (wenn Fokus auf Karte)."
+    },
+    "contact": {
+      "title": "Kontakt & Feedback",
+      "body": "Fragen, Bugs oder Ideen? Schreib uns: admin@4cpa.ch — oder erstelle ein Issue auf GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Zur Startseite",
     "logo": "klopilot Logo",

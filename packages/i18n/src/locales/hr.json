@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Karta",
+      "body": "Dodirnite oznaku za prikaz detalja. Zumirajte gestom stiskanja ili kotačićem miša. Vaša lokacija prikazana je kao plava točka — pristup lokaciji nije obavezan."
+    },
+    "search": {
+      "title": "Pretraživanje",
+      "body": "Unesite naziv ili adresu. Rezultati se prikazuju odmah, poredani po udaljenosti. Pritisnite Escape za zatvaranje."
+    },
+    "filter": {
+      "title": "Filtri",
+      "body": "Čipovi ispod zaglavlja filtriraju kartu u stvarnom vremenu: besplatno, pristupačno ili po kategoriji. Više filtara može se kombinirati."
+    },
+    "rating": {
+      "title": "Sustav ocjenjivanja",
+      "body": "Dodijelite cvjetiće 🌸 (pozitivno, 0–5) ili muhe 🪰 (negativno, 0–5) za 10 kriterija. Rezultat = cvjetići minus muhe. Što zelenije, to bolje."
+    },
+    "contribute": {
+      "title": "Dodaj zahod",
+      "body": "Prijavite se i gore će se pojaviti gumb „+ Dodaj“. Navedite naziv, kategoriju i svoju lokaciju. Uredivo u bilo kojem trenutku u profilu."
+    },
+    "accessibility": {
+      "title": "Pristupačnost",
+      "body": "Filtar „Pristupačno“ prikazuje zahode s pristupom za invalidska kolica ili ulazom bez stuba. Više detalja (Eurokey, stol za previjanje, tuš) u ploči s detaljima."
+    },
+    "privacy": {
+      "title": "Privatnost",
+      "body": "Za pregledavanje nije potreban račun. Fotografije se pohranjuju bez GPS metapodataka (EXIF). Privatni zahodi vidljivi su na karti samo pozvanim korisnicima."
+    },
+    "coverage": {
+      "title": "Međunarodna pokrivenost",
+      "body": "39 zemalja u Europi — od zapadne i sjeverne Europe preko srednje i istočne Europe do cijelog Balkana — kao i mediteranske obalne regije. Podaci iz OpenStreetMapa i zajednice."
+    },
+    "language": {
+      "title": "Odaberi jezik",
+      "body": "Dostupno na 31 jeziku, uključujući arapski i hebrejski s prikazom zdesna nalijevo. Promijenite u izborniku jezika ili izravno putem poveznice, npr. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Tipkovnički prečaci",
+      "body": "Tab: pomakni fokus · Enter/razmaknica: aktiviraj · Escape: zatvori dijalog · ←/→: pregledavaj fotografije · ↑/↓: zumiraj kartu (kad je karta u fokusu)."
+    },
+    "contact": {
+      "title": "Kontakt i povratne informacije",
+      "body": "Pitanja, greške ili ideje? Pišite nam: admin@4cpa.ch — ili otvorite issue na GitHubu: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Na početnu",
     "logo": "Logotip klopilot",

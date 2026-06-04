@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Hartă",
+      "body": "Atinge un marcaj pentru a vedea detalii. Mărește cu gestul de ciupire sau cu rotița mouse-ului. Locația ta este afișată ca un punct albastru — accesul la locație este opțional."
+    },
+    "search": {
+      "title": "Căutare",
+      "body": "Introdu un nume sau o adresă. Rezultatele apar imediat, sortate după distanță. Apasă Escape pentru a închide."
+    },
+    "filter": {
+      "title": "Filtre",
+      "body": "Cipurile de sub antet filtrează harta în timp real: gratuit, accesibil sau pe categorii. Mai multe filtre pot fi combinate."
+    },
+    "rating": {
+      "title": "Sistem de evaluare",
+      "body": "Acordă floricele 🌸 (pozitiv, 0–5) sau muște 🪰 (negativ, 0–5) pentru 10 criterii. Scor = floricele minus muște. Cu cât mai verde, cu atât mai bine."
+    },
+    "contribute": {
+      "title": "Adaugă o toaletă",
+      "body": "Conectează-te și butonul „+ Adaugă” apare sus. Indică numele, categoria și locația ta. Editabil oricând în profil."
+    },
+    "accessibility": {
+      "title": "Accesibilitate",
+      "body": "Filtrul „Accesibil” arată toaletele cu acces pentru scaun cu rotile sau intrare fără trepte. Mai multe detalii (Eurokey, masă de înfășat, duș) în panoul de detalii."
+    },
+    "privacy": {
+      "title": "Confidențialitate",
+      "body": "Nu este nevoie de cont pentru a naviga. Fotografiile sunt stocate fără metadate GPS (EXIF). Toaletele private sunt vizibile pe hartă doar pentru utilizatorii invitați."
+    },
+    "coverage": {
+      "title": "Acoperire internațională",
+      "body": "39 de țări din Europa — din Europa de Vest și de Nord, prin Europa Centrală și de Est, până în întregul Balcani — plus regiunile de coastă mediteraneene. Date din OpenStreetMap și de la comunitate."
+    },
+    "language": {
+      "title": "Alege limba",
+      "body": "Disponibil în 31 de limbi, inclusiv arabă și ebraică cu afișare de la dreapta la stânga. Schimbă din meniul de limbi sau direct prin link, de ex. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Scurtături de tastatură",
+      "body": "Tab: mută focusul · Enter/Spațiu: activează · Escape: închide dialogul · ←/→: răsfoiește fotografiile · ↑/↓: zoom hartă (când harta are focus)."
+    },
+    "contact": {
+      "title": "Contact și feedback",
+      "body": "Întrebări, erori sau idei? Scrie-ne: admin@4cpa.ch — sau deschide o problemă pe GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "La pagina principală",
     "logo": "Logo klopilot",

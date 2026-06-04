@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Mappa",
+      "body": "Tocca un indicatore per vedere i dettagli. Zooma con il pizzico o la rotellina del mouse. La tua posizione è mostrata con un punto blu — l’accesso alla posizione è facoltativo."
+    },
+    "search": {
+      "title": "Ricerca",
+      "body": "Inserisci nome o indirizzo. I risultati appaiono subito, ordinati per distanza. Premi Esc per chiudere."
+    },
+    "filter": {
+      "title": "Filtri",
+      "body": "I chip sotto l’intestazione filtrano la mappa in tempo reale: gratis, accessibile o per categoria. Più filtri sono combinabili."
+    },
+    "rating": {
+      "title": "Sistema di valutazione",
+      "body": "Assegna fiori 🌸 (positivo, 0–5) o mosche 🪰 (negativo, 0–5) su 10 criteri. Punteggio = fiori meno mosche. Più è verde, meglio è."
+    },
+    "contribute": {
+      "title": "Aggiungi un bagno",
+      "body": "Accedi e in alto comparirà il pulsante « + Aggiungi ». Inserisci nome, categoria e la tua posizione. Modificabile in qualsiasi momento nel profilo."
+    },
+    "accessibility": {
+      "title": "Accessibilità",
+      "body": "Il filtro « Accessibile » mostra i bagni con accesso per sedia a rotelle o ingresso senza gradini. Altri dettagli (Eurokey, fasciatoio, doccia) nel pannello dei dettagli."
+    },
+    "privacy": {
+      "title": "Privacy",
+      "body": "Nessun account necessario per sfogliare. Le foto vengono salvate senza metadati GPS (EXIF). I bagni privati sono visibili sulla mappa solo agli utenti invitati."
+    },
+    "coverage": {
+      "title": "Copertura internazionale",
+      "body": "39 paesi in Europa — dall’Europa occidentale e settentrionale all’intera penisola balcanica passando per l’Europa centrale e orientale — oltre alle regioni costiere del Mediterraneo. Dati da OpenStreetMap e dalla community."
+    },
+    "language": {
+      "title": "Scegli la lingua",
+      "body": "Disponibile in 31 lingue, tra cui arabo ed ebraico con visualizzazione da destra a sinistra. Cambia dal menu delle lingue o direttamente tramite link, es. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Scorciatoie da tastiera",
+      "body": "Tab: sposta il focus · Invio/Spazio: attiva · Esc: chiudi la finestra · ←/→: sfoglia le foto · ↑/↓: zoom della mappa (quando la mappa ha il focus)."
+    },
+    "contact": {
+      "title": "Contatti & feedback",
+      "body": "Domande, bug o idee? Scrivici: admin@4cpa.ch — oppure apri una issue su GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Vai alla home",
     "logo": "Logo klopilot",

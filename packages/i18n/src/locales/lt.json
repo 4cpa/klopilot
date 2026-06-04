@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Žemėlapis",
+      "body": "Bakstelėkite žymeklį, kad pamatytumėte išsamią informaciją. Keiskite mastelį suspaudimo gestu arba pelės ratuku. Jūsų vieta rodoma kaip mėlynas taškas — prieiga prie vietos yra neprivaloma."
+    },
+    "search": {
+      "title": "Paieška",
+      "body": "Įveskite pavadinimą arba adresą. Rezultatai pasirodo iškart, surūšiuoti pagal atstumą. Norėdami uždaryti, paspauskite Escape."
+    },
+    "filter": {
+      "title": "Filtrai",
+      "body": "Lustai po antrašte filtruoja žemėlapį realiuoju laiku: nemokama, prieinama arba pagal kategoriją. Galima derinti kelis filtrus."
+    },
+    "rating": {
+      "title": "Vertinimo sistema",
+      "body": "Skirkite gėlių 🌸 (teigiamai, 0–5) arba musių 🪰 (neigiamai, 0–5) pagal 10 kriterijų. Įvertinimas = gėlės minus musės. Kuo žalesnis, tuo geriau."
+    },
+    "contribute": {
+      "title": "Pridėti tualetą",
+      "body": "Prisijunkite ir viršuje pasirodys mygtukas „+ Pridėti“. Nurodykite pavadinimą, kategoriją ir savo vietą. Bet kada redaguojama profilyje."
+    },
+    "accessibility": {
+      "title": "Prieinamumas",
+      "body": "Filtras „Prieinama“ rodo tualetus su prieiga neįgaliųjų vežimėliui arba įėjimu be laiptelių. Daugiau informacijos (Eurokey, vystymo stalas, dušas) informacijos skydelyje."
+    },
+    "privacy": {
+      "title": "Privatumas",
+      "body": "Naršyti paskyros nereikia. Nuotraukos saugomos be GPS metaduomenų (EXIF). Privatūs tualetai žemėlapyje matomi tik pakviestiems naudotojams."
+    },
+    "coverage": {
+      "title": "Tarptautinė aprėptis",
+      "body": "39 šalys Europoje — nuo Vakarų ir Šiaurės Europos per Vidurio ir Rytų Europą iki viso Balkanų pusiasalio — taip pat Viduržemio jūros pakrantės regionai. Duomenys iš OpenStreetMap ir bendruomenės."
+    },
+    "language": {
+      "title": "Pasirinkti kalbą",
+      "body": "Prieinama 31 kalba, įskaitant arabų ir hebrajų su rodymu iš dešinės į kairę. Keiskite kalbų meniu arba tiesiogiai nuoroda, pvz., klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Spartieji klavišai",
+      "body": "Tab: perkelti fokusą · Enter/tarpas: aktyvinti · Escape: uždaryti dialogą · ←/→: naršyti nuotraukas · ↑/↓: keisti žemėlapio mastelį (kai žemėlapis sufokusuotas)."
+    },
+    "contact": {
+      "title": "Kontaktai ir atsiliepimai",
+      "body": "Klausimai, klaidos ar idėjos? Rašykite mums: admin@4cpa.ch — arba sukurkite issue GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Į pradžios puslapį",
     "logo": "klopilot logotipas",

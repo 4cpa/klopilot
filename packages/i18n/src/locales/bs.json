@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Karta",
+      "body": "Dodirnite oznaku da vidite detalje. Zumirajte pokretom skupljanja prstiju ili točkićem miša. Vaša lokacija prikazana je kao plava tačka — pristup lokaciji nije obavezan."
+    },
+    "search": {
+      "title": "Pretraga",
+      "body": "Unesite naziv ili adresu. Rezultati se prikazuju odmah, sortirani po udaljenosti. Pritisnite Escape za zatvaranje."
+    },
+    "filter": {
+      "title": "Filteri",
+      "body": "Čipovi ispod zaglavlja filtriraju kartu u realnom vremenu: besplatno, pristupačno ili po kategoriji. Više filtera može se kombinovati."
+    },
+    "rating": {
+      "title": "Sistem ocjenjivanja",
+      "body": "Dodijelite cvjetiće 🌸 (pozitivno, 0–5) ili muhe 🪰 (negativno, 0–5) za 10 kriterija. Rezultat = cvjetići minus muhe. Što zelenije, to bolje."
+    },
+    "contribute": {
+      "title": "Dodaj toalet",
+      "body": "Prijavite se i gore će se pojaviti dugme „+ Dodaj“. Navedite naziv, kategoriju i svoju lokaciju. Može se urediti bilo kada u profilu."
+    },
+    "accessibility": {
+      "title": "Pristupačnost",
+      "body": "Filter „Pristupačno“ prikazuje toalete s pristupom za invalidska kolica ili ulazom bez stepenika. Više detalja (Eurokey, sto za presvlačenje, tuš) u panelu s detaljima."
+    },
+    "privacy": {
+      "title": "Privatnost",
+      "body": "Za pregledanje nije potreban nalog. Fotografije se pohranjuju bez GPS metapodataka (EXIF). Privatni toaleti vidljivi su na karti samo pozvanim korisnicima."
+    },
+    "coverage": {
+      "title": "Međunarodna pokrivenost",
+      "body": "39 zemalja u Evropi — od zapadne i sjeverne Evrope preko centralne i istočne Evrope do cijelog Balkana — kao i mediteranske priobalne regije. Podaci s OpenStreetMapa i od zajednice."
+    },
+    "language": {
+      "title": "Odaberi jezik",
+      "body": "Dostupno na 31 jeziku, uključujući arapski i hebrejski s prikazom zdesna nalijevo. Promijenite u meniju jezika ili direktno putem linka, npr. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Prečice na tastaturi",
+      "body": "Tab: pomjeri fokus · Enter/razmaknica: aktiviraj · Escape: zatvori dijalog · ←/→: pregledaj fotografije · ↑/↓: zumiraj kartu (kada je karta u fokusu)."
+    },
+    "contact": {
+      "title": "Kontakt i povratne informacije",
+      "body": "Pitanja, greške ili ideje? Pišite nam: admin@4cpa.ch — ili otvorite issue na GitHubu: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Na početnu",
     "logo": "klopilot logo",

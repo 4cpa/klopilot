@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Carte",
+      "body": "Touchez un marqueur pour voir les détails. Zoomez par pincement ou avec la molette. Votre position apparaît sous forme de point bleu — l’accès à la localisation est facultatif."
+    },
+    "search": {
+      "title": "Recherche",
+      "body": "Saisissez un nom ou une adresse. Les résultats s’affichent immédiatement, triés par distance. Appuyez sur Échap pour fermer."
+    },
+    "filter": {
+      "title": "Filtres",
+      "body": "Les puces sous l’en-tête filtrent la carte en temps réel : gratuit, accessible ou par catégorie. Plusieurs filtres sont combinables."
+    },
+    "rating": {
+      "title": "Système de notation",
+      "body": "Attribuez des fleurs 🌸 (positif, 0–5) ou des mouches 🪰 (négatif, 0–5) sur 10 critères. Score = fleurs moins mouches. Plus c’est vert, mieux c’est."
+    },
+    "contribute": {
+      "title": "Ajouter des toilettes",
+      "body": "Connectez-vous et le bouton « + Ajouter » apparaît en haut. Indiquez le nom, la catégorie et votre position. Modifiable à tout moment dans le profil."
+    },
+    "accessibility": {
+      "title": "Accessibilité",
+      "body": "Le filtre « Accessible » montre les toilettes avec accès en fauteuil roulant ou entrée de plain-pied. Plus de détails (Eurokey, table à langer, douche) dans le panneau de détails."
+    },
+    "privacy": {
+      "title": "Confidentialité",
+      "body": "Aucun compte requis pour parcourir. Les photos sont stockées sans métadonnées GPS (EXIF). Les toilettes privées ne sont visibles sur la carte que par les personnes invitées."
+    },
+    "coverage": {
+      "title": "Couverture internationale",
+      "body": "39 pays en Europe — de l’Europe de l’Ouest et du Nord à toute la péninsule balkanique en passant par l’Europe centrale et de l’Est — ainsi que les régions côtières méditerranéennes. Données d’OpenStreetMap et de la communauté."
+    },
+    "language": {
+      "title": "Choisir la langue",
+      "body": "Disponible en 31 langues, dont l’arabe et l’hébreu avec affichage de droite à gauche. Changez via le menu des langues ou directement par lien, p. ex. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Raccourcis clavier",
+      "body": "Tab : déplacer le focus · Entrée/Espace : activer · Échap : fermer la boîte de dialogue · ←/→ : parcourir les photos · ↑/↓ : zoomer la carte (quand la carte a le focus)."
+    },
+    "contact": {
+      "title": "Contact & retours",
+      "body": "Questions, bugs ou idées ? Écrivez-nous : admin@4cpa.ch — ou ouvrez une issue sur GitHub : github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Aller à l’accueil",
     "logo": "Logo klopilot",

@@ -3,64 +3,20 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-/* ── Hilfe-Inhalte ─────────────────────────────────────────────────────────── */
+/* ── Hilfe-Sektionen: Icon + i18n-Key (Texte in packages/i18n → `help.*`) ───── */
 const SECTIONS = [
-  {
-    icon: '🗺️',
-    title: 'Karte',
-    body: 'Tippe auf einen Marker, um Details zu sehen. Zoome mit Pinch-Geste oder dem Mausrad. Dein Standort wird mit einem blauen Punkt angezeigt — Standort-Zugriff ist optional.',
-  },
-  {
-    icon: '🔍',
-    title: 'Suche',
-    body: 'Gib Name oder Adresse ein. Resultate erscheinen sofort, sortiert nach Distanz. Drücke Escape zum Schliessen.',
-  },
-  {
-    icon: '🎛️',
-    title: 'Filter',
-    body: 'Die Chips unter dem Header filtern die Karte in Echtzeit: Gratis, Barrierefrei, oder nach Kategorie. Mehrere Filter sind kombinierbar.',
-  },
-  {
-    icon: '🌸 / 🪰',
-    title: 'Bewertungssystem',
-    body: 'Vergib Blümchen 🌸 (positiv, 0–5) oder Fliegen 🪰 (negativ, 0–5) für 10 Kriterien. Score = Blümchen minus Fliegen. Je grüner, desto besser.',
-  },
-  {
-    icon: '🚽',
-    title: 'Toilette eintragen',
-    body: 'Melde dich an, dann erscheint der «+ Eintragen»-Button oben. Gib Name, Kategorie und deinen Standort an. Bearbeitbar jederzeit im Profil.',
-  },
-  {
-    icon: '♿',
-    title: 'Barrierefreiheit',
-    body: 'Filter «Barrierefrei» zeigt Toiletten mit Rollstuhlzugang oder stufenlosem Eingang. Weitere Details (Eurokey, Wickeltisch, Dusche) im Detail-Panel.',
-  },
-  {
-    icon: '🔒',
-    title: 'Datenschutz',
-    body: 'Kein Konto nötig zum Stöbern. Fotos werden ohne GPS-Metadaten (EXIF) gespeichert. Private Toiletten sind auf der Karte nur für Eingeladene sichtbar.',
-  },
-  {
-    icon: '🌍',
-    title: 'Internationale Abdeckung',
-    body: '39 Länder in Europa — von West- und Nordeuropa über Mittel- und Osteuropa und den ganzen Balkan — sowie die Küstenregionen des Mittelmeers. Daten stammen aus OpenStreetMap und der Community.',
-  },
-  {
-    icon: '🗣️',
-    title: 'Sprache wählen',
-    body: 'Verfügbar in 31 Sprachen, inklusive Arabisch und Hebräisch mit Rechts-nach-links-Darstellung. Wechsle über das Sprachmenü oder direkt per Link, z. B. klopilot.ch/?lang=uk.',
-  },
-  {
-    icon: '⌨️',
-    title: 'Tastaturkürzel',
-    body: 'Tab: Fokus bewegen · Enter/Leertaste: Aktion ausführen · Escape: Dialog schliessen · ←/→: Fotos blättern · ↑/↓: Karte zoomen (wenn Fokus auf Karte)',
-  },
-  {
-    icon: '📩',
-    title: 'Kontakt & Feedback',
-    body: 'Fragen, Bugs oder Ideen? Schreib uns: admin@4cpa.ch — oder erstelle ein Issue auf GitHub: github.com/4cpa/klopilot',
-  },
-];
+  { icon: '🗺️', id: 'map' },
+  { icon: '🔍', id: 'search' },
+  { icon: '🎛️', id: 'filter' },
+  { icon: '🌸 / 🪰', id: 'rating' },
+  { icon: '🚽', id: 'contribute' },
+  { icon: '♿', id: 'accessibility' },
+  { icon: '🔒', id: 'privacy' },
+  { icon: '🌍', id: 'coverage' },
+  { icon: '🗣️', id: 'language' },
+  { icon: '⌨️', id: 'shortcuts' },
+  { icon: '📩', id: 'contact' },
+] as const;
 
 /* ── QuestionMarkIcon ──────────────────────────────────────────────────────── */
 function QuestionMarkIcon() {
@@ -122,7 +78,7 @@ export function HelpButton() {
         aria-label={t('a11y.help')}
         aria-expanded={open}
         aria-haspopup="dialog"
-        title="Hilfe & Bedienung"
+        title={t('a11y.help')}
         style={{
           width: 30,
           height: 30,
@@ -215,7 +171,7 @@ export function HelpButton() {
                   gap: 8,
                 }}
               >
-                <span aria-hidden>❓</span> Hilfe & Bedienung
+                <span aria-hidden>❓</span> {t('a11y.help')}
               </h2>
               <button
                 ref={closeRef}
@@ -252,7 +208,7 @@ export function HelpButton() {
               >
                 {SECTIONS.map((s) => (
                   <div
-                    key={s.title}
+                    key={s.id}
                     style={{
                       borderRadius: 12,
                       border: '1px solid var(--line)',
@@ -271,7 +227,9 @@ export function HelpButton() {
                       <span style={{ fontSize: 18 }} aria-hidden>
                         {s.icon}
                       </span>
-                      <strong style={{ fontSize: 14, color: 'var(--ink)' }}>{s.title}</strong>
+                      <strong style={{ fontSize: 14, color: 'var(--ink)' }}>
+                        {t(`help.${s.id}.title`)}
+                      </strong>
                     </div>
                     <p
                       style={{
@@ -281,7 +239,7 @@ export function HelpButton() {
                         lineHeight: 1.55,
                       }}
                     >
-                      {s.body}
+                      {t(`help.${s.id}.body`)}
                     </p>
                   </div>
                 ))}

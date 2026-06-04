@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Térkép",
+      "body": "Koppintson egy jelölőre a részletekért. Nagyítson csípő mozdulattal vagy az egérgörgővel. A helyzetét kék pont jelzi — a helyhozzáférés opcionális."
+    },
+    "search": {
+      "title": "Keresés",
+      "body": "Adjon meg nevet vagy címet. Az eredmények azonnal megjelennek, távolság szerint rendezve. Bezáráshoz nyomja meg az Escape billentyűt."
+    },
+    "filter": {
+      "title": "Szűrők",
+      "body": "A fejléc alatti chipek valós időben szűrik a térképet: ingyenes, akadálymentes vagy kategória szerint. Több szűrő kombinálható."
+    },
+    "rating": {
+      "title": "Értékelési rendszer",
+      "body": "Adjon virágokat 🌸 (pozitív, 0–5) vagy legyeket 🪰 (negatív, 0–5) 10 szempontra. Pontszám = virágok mínusz legyek. Minél zöldebb, annál jobb."
+    },
+    "contribute": {
+      "title": "Mosdó hozzáadása",
+      "body": "Jelentkezzen be, és felül megjelenik a „+ Hozzáadás” gomb. Adja meg a nevet, kategóriát és a helyét. A profilban bármikor szerkeszthető."
+    },
+    "accessibility": {
+      "title": "Akadálymentesség",
+      "body": "Az „Akadálymentes” szűrő a kerekesszékkel megközelíthető vagy küszöb nélküli bejáratú mosdókat mutatja. További részletek (Eurokey, pelenkázó, zuhany) a részletek panelen."
+    },
+    "privacy": {
+      "title": "Adatvédelem",
+      "body": "A böngészéshez nem kell fiók. A fényképek GPS-metaadatok (EXIF) nélkül tárolódnak. A privát mosdók a térképen csak a meghívott felhasználók számára láthatók."
+    },
+    "coverage": {
+      "title": "Nemzetközi lefedettség",
+      "body": "39 ország Európában — Nyugat- és Észak-Európától Közép- és Kelet-Európán át az egész Balkánig — valamint a Földközi-tenger partvidéke. Az adatok az OpenStreetMapről és a közösségtől származnak."
+    },
+    "language": {
+      "title": "Nyelv választása",
+      "body": "31 nyelven elérhető, beleértve az arabot és a hébert jobbról balra megjelenítéssel. Váltson a nyelvi menüben vagy közvetlenül linkkel, pl. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Billentyűparancsok",
+      "body": "Tab: fókusz mozgatása · Enter/Szóköz: aktiválás · Escape: párbeszéd bezárása · ←/→: fényképek lapozása · ↑/↓: térkép nagyítása (ha a térképen van a fókusz)."
+    },
+    "contact": {
+      "title": "Kapcsolat és visszajelzés",
+      "body": "Kérdés, hiba vagy ötlet? Írjon nekünk: admin@4cpa.ch — vagy nyisson egy issue-t a GitHubon: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "A kezdőlapra",
     "logo": "klopilot logó",

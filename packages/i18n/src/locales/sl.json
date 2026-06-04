@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Zemljevid",
+      "body": "Tapnite oznako za prikaz podrobnosti. Povečajte s ščipalno potezo ali kolescem miške. Vaša lokacija je prikazana kot modra pika — dostop do lokacije je izbiren."
+    },
+    "search": {
+      "title": "Iskanje",
+      "body": "Vnesite ime ali naslov. Rezultati se prikažejo takoj, razvrščeni po razdalji. Za zaprtje pritisnite Escape."
+    },
+    "filter": {
+      "title": "Filtri",
+      "body": "Čipi pod glavo filtrirajo zemljevid v realnem času: brezplačno, dostopno ali po kategoriji. Več filtrov je mogoče kombinirati."
+    },
+    "rating": {
+      "title": "Sistem ocenjevanja",
+      "body": "Dodelite rožice 🌸 (pozitivno, 0–5) ali muhe 🪰 (negativno, 0–5) za 10 meril. Ocena = rožice minus muhe. Bolj zeleno, bolje."
+    },
+    "contribute": {
+      "title": "Dodaj stranišče",
+      "body": "Prijavite se in zgoraj se prikaže gumb „+ Dodaj“. Navedite ime, kategorijo in svojo lokacijo. Kadar koli urejljivo v profilu."
+    },
+    "accessibility": {
+      "title": "Dostopnost",
+      "body": "Filter „Dostopno“ prikazuje stranišča z dostopom za invalidski voziček ali vhodom brez stopnic. Več podrobnosti (Eurokey, previjalna miza, prha) v podoknu s podrobnostmi."
+    },
+    "privacy": {
+      "title": "Zasebnost",
+      "body": "Za brskanje račun ni potreben. Fotografije se shranjujejo brez metapodatkov GPS (EXIF). Zasebna stranišča so na zemljevidu vidna le povabljenim uporabnikom."
+    },
+    "coverage": {
+      "title": "Mednarodna pokritost",
+      "body": "39 držav v Evropi — od zahodne in severne Evrope prek srednje in vzhodne Evrope do celotnega Balkana — ter sredozemska obalna območja. Podatki iz OpenStreetMap in skupnosti."
+    },
+    "language": {
+      "title": "Izberi jezik",
+      "body": "Na voljo v 31 jezikih, vključno z arabščino in hebrejščino s prikazom od desne proti levi. Preklopite v meniju jezikov ali neposredno prek povezave, npr. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Bližnjice na tipkovnici",
+      "body": "Tab: premakni fokus · Enter/preslednica: aktiviraj · Escape: zapri pogovorno okno · ←/→: brskanje po fotografijah · ↑/↓: povečava zemljevida (ko je zemljevid v fokusu)."
+    },
+    "contact": {
+      "title": "Stik in povratne informacije",
+      "body": "Vprašanja, napake ali ideje? Pišite nam: admin@4cpa.ch — ali odprite issue na GitHubu: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Na domačo stran",
     "logo": "Logotip klopilot",

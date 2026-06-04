@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Karte",
+      "body": "Pieskarieties marķierim, lai redzētu detaļas. Tālummainiet ar savilkšanas žestu vai peles ritenīti. Jūsu atrašanās vieta tiek rādīta kā zils punkts — piekļuve atrašanās vietai ir izvēles."
+    },
+    "search": {
+      "title": "Meklēšana",
+      "body": "Ievadiet nosaukumu vai adresi. Rezultāti parādās uzreiz, sakārtoti pēc attāluma. Nospiediet Escape, lai aizvērtu."
+    },
+    "filter": {
+      "title": "Filtri",
+      "body": "Mikroshēmas zem galvenes filtrē karti reāllaikā: bez maksas, pieejams vai pēc kategorijas. Var apvienot vairākus filtrus."
+    },
+    "rating": {
+      "title": "Vērtēšanas sistēma",
+      "body": "Piešķiriet ziedus 🌸 (pozitīvi, 0–5) vai mušas 🪰 (negatīvi, 0–5) 10 kritērijos. Rezultāts = ziedi mīnus mušas. Jo zaļāks, jo labāk."
+    },
+    "contribute": {
+      "title": "Pievienot tualeti",
+      "body": "Piesakieties, un augšā parādīsies poga „+ Pievienot“. Norādiet nosaukumu, kategoriju un savu atrašanās vietu. Jebkurā laikā rediģējams profilā."
+    },
+    "accessibility": {
+      "title": "Pieejamība",
+      "body": "Filtrs „Pieejams“ rāda tualetes ar piekļuvi ratiņkrēslam vai ieeju bez pakāpieniem. Vairāk detaļu (Eurokey, autiņu maiņas galds, duša) detaļu panelī."
+    },
+    "privacy": {
+      "title": "Privātums",
+      "body": "Pārlūkošanai konts nav nepieciešams. Fotoattēli tiek saglabāti bez GPS metadatiem (EXIF). Privātās tualetes kartē redzamas tikai uzaicinātajiem lietotājiem."
+    },
+    "coverage": {
+      "title": "Starptautiskais pārklājums",
+      "body": "39 valstis Eiropā — no Rietumeiropas un Ziemeļeiropas caur Centrāleiropu un Austrumeiropu līdz visiem Balkāniem — kā arī Vidusjūras piekrastes reģioni. Dati no OpenStreetMap un kopienas."
+    },
+    "language": {
+      "title": "Izvēlēties valodu",
+      "body": "Pieejams 31 valodā, tostarp arābu un ebreju valodā ar attēlojumu no labās uz kreiso. Mainiet valodu izvēlnē vai tieši ar saiti, piem., klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Tastatūras saīsnes",
+      "body": "Tab: pārvietot fokusu · Enter/atstarpe: aktivizēt · Escape: aizvērt dialoglodziņu · ←/→: pārlūkot fotoattēlus · ↑/↓: tuvināt karti (kad karte ir fokusā)."
+    },
+    "contact": {
+      "title": "Kontakti un atsauksmes",
+      "body": "Jautājumi, kļūdas vai idejas? Rakstiet mums: admin@4cpa.ch — vai izveidojiet issue GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Uz sākumlapu",
     "logo": "klopilot logotips",

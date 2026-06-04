@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Harta",
+      "body": "Prekni një shënues për të parë detajet. Zmadho me gjest shtrëngimi ose me rrotën e miut. Vendndodhja jote shfaqet si një pikë blu — qasja në vendndodhje është opsionale."
+    },
+    "search": {
+      "title": "Kërkim",
+      "body": "Shkruaj një emër ose adresë. Rezultatet shfaqen menjëherë, të renditura sipas distancës. Shtyp Escape për ta mbyllur."
+    },
+    "filter": {
+      "title": "Filtra",
+      "body": "Çipat nën titull filtrojnë hartën në kohë reale: falas, i aksesueshëm ose sipas kategorisë. Mund të kombinohen disa filtra."
+    },
+    "rating": {
+      "title": "Sistemi i vlerësimit",
+      "body": "Jep lule 🌸 (pozitive, 0–5) ose miza 🪰 (negative, 0–5) për 10 kritere. Pikët = lule minus miza. Sa më e gjelbër, aq më mirë."
+    },
+    "contribute": {
+      "title": "Shto një tualet",
+      "body": "Identifikohu dhe butoni „+ Shto“ shfaqet lart. Jep emrin, kategorinë dhe vendndodhjen tënde. I redaktueshëm në çdo kohë në profil."
+    },
+    "accessibility": {
+      "title": "Aksesueshmëria",
+      "body": "Filtri „I aksesueshëm“ tregon tualetet me akses për karrige me rrota ose hyrje pa shkallë. Më shumë detaje (Eurokey, tavolinë ndërrimi, dush) në panelin e detajeve."
+    },
+    "privacy": {
+      "title": "Privatësia",
+      "body": "Nuk nevojitet llogari për shfletim. Fotot ruhen pa metadata GPS (EXIF). Tualetet private shfaqen në hartë vetëm për përdoruesit e ftuar."
+    },
+    "coverage": {
+      "title": "Mbulimi ndërkombëtar",
+      "body": "39 vende në Evropë — nga Evropa Perëndimore dhe Veriore përmes Evropës Qendrore dhe Lindore deri te i gjithë Ballkani — si dhe rajonet bregdetare të Mesdheut. Të dhënat nga OpenStreetMap dhe komuniteti."
+    },
+    "language": {
+      "title": "Zgjidh gjuhën",
+      "body": "E disponueshme në 31 gjuhë, përfshirë arabishten dhe hebraishten me shfaqje nga e djathta në të majtë. Ndërro nga menyja e gjuhëve ose drejtpërdrejt me lidhje, p.sh. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Shkurtoret e tastierës",
+      "body": "Tab: zhvendos fokusin · Enter/Hapësirë: aktivizo · Escape: mbyll dialogun · ←/→: shfleto fotot · ↑/↓: zmadho hartën (kur harta është në fokus)."
+    },
+    "contact": {
+      "title": "Kontakt & komente",
+      "body": "Pyetje, gabime ose ide? Na shkruaj: admin@4cpa.ch — ose hap një issue në GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Te ballina",
     "logo": "Logoja klopilot",

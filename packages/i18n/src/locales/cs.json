@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Mapa",
+      "body": "Klepnutím na značku zobrazíte podrobnosti. Přibližujte gestem sevření nebo kolečkem myši. Vaše poloha se zobrazuje jako modrá tečka — přístup k poloze je volitelný."
+    },
+    "search": {
+      "title": "Hledání",
+      "body": "Zadejte název nebo adresu. Výsledky se zobrazí okamžitě, seřazené podle vzdálenosti. Zavřete stisknutím Escape."
+    },
+    "filter": {
+      "title": "Filtry",
+      "body": "Štítky pod záhlavím filtrují mapu v reálném čase: zdarma, bezbariérové nebo podle kategorie. Více filtrů lze kombinovat."
+    },
+    "rating": {
+      "title": "Systém hodnocení",
+      "body": "Udělujte kytičky 🌸 (kladně, 0–5) nebo mouchy 🪰 (záporně, 0–5) v 10 kritériích. Skóre = kytičky mínus mouchy. Čím zelenější, tím lepší."
+    },
+    "contribute": {
+      "title": "Přidat toaletu",
+      "body": "Přihlaste se a nahoře se objeví tlačítko „+ Přidat“. Zadejte název, kategorii a svou polohu. Kdykoli upravitelné v profilu."
+    },
+    "accessibility": {
+      "title": "Bezbariérovost",
+      "body": "Filtr „Bezbariérové“ zobrazuje toalety s přístupem pro vozíčkáře nebo bezbariérovým vstupem. Další detaily (Eurokey, přebalovací pult, sprcha) v panelu detailů."
+    },
+    "privacy": {
+      "title": "Soukromí",
+      "body": "K prohlížení není potřeba účet. Fotky se ukládají bez GPS metadat (EXIF). Soukromé toalety jsou na mapě viditelné jen pro pozvané uživatele."
+    },
+    "coverage": {
+      "title": "Mezinárodní pokrytí",
+      "body": "39 zemí v Evropě — od západní a severní Evropy přes střední a východní Evropu po celý Balkán — a také pobřežní oblasti Středomoří. Data z OpenStreetMap a od komunity."
+    },
+    "language": {
+      "title": "Vybrat jazyk",
+      "body": "Dostupné ve 31 jazycích, včetně arabštiny a hebrejštiny se zobrazením zprava doleva. Přepněte v jazykové nabídce nebo přímo odkazem, např. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Klávesové zkratky",
+      "body": "Tab: přesun fokusu · Enter/mezerník: aktivovat · Escape: zavřít dialog · ←/→: procházet fotky · ↑/↓: přiblížit mapu (když je mapa zaměřená)."
+    },
+    "contact": {
+      "title": "Kontakt a zpětná vazba",
+      "body": "Dotazy, chyby nebo nápady? Napište nám: admin@4cpa.ch — nebo založte issue na GitHubu: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Na úvodní stránku",
     "logo": "Logo klopilot",
