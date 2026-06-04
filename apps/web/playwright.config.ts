@@ -11,6 +11,10 @@ export default defineConfig({
   use: {
     baseURL: process.env.BASE_URL ?? 'http://localhost:3102',
     trace: 'on-first-retry',
+    // Feste Locale: seit die App die Browser-/Systemsprache erkennt, würde die
+    // Runner-Locale (z. B. en-US) die UI-Sprache bestimmen. Tests prüfen
+    // deutschen Text → Locale deterministisch auf de-DE pinnen.
+    locale: 'de-DE',
   },
 
   projects: [

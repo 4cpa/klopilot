@@ -47,9 +47,32 @@ export function applyDir(lang: string) {
   document.documentElement.dir = (RTL_LOCALES as string[]).includes(lang) ? 'rtl' : 'ltr';
 }
 
-// Initiale Sprache bestimmen: URL-Param `?lang=` (bzw. `?lng=`) hat Vorrang —
-// damit funktionieren teilbare Vorschaulinks (z. B. klopilot.ch/?lang=el) und die
-// Wahl wird gemerkt. Danach localStorage, sonst Default 'de'.
+/**
+ * System-/Browsersprache des Geräts auf eine unterstützte Locale abbilden.
+ * Nutzt `navigator.languages` (geordnete Präferenzliste) und fällt auf
+ * `navigator.language` zurück; nur der 2-Buchstaben-Code zählt
+ * (z. B. `de-CH` → `de`, `pt-BR` → `pt`). Default `de`, wenn nichts passt.
+ */
+function detectSystemLang(): string {
+  if (typeof navigator === 'undefined') return 'de';
+  const prefs = [
+    ...(Array.isArray(navigator.languages) ? navigator.languages : []),
+    navigator.language,
+  ].filter(Boolean) as string[];
+  for (const tag of prefs) {
+    const code = tag.slice(0, 2).toLowerCase();
+    if ((SUPPORTED_LOCALES as string[]).includes(code)) return code;
+  }
+  return 'de';
+}
+
+// Initiale Sprache bestimmen:
+//   1. URL-Param `?lang=` (bzw. `?lng=`) — teilbare Vorschaulinks, wird gemerkt
+//   2. localStorage — explizite Nutzerwahl im Sprachmenü
+//   3. System-/Browsersprache des Geräts (Desktop & Mobile)
+//   4. Default 'de'
+// So bekommt jeder neue Besucher automatisch seine Gerätesprache; eine bewusst
+// gewählte Sprache bleibt erhalten.
 function detectInitialLang(): string {
   if (typeof window === 'undefined') return 'de';
   try {
@@ -59,9 +82,9 @@ function detectInitialLang(): string {
       localStorage.setItem(LANG_KEY, q);
       return q;
     }
-    return localStorage.getItem(LANG_KEY) ?? 'de';
+    return localStorage.getItem(LANG_KEY) ?? detectSystemLang();
   } catch {
-    return 'de';
+    return detectSystemLang();
   }
 }
 
