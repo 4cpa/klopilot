@@ -50,7 +50,18 @@
     "submit": "🚽 Bæta við salerni",
     "success_title": "✅ Bætt við!",
     "success_message": "\"{{name}}\" hefur verið bætt við.",
-    "go_to_map": "Á kortið"
+    "go_to_map": "Á kortið",
+    "private_note": "Einkaklósett birtast ekki á opinbera kortinu — aðeins boðnir sjá þau. Staðsetning er námunduð að ~100 m.",
+    "from_map_click": "stillt með smelli á kort",
+    "pick_on_map": "Smelltu á kortið til að stilla nákvæma staðsetningu",
+    "lng": "Lengdargráða",
+    "lat": "Breiddargráða",
+    "availability": "Aðgengi",
+    "available": "Laust",
+    "available_desc": "Klósett er aðgengilegt",
+    "closed": "Lokað",
+    "closed_desc": "Tímabundið ófáanlegt",
+    "submitting": "Sendi…"
   },
   "profile": {
     "title": "Prófíll",

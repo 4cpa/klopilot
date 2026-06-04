@@ -50,7 +50,18 @@
     "submit": "🚽 Tilføj toilet",
     "success_title": "✅ Tilføjet!",
     "success_message": "«{{name}}» er blevet tilføjet.",
-    "go_to_map": "Gå til kortet"
+    "go_to_map": "Gå til kortet",
+    "private_note": "Private toiletter vises ikke på det offentlige kort — kun inviterede kan se dem. Placeringen afrundes til ~100 m.",
+    "from_map_click": "sat via kortklik",
+    "pick_on_map": "Tryk på kortet for at angive den nøjagtige placering",
+    "lng": "Længdegrad",
+    "lat": "Breddegrad",
+    "availability": "Tilgængelighed",
+    "available": "Tilgængelig",
+    "available_desc": "Toilettet er tilgængeligt",
+    "closed": "Lukket",
+    "closed_desc": "Midlertidigt utilgængeligt",
+    "submitting": "Sender…"
   },
   "profile": {
     "title": "Profil",

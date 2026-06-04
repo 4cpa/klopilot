@@ -137,6 +137,7 @@ export function ThemeToggle() {
 
 /* ── Mini-Button (Navbar mobile, AppBar) — gleicher Stil wie HelpButton ────── */
 export function ThemeToggleMini() {
+  const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
 
   const idx = OPTIONS.findIndex((o) => o.value === theme);
@@ -147,7 +148,7 @@ export function ThemeToggleMini() {
     <button
       type="button"
       title={`Theme: ${current.title} → ${nextOption.title}`}
-      aria-label={`Theme wechseln (aktuell: ${current.title})`}
+      aria-label={t('a11y.theme')}
       onClick={(e) => {
         e.stopPropagation();
         setTheme(nextOption.value);

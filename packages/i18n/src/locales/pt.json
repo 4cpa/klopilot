@@ -50,7 +50,18 @@
     "submit": "🚽 Adicionar casa de banho",
     "success_title": "✅ Adicionado!",
     "success_message": "«{{name}}» foi adicionado.",
-    "go_to_map": "Ir para o mapa"
+    "go_to_map": "Ir para o mapa",
+    "private_note": "As casas de banho privadas não aparecem no mapa público — só as pessoas convidadas as podem ver. A localização é arredondada para ~100 m.",
+    "from_map_click": "definido por clique no mapa",
+    "pick_on_map": "Toque no mapa para definir a localização exata",
+    "lng": "Longitude",
+    "lat": "Latitude",
+    "availability": "Disponibilidade",
+    "available": "Disponível",
+    "available_desc": "Casa de banho acessível",
+    "closed": "Fechado",
+    "closed_desc": "Temporariamente indisponível",
+    "submitting": "A enviar…"
   },
   "profile": {
     "title": "Perfil",

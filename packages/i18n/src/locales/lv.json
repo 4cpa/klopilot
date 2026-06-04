@@ -50,7 +50,18 @@
     "submit": "🚽 Pievienot tualeti",
     "success_title": "✅ Pievienots!",
     "success_message": "\"{{name}}\" ir pievienots.",
-    "go_to_map": "Uz karti"
+    "go_to_map": "Uz karti",
+    "private_note": "Privātās tualetes neparādās publiskajā kartē — tās redz tikai uzaicinātie. Atrašanās vieta tiek noapaļota līdz ~100 m.",
+    "from_map_click": "iestatīts ar klikšķi kartē",
+    "pick_on_map": "Pieskarieties kartei, lai iestatītu precīzu atrašanās vietu",
+    "lng": "Garums",
+    "lat": "Platums",
+    "availability": "Pieejamība",
+    "available": "Pieejama",
+    "available_desc": "Tualete ir pieejama",
+    "closed": "Slēgta",
+    "closed_desc": "Īslaicīgi nav pieejama",
+    "submitting": "Nosūta…"
   },
   "profile": {
     "title": "Profils",

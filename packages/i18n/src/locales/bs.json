@@ -50,7 +50,18 @@
     "submit": "🚽 Dodaj toalet",
     "success_title": "✅ Dodano!",
     "success_message": "\"{{name}}\" je dodan.",
-    "go_to_map": "Na mapu"
+    "go_to_map": "Na mapu",
+    "private_note": "Privatni toaleti se ne prikazuju na javnoj karti — vide ih samo pozvani. Lokacija se zaokružuje na ~100 m.",
+    "from_map_click": "postavljeno klikom na kartu",
+    "pick_on_map": "Dodirnite kartu da postavite tačnu lokaciju",
+    "lng": "Geografska dužina",
+    "lat": "Geografska širina",
+    "availability": "Dostupnost",
+    "available": "Dostupan",
+    "available_desc": "Toalet je pristupačan",
+    "closed": "Zatvoreno",
+    "closed_desc": "Privremeno nedostupno",
+    "submitting": "Slanje…"
   },
   "profile": {
     "title": "Profil",

@@ -50,7 +50,18 @@
     "submit": "🚽 Mosdó hozzáadása",
     "success_title": "✅ Hozzáadva!",
     "success_message": "A(z) \"{{name}}\" hozzá lett adva.",
-    "go_to_map": "Ugrás a térképre"
+    "go_to_map": "Ugrás a térképre",
+    "private_note": "A privát mosdók nem jelennek meg a nyilvános térképen — csak a meghívottak láthatják. A helyzet ~100 m-re kerekítve.",
+    "from_map_click": "térképkattintással beállítva",
+    "pick_on_map": "Koppintson a térképre a pontos hely megadásához",
+    "lng": "Hosszúság",
+    "lat": "Szélesség",
+    "availability": "Elérhetőség",
+    "available": "Elérhető",
+    "available_desc": "A mosdó hozzáférhető",
+    "closed": "Zárva",
+    "closed_desc": "Átmenetileg nem elérhető",
+    "submitting": "Beküldés…"
   },
   "profile": {
     "title": "Profil",

@@ -50,7 +50,18 @@
     "submit": "🚽 Lisa tualett",
     "success_title": "✅ Lisatud!",
     "success_message": "\"{{name}}\" on lisatud.",
-    "go_to_map": "Mine kaardile"
+    "go_to_map": "Mine kaardile",
+    "private_note": "Privaatsed tualetid ei ilmu avalikul kaardil — neid näevad ainult kutsutud. Asukoht ümardatakse ~100 m-ni.",
+    "from_map_click": "määratud kaardiklõpsuga",
+    "pick_on_map": "Puuduta kaarti täpse asukoha määramiseks",
+    "lng": "Pikkuskraad",
+    "lat": "Laiuskraad",
+    "availability": "Saadavus",
+    "available": "Saadaval",
+    "available_desc": "Tualett on ligipääsetav",
+    "closed": "Suletud",
+    "closed_desc": "Ajutiselt pole saadaval",
+    "submitting": "Saadan…"
   },
   "profile": {
     "title": "Profiil",

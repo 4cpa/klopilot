@@ -50,7 +50,18 @@
     "submit": "🚽 Lisää WC",
     "success_title": "✅ Lisätty!",
     "success_message": "«{{name}}» on lisätty.",
-    "go_to_map": "Siirry karttaan"
+    "go_to_map": "Siirry karttaan",
+    "private_note": "Yksityiset wc:t eivät näy julkisella kartalla — vain kutsutut näkevät ne. Sijainti pyöristetään ~100 metriin.",
+    "from_map_click": "asetettu kartalta klikkaamalla",
+    "pick_on_map": "Aseta tarkka sijainti napauttamalla karttaa",
+    "lng": "Pituusaste",
+    "lat": "Leveysaste",
+    "availability": "Saatavuus",
+    "available": "Saatavilla",
+    "available_desc": "Wc on käytettävissä",
+    "closed": "Suljettu",
+    "closed_desc": "Tilapäisesti pois käytöstä",
+    "submitting": "Lähetetään…"
   },
   "profile": {
     "title": "Profiili",

@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useState, useEffect, useCallback, useRef, useMemo, Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
 import {
   toilets as toiletsApi,
@@ -40,6 +41,7 @@ type Sheet = 'none' | 'detail' | 'rate' | 'add' | 'login';
 
 // ── Inner Component (braucht useSearchParams → muss in Suspense) ───────────
 function KarteInner() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const { pos } = useGeoLocation();
   const { user } = useAuth();
@@ -289,7 +291,7 @@ function KarteInner() {
             whiteSpace: 'nowrap',
           }}
         >
-          📍 Klick auf die Karte um den Standort zu setzen
+          📍 {t('contribute.pick_on_map')}
         </div>
       )}
 

@@ -50,7 +50,18 @@
     "submit": "🚽 Add toilet",
     "success_title": "✅ Added!",
     "success_message": "\"{{name}}\" has been added.",
-    "go_to_map": "Go to map"
+    "go_to_map": "Go to map",
+    "private_note": "Private toilets don’t appear on the public map — only invited people can see them. The exact location is rounded to ~100 m.",
+    "from_map_click": "set via map click",
+    "pick_on_map": "Tap the map to set the exact location",
+    "lng": "Longitude",
+    "lat": "Latitude",
+    "availability": "Availability",
+    "available": "Available",
+    "available_desc": "Toilet is accessible",
+    "closed": "Closed",
+    "closed_desc": "Temporarily unavailable",
+    "submitting": "Submitting…"
   },
   "profile": {
     "title": "Profile",

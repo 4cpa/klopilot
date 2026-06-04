@@ -50,7 +50,18 @@
     "submit": "🚽 Añadir baño",
     "success_title": "✅ ¡Añadido!",
     "success_message": "«{{name}}» ha sido añadido.",
-    "go_to_map": "Ir al mapa"
+    "go_to_map": "Ir al mapa",
+    "private_note": "Los baños privados no aparecen en el mapa público — solo las personas invitadas pueden verlos. La ubicación se redondea a ~100 m.",
+    "from_map_click": "definido con clic en el mapa",
+    "pick_on_map": "Toca el mapa para fijar la ubicación exacta",
+    "lng": "Longitud",
+    "lat": "Latitud",
+    "availability": "Disponibilidad",
+    "available": "Disponible",
+    "available_desc": "Baño accesible",
+    "closed": "Cerrado",
+    "closed_desc": "Temporalmente no disponible",
+    "submitting": "Enviando…"
   },
   "profile": {
     "title": "Perfil",

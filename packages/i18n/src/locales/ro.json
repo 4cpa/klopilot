@@ -50,7 +50,18 @@
     "submit": "🚽 Adaugă toaleta",
     "success_title": "✅ Adăugată!",
     "success_message": "„{{name}}” a fost adăugată.",
-    "go_to_map": "Mergi la hartă"
+    "go_to_map": "Mergi la hartă",
+    "private_note": "Toaletele private nu apar pe harta publică — doar persoanele invitate le pot vedea. Locația este rotunjită la ~100 m.",
+    "from_map_click": "setat prin clic pe hartă",
+    "pick_on_map": "Atinge harta pentru a seta locația exactă",
+    "lng": "Longitudine",
+    "lat": "Latitudine",
+    "availability": "Disponibilitate",
+    "available": "Disponibilă",
+    "available_desc": "Toaleta este accesibilă",
+    "closed": "Închisă",
+    "closed_desc": "Temporar indisponibilă",
+    "submitting": "Se trimite…"
   },
   "profile": {
     "title": "Profil",

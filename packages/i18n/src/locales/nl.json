@@ -50,7 +50,18 @@
     "submit": "🚽 Toilet toevoegen",
     "success_title": "✅ Toegevoegd!",
     "success_message": "\"{{name}}\" is toegevoegd.",
-    "go_to_map": "Naar de kaart"
+    "go_to_map": "Naar de kaart",
+    "private_note": "Privétoiletten verschijnen niet op de openbare kaart — alleen genodigden kunnen ze zien. De locatie wordt afgerond op ~100 m.",
+    "from_map_click": "ingesteld via kaartklik",
+    "pick_on_map": "Tik op de kaart om de exacte locatie in te stellen",
+    "lng": "Lengtegraad",
+    "lat": "Breedtegraad",
+    "availability": "Beschikbaarheid",
+    "available": "Beschikbaar",
+    "available_desc": "Toilet is toegankelijk",
+    "closed": "Gesloten",
+    "closed_desc": "Tijdelijk niet beschikbaar",
+    "submitting": "Verzenden…"
   },
   "profile": {
     "title": "Profiel",

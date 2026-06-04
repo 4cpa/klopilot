@@ -50,7 +50,18 @@
     "submit": "🚽 Toilette eintragen",
     "success_title": "✅ Eingetragen!",
     "success_message": "\"{{name}}\" wurde hinzugefügt.",
-    "go_to_map": "Zur Karte"
+    "go_to_map": "Zur Karte",
+    "private_note": "Private Toiletten erscheinen nicht auf der öffentlichen Karte — nur eingeladene Personen sehen sie. Der Standort wird auf ~100 m gerundet.",
+    "from_map_click": "per Karten-Klick gesetzt",
+    "pick_on_map": "Klick auf die Karte, um den genauen Standort zu setzen",
+    "lng": "Längengrad",
+    "lat": "Breitengrad",
+    "availability": "Verfügbarkeit",
+    "available": "Verfügbar",
+    "available_desc": "Toilette ist zugänglich",
+    "closed": "Geschlossen",
+    "closed_desc": "Vorübergehend nicht zugänglich",
+    "submitting": "Wird eingetragen…"
   },
   "profile": {
     "title": "Profil",

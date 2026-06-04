@@ -50,7 +50,18 @@
     "submit": "🚽 Pridėti tualetą",
     "success_title": "✅ Pridėta!",
     "success_message": "\"{{name}}\" pridėtas.",
-    "go_to_map": "Į žemėlapį"
+    "go_to_map": "Į žemėlapį",
+    "private_note": "Privatūs tualetai nerodomi viešame žemėlapyje — juos mato tik pakviestieji. Vieta suapvalinama iki ~100 m.",
+    "from_map_click": "nustatyta spustelėjus žemėlapį",
+    "pick_on_map": "Bakstelėkite žemėlapį, kad nustatytumėte tikslią vietą",
+    "lng": "Ilguma",
+    "lat": "Platuma",
+    "availability": "Prieinamumas",
+    "available": "Prieinamas",
+    "available_desc": "Tualetas yra prieinamas",
+    "closed": "Uždaryta",
+    "closed_desc": "Laikinai neprieinama",
+    "submitting": "Siunčiama…"
   },
   "profile": {
     "title": "Profilis",

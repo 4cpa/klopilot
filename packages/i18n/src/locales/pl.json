@@ -50,7 +50,18 @@
     "submit": "🚽 Dodaj toaletę",
     "success_title": "✅ Dodano!",
     "success_message": "\"{{name}}\" została dodana.",
-    "go_to_map": "Przejdź do mapy"
+    "go_to_map": "Przejdź do mapy",
+    "private_note": "Prywatne toalety nie pojawiają się na publicznej mapie — widzą je tylko zaproszone osoby. Lokalizacja jest zaokrąglana do ~100 m.",
+    "from_map_click": "ustawione kliknięciem na mapie",
+    "pick_on_map": "Kliknij mapę, aby ustawić dokładną lokalizację",
+    "lng": "Długość geograficzna",
+    "lat": "Szerokość geograficzna",
+    "availability": "Dostępność",
+    "available": "Dostępna",
+    "available_desc": "Toaleta jest dostępna",
+    "closed": "Zamknięta",
+    "closed_desc": "Tymczasowo niedostępna",
+    "submitting": "Wysyłanie…"
   },
   "profile": {
     "title": "Profil",

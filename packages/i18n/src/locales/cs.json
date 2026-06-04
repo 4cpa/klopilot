@@ -50,7 +50,18 @@
     "submit": "🚽 Přidat toaletu",
     "success_title": "✅ Přidáno!",
     "success_message": "\"{{name}}\" byla přidána.",
-    "go_to_map": "Přejít na mapu"
+    "go_to_map": "Přejít na mapu",
+    "private_note": "Soukromé toalety se na veřejné mapě nezobrazují — vidí je jen pozvaní. Poloha se zaokrouhluje na ~100 m.",
+    "from_map_click": "nastaveno kliknutím na mapu",
+    "pick_on_map": "Klikněte na mapu pro nastavení přesné polohy",
+    "lng": "Zeměpisná délka",
+    "lat": "Zeměpisná šířka",
+    "availability": "Dostupnost",
+    "available": "Dostupná",
+    "available_desc": "Toaleta je přístupná",
+    "closed": "Zavřeno",
+    "closed_desc": "Dočasně nedostupné",
+    "submitting": "Odesílání…"
   },
   "profile": {
     "title": "Profil",

@@ -50,7 +50,18 @@
     "submit": "🚽 Ajouter la toilette",
     "success_title": "✅ Ajouté !",
     "success_message": "« {{name}} » a été ajouté.",
-    "go_to_map": "Vers la carte"
+    "go_to_map": "Vers la carte",
+    "private_note": "Les toilettes privées n’apparaissent pas sur la carte publique — seules les personnes invitées peuvent les voir. La position est arrondie à ~100 m.",
+    "from_map_click": "défini par clic sur la carte",
+    "pick_on_map": "Cliquez sur la carte pour définir l’emplacement exact",
+    "lng": "Longitude",
+    "lat": "Latitude",
+    "availability": "Disponibilité",
+    "available": "Disponible",
+    "available_desc": "Toilette accessible",
+    "closed": "Fermé",
+    "closed_desc": "Temporairement indisponible",
+    "submitting": "Envoi en cours…"
   },
   "profile": {
     "title": "Profil",

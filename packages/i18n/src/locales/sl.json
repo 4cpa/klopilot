@@ -50,7 +50,18 @@
     "submit": "🚽 Dodaj stranišče",
     "success_title": "✅ Dodano!",
     "success_message": "\"{{name}}\" je bilo dodano.",
-    "go_to_map": "Na zemljevid"
+    "go_to_map": "Na zemljevid",
+    "private_note": "Zasebna stranišča se ne prikažejo na javnem zemljevidu — vidijo jih le povabljeni. Lokacija se zaokroži na ~100 m.",
+    "from_map_click": "nastavljeno s klikom na zemljevid",
+    "pick_on_map": "Tapnite zemljevid za nastavitev natančne lokacije",
+    "lng": "Zemljepisna dolžina",
+    "lat": "Zemljepisna širina",
+    "availability": "Razpoložljivost",
+    "available": "Na voljo",
+    "available_desc": "Stranišče je dostopno",
+    "closed": "Zaprto",
+    "closed_desc": "Začasno nedostopno",
+    "submitting": "Pošiljanje…"
   },
   "profile": {
     "title": "Profil",

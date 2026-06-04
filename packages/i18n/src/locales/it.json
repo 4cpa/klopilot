@@ -50,7 +50,18 @@
     "submit": "🚽 Aggiungi toilette",
     "success_title": "✅ Aggiunto!",
     "success_message": "«{{name}}» è stato aggiunto.",
-    "go_to_map": "Vai alla mappa"
+    "go_to_map": "Vai alla mappa",
+    "private_note": "I bagni privati non compaiono sulla mappa pubblica — solo le persone invitate possono vederli. La posizione è arrotondata a ~100 m.",
+    "from_map_click": "impostato con clic sulla mappa",
+    "pick_on_map": "Tocca la mappa per impostare la posizione esatta",
+    "lng": "Longitudine",
+    "lat": "Latitudine",
+    "availability": "Disponibilità",
+    "available": "Disponibile",
+    "available_desc": "Bagno accessibile",
+    "closed": "Chiuso",
+    "closed_desc": "Temporaneamente non disponibile",
+    "submitting": "Invio in corso…"
   },
   "profile": {
     "title": "Profilo",

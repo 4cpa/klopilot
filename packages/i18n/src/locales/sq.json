@@ -50,7 +50,18 @@
     "submit": "🚽 Shto tualetin",
     "success_title": "✅ U shtua!",
     "success_message": "\"{{name}}\" u shtua.",
-    "go_to_map": "Shko te harta"
+    "go_to_map": "Shko te harta",
+    "private_note": "Tualetet private nuk shfaqen në hartën publike — vetëm personat e ftuar mund t’i shohin. Vendndodhja rrumbullakoset në ~100 m.",
+    "from_map_click": "vendosur me klik në hartë",
+    "pick_on_map": "Prekni hartën për të vendosur vendndodhjen e saktë",
+    "lng": "Gjatësia gjeografike",
+    "lat": "Gjerësia gjeografike",
+    "availability": "Disponueshmëria",
+    "available": "I disponueshëm",
+    "available_desc": "Tualeti është i aksesueshëm",
+    "closed": "Mbyllur",
+    "closed_desc": "Përkohësisht i padisponueshëm",
+    "submitting": "Po dërgohet…"
   },
   "profile": {
     "title": "Profili",
