@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Mapa",
+      "body": "Toque num marcador para ver os detalhes. Faça zoom com o gesto de pinça ou a roda do rato. A sua localização aparece como um ponto azul — o acesso à localização é opcional."
+    },
+    "search": {
+      "title": "Pesquisa",
+      "body": "Introduza um nome ou endereço. Os resultados aparecem de imediato, ordenados por distância. Prima Escape para fechar."
+    },
+    "filter": {
+      "title": "Filtros",
+      "body": "Os chips abaixo do cabeçalho filtram o mapa em tempo real: grátis, acessível ou por categoria. Vários filtros podem ser combinados."
+    },
+    "rating": {
+      "title": "Sistema de avaliação",
+      "body": "Atribua flores 🌸 (positivo, 0–5) ou moscas 🪰 (negativo, 0–5) em 10 critérios. Pontuação = flores menos moscas. Quanto mais verde, melhor."
+    },
+    "contribute": {
+      "title": "Adicionar uma casa de banho",
+      "body": "Inicie sessão e o botão « + Adicionar » aparece no topo. Indique nome, categoria e a sua localização. Editável a qualquer momento no perfil."
+    },
+    "accessibility": {
+      "title": "Acessibilidade",
+      "body": "O filtro « Acessível » mostra casas de banho com acesso para cadeira de rodas ou entrada sem degraus. Mais detalhes (Eurokey, fraldário, duche) no painel de detalhes."
+    },
+    "privacy": {
+      "title": "Privacidade",
+      "body": "Não é necessária conta para navegar. As fotos são guardadas sem metadados GPS (EXIF). As casas de banho privadas só são visíveis no mapa para utilizadores convidados."
+    },
+    "coverage": {
+      "title": "Cobertura internacional",
+      "body": "39 países na Europa — da Europa Ocidental e do Norte até todos os Balcãs, passando pela Europa Central e de Leste — além das regiões costeiras do Mediterrâneo. Dados do OpenStreetMap e da comunidade."
+    },
+    "language": {
+      "title": "Escolher idioma",
+      "body": "Disponível em 31 idiomas, incluindo árabe e hebraico com apresentação da direita para a esquerda. Mude no menu de idiomas ou diretamente por link, p. ex. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Atalhos de teclado",
+      "body": "Tab: mover o foco · Enter/Espaço: ativar · Escape: fechar a caixa de diálogo · ←/→: ver fotos · ↑/↓: zoom do mapa (quando o mapa tem o foco)."
+    },
+    "contact": {
+      "title": "Contacto e feedback",
+      "body": "Perguntas, erros ou ideias? Escreva-nos: admin@4cpa.ch — ou abra uma issue no GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Ir para o início",
     "logo": "Logótipo klopilot",
@@ -50,7 +96,18 @@
     "submit": "🚽 Adicionar casa de banho",
     "success_title": "✅ Adicionado!",
     "success_message": "«{{name}}» foi adicionado.",
-    "go_to_map": "Ir para o mapa"
+    "go_to_map": "Ir para o mapa",
+    "private_note": "As casas de banho privadas não aparecem no mapa público — só as pessoas convidadas as podem ver. A localização é arredondada para ~100 m.",
+    "from_map_click": "definido por clique no mapa",
+    "pick_on_map": "Toque no mapa para definir a localização exata",
+    "lng": "Longitude",
+    "lat": "Latitude",
+    "availability": "Disponibilidade",
+    "available": "Disponível",
+    "available_desc": "Casa de banho acessível",
+    "closed": "Fechado",
+    "closed_desc": "Temporariamente indisponível",
+    "submitting": "A enviar…"
   },
   "profile": {
     "title": "Perfil",

@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Map",
+      "body": "Tap a marker to see details. Zoom with a pinch gesture or the mouse wheel. Your location is shown as a blue dot — location access is optional."
+    },
+    "search": {
+      "title": "Search",
+      "body": "Enter a name or address. Results appear instantly, sorted by distance. Press Escape to close."
+    },
+    "filter": {
+      "title": "Filters",
+      "body": "The chips under the header filter the map in real time: free, accessible or by category. Multiple filters can be combined."
+    },
+    "rating": {
+      "title": "Rating system",
+      "body": "Give flowers 🌸 (positive, 0–5) or flies 🪰 (negative, 0–5) across 10 criteria. Score = flowers minus flies. The greener, the better."
+    },
+    "contribute": {
+      "title": "Add a toilet",
+      "body": "Sign in and the “+ Add” button appears at the top. Enter name, category and your location. Editable any time in your profile."
+    },
+    "accessibility": {
+      "title": "Accessibility",
+      "body": "The “Accessible” filter shows toilets with wheelchair access or a step-free entrance. More details (Eurokey, baby changing, shower) in the detail panel."
+    },
+    "privacy": {
+      "title": "Privacy",
+      "body": "No account needed to browse. Photos are stored without GPS metadata (EXIF). Private toilets are visible on the map only to invited users."
+    },
+    "coverage": {
+      "title": "International coverage",
+      "body": "39 countries across Europe — from Western and Northern Europe through Central and Eastern Europe to the whole Balkans — plus the Mediterranean coastal regions. Data from OpenStreetMap and the community."
+    },
+    "language": {
+      "title": "Choose language",
+      "body": "Available in 31 languages, including Arabic and Hebrew with right-to-left layout. Switch via the language menu or directly by link, e.g. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Keyboard shortcuts",
+      "body": "Tab: move focus · Enter/Space: activate · Escape: close dialog · ←/→: browse photos · ↑/↓: zoom map (when the map is focused)."
+    },
+    "contact": {
+      "title": "Contact & feedback",
+      "body": "Questions, bugs or ideas? Write to us: admin@4cpa.ch — or open an issue on GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Go to homepage",
     "logo": "klopilot logo",
@@ -50,7 +96,18 @@
     "submit": "🚽 Add toilet",
     "success_title": "✅ Added!",
     "success_message": "\"{{name}}\" has been added.",
-    "go_to_map": "Go to map"
+    "go_to_map": "Go to map",
+    "private_note": "Private toilets don’t appear on the public map — only invited people can see them. The exact location is rounded to ~100 m.",
+    "from_map_click": "set via map click",
+    "pick_on_map": "Tap the map to set the exact location",
+    "lng": "Longitude",
+    "lat": "Latitude",
+    "availability": "Availability",
+    "available": "Available",
+    "available_desc": "Toilet is accessible",
+    "closed": "Closed",
+    "closed_desc": "Temporarily unavailable",
+    "submitting": "Submitting…"
   },
   "profile": {
     "title": "Profile",

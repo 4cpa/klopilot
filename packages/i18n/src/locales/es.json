@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Mapa",
+      "body": "Toca un marcador para ver los detalles. Amplía con un gesto de pellizco o la rueda del ratón. Tu ubicación se muestra como un punto azul — el acceso a la ubicación es opcional."
+    },
+    "search": {
+      "title": "Búsqueda",
+      "body": "Escribe un nombre o dirección. Los resultados aparecen al instante, ordenados por distancia. Pulsa Escape para cerrar."
+    },
+    "filter": {
+      "title": "Filtros",
+      "body": "Los chips bajo el encabezado filtran el mapa en tiempo real: gratis, accesible o por categoría. Se pueden combinar varios filtros."
+    },
+    "rating": {
+      "title": "Sistema de valoración",
+      "body": "Da flores 🌸 (positivo, 0–5) o moscas 🪰 (negativo, 0–5) en 10 criterios. Puntuación = flores menos moscas. Cuanto más verde, mejor."
+    },
+    "contribute": {
+      "title": "Añadir un baño",
+      "body": "Inicia sesión y arriba aparecerá el botón « + Añadir ». Indica nombre, categoría y tu ubicación. Editable en cualquier momento en tu perfil."
+    },
+    "accessibility": {
+      "title": "Accesibilidad",
+      "body": "El filtro « Accesible » muestra baños con acceso para silla de ruedas o entrada sin escalones. Más detalles (Eurokey, cambiador, ducha) en el panel de detalles."
+    },
+    "privacy": {
+      "title": "Privacidad",
+      "body": "No se necesita cuenta para explorar. Las fotos se guardan sin metadatos GPS (EXIF). Los baños privados solo son visibles en el mapa para usuarios invitados."
+    },
+    "coverage": {
+      "title": "Cobertura internacional",
+      "body": "39 países de Europa — desde Europa occidental y del norte hasta todos los Balcanes, pasando por Europa central y oriental — además de las regiones costeras del Mediterráneo. Datos de OpenStreetMap y la comunidad."
+    },
+    "language": {
+      "title": "Elegir idioma",
+      "body": "Disponible en 31 idiomas, incluidos árabe y hebreo con disposición de derecha a izquierda. Cambia desde el menú de idiomas o directamente por enlace, p. ej. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Atajos de teclado",
+      "body": "Tab: mover el foco · Entrar/Espacio: activar · Escape: cerrar el diálogo · ←/→: ver fotos · ↑/↓: zoom del mapa (cuando el mapa tiene el foco)."
+    },
+    "contact": {
+      "title": "Contacto y comentarios",
+      "body": "¿Preguntas, errores o ideas? Escríbenos: admin@4cpa.ch — o abre una incidencia en GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Ir al inicio",
     "logo": "Logotipo de klopilot",
@@ -50,7 +96,18 @@
     "submit": "🚽 Añadir baño",
     "success_title": "✅ ¡Añadido!",
     "success_message": "«{{name}}» ha sido añadido.",
-    "go_to_map": "Ir al mapa"
+    "go_to_map": "Ir al mapa",
+    "private_note": "Los baños privados no aparecen en el mapa público — solo las personas invitadas pueden verlos. La ubicación se redondea a ~100 m.",
+    "from_map_click": "definido con clic en el mapa",
+    "pick_on_map": "Toca el mapa para fijar la ubicación exacta",
+    "lng": "Longitud",
+    "lat": "Latitud",
+    "availability": "Disponibilidad",
+    "available": "Disponible",
+    "available_desc": "Baño accesible",
+    "closed": "Cerrado",
+    "closed_desc": "Temporalmente no disponible",
+    "submitting": "Enviando…"
   },
   "profile": {
     "title": "Perfil",

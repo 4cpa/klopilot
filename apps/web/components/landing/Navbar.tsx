@@ -67,7 +67,7 @@ export function LangDropdown({ compact = false }: { compact?: boolean }) {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={`Sprache: ${current.label}`}
+        aria-label={`${t('a11y.choose_language')}: ${current.label}`}
         style={{
           display: 'flex',
           alignItems: 'center',

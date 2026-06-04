@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Kort",
+      "body": "Tryk på en markør for at se detaljer. Zoom med knibegestus eller musehjulet. Din placering vises som en blå prik — placeringsadgang er valgfri."
+    },
+    "search": {
+      "title": "Søgning",
+      "body": "Indtast et navn eller en adresse. Resultater vises med det samme, sorteret efter afstand. Tryk på Escape for at lukke."
+    },
+    "filter": {
+      "title": "Filtre",
+      "body": "Chipsene under headeren filtrerer kortet i realtid: gratis, tilgængeligt eller efter kategori. Flere filtre kan kombineres."
+    },
+    "rating": {
+      "title": "Bedømmelsessystem",
+      "body": "Giv blomster 🌸 (positiv, 0–5) eller fluer 🪰 (negativ, 0–5) på 10 kriterier. Score = blomster minus fluer. Jo grønnere, jo bedre."
+    },
+    "contribute": {
+      "title": "Tilføj et toilet",
+      "body": "Log ind, så vises knappen „+ Tilføj“ øverst. Angiv navn, kategori og din placering. Kan redigeres når som helst i profilen."
+    },
+    "accessibility": {
+      "title": "Tilgængelighed",
+      "body": "Filteret „Tilgængeligt“ viser toiletter med kørestolsadgang eller trinfri indgang. Flere detaljer (Eurokey, puslebord, bruser) i detaljepanelet."
+    },
+    "privacy": {
+      "title": "Privatliv",
+      "body": "Ingen konto nødvendig for at browse. Fotos gemmes uden GPS-metadata (EXIF). Private toiletter er kun synlige på kortet for inviterede brugere."
+    },
+    "coverage": {
+      "title": "International dækning",
+      "body": "39 lande i Europa — fra Vest- og Nordeuropa over Central- og Østeuropa til hele Balkan — samt Middelhavets kystområder. Data fra OpenStreetMap og fællesskabet."
+    },
+    "language": {
+      "title": "Vælg sprog",
+      "body": "Tilgængelig på 31 sprog, inklusive arabisk og hebraisk med højre-mod-venstre-visning. Skift via sprogmenuen eller direkte via link, f.eks. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Tastaturgenveje",
+      "body": "Tab: flyt fokus · Enter/mellemrum: aktivér · Escape: luk dialog · ←/→: bladr i fotos · ↑/↓: zoom kort (når kortet er i fokus)."
+    },
+    "contact": {
+      "title": "Kontakt & feedback",
+      "body": "Spørgsmål, fejl eller idéer? Skriv til os: admin@4cpa.ch — eller opret en issue på GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Til forsiden",
     "logo": "klopilot-logo",
@@ -50,7 +96,18 @@
     "submit": "🚽 Tilføj toilet",
     "success_title": "✅ Tilføjet!",
     "success_message": "«{{name}}» er blevet tilføjet.",
-    "go_to_map": "Gå til kortet"
+    "go_to_map": "Gå til kortet",
+    "private_note": "Private toiletter vises ikke på det offentlige kort — kun inviterede kan se dem. Placeringen afrundes til ~100 m.",
+    "from_map_click": "sat via kortklik",
+    "pick_on_map": "Tryk på kortet for at angive den nøjagtige placering",
+    "lng": "Længdegrad",
+    "lat": "Breddegrad",
+    "availability": "Tilgængelighed",
+    "available": "Tilgængelig",
+    "available_desc": "Toilettet er tilgængeligt",
+    "closed": "Lukket",
+    "closed_desc": "Midlertidigt utilgængeligt",
+    "submitting": "Sender…"
   },
   "profile": {
     "title": "Profil",

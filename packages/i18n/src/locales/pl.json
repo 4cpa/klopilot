@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Mapa",
+      "body": "Dotknij znacznika, aby zobaczyć szczegóły. Powiększaj gestem szczypania lub kółkiem myszy. Twoja lokalizacja jest pokazana jako niebieska kropka — dostęp do lokalizacji jest opcjonalny."
+    },
+    "search": {
+      "title": "Wyszukiwanie",
+      "body": "Wpisz nazwę lub adres. Wyniki pojawiają się natychmiast, posortowane według odległości. Naciśnij Escape, aby zamknąć."
+    },
+    "filter": {
+      "title": "Filtry",
+      "body": "Chipy pod nagłówkiem filtrują mapę w czasie rzeczywistym: za darmo, dostępne lub według kategorii. Wiele filtrów można łączyć."
+    },
+    "rating": {
+      "title": "System ocen",
+      "body": "Przyznawaj kwiatki 🌸 (pozytywne, 0–5) lub muchy 🪰 (negatywne, 0–5) w 10 kryteriach. Wynik = kwiatki minus muchy. Im bardziej zielono, tym lepiej."
+    },
+    "contribute": {
+      "title": "Dodaj toaletę",
+      "body": "Zaloguj się, a u góry pojawi się przycisk „+ Dodaj”. Podaj nazwę, kategorię i swoją lokalizację. Edytowalne w każdej chwili w profilu."
+    },
+    "accessibility": {
+      "title": "Dostępność",
+      "body": "Filtr „Dostępne” pokazuje toalety z dostępem dla wózków lub wejściem bez progów. Więcej szczegółów (Eurokey, przewijak, prysznic) w panelu szczegółów."
+    },
+    "privacy": {
+      "title": "Prywatność",
+      "body": "Do przeglądania nie jest potrzebne konto. Zdjęcia są zapisywane bez metadanych GPS (EXIF). Prywatne toalety są widoczne na mapie tylko dla zaproszonych użytkowników."
+    },
+    "coverage": {
+      "title": "Zasięg międzynarodowy",
+      "body": "39 krajów w Europie — od Europy Zachodniej i Północnej przez Europę Środkową i Wschodnią po cały Bałkan — oraz regiony przybrzeżne Morza Śródziemnego. Dane z OpenStreetMap i społeczności."
+    },
+    "language": {
+      "title": "Wybierz język",
+      "body": "Dostępne w 31 językach, w tym po arabsku i hebrajsku z układem od prawej do lewej. Zmień w menu języków lub bezpośrednio przez link, np. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Skróty klawiaturowe",
+      "body": "Tab: przenieś fokus · Enter/spacja: aktywuj · Escape: zamknij okno · ←/→: przeglądaj zdjęcia · ↑/↓: powiększ mapę (gdy mapa ma fokus)."
+    },
+    "contact": {
+      "title": "Kontakt i opinie",
+      "body": "Pytania, błędy lub pomysły? Napisz do nas: admin@4cpa.ch — lub otwórz issue na GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Na stronę główną",
     "logo": "Logo klopilot",
@@ -50,7 +96,18 @@
     "submit": "🚽 Dodaj toaletę",
     "success_title": "✅ Dodano!",
     "success_message": "\"{{name}}\" została dodana.",
-    "go_to_map": "Przejdź do mapy"
+    "go_to_map": "Przejdź do mapy",
+    "private_note": "Prywatne toalety nie pojawiają się na publicznej mapie — widzą je tylko zaproszone osoby. Lokalizacja jest zaokrąglana do ~100 m.",
+    "from_map_click": "ustawione kliknięciem na mapie",
+    "pick_on_map": "Kliknij mapę, aby ustawić dokładną lokalizację",
+    "lng": "Długość geograficzna",
+    "lat": "Szerokość geograficzna",
+    "availability": "Dostępność",
+    "available": "Dostępna",
+    "available_desc": "Toaleta jest dostępna",
+    "closed": "Zamknięta",
+    "closed_desc": "Tymczasowo niedostępna",
+    "submitting": "Wysyłanie…"
   },
   "profile": {
     "title": "Profil",

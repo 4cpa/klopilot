@@ -3,14 +3,15 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toilets } from '@/lib/api';
 
+// Emoji + Kategorie-Wert; das Label kommt aus dem übersetzten `category.*`-Namespace
 const CATEGORIES = [
-  { value: 'public', label: '🚽 Öffentlich' },
-  { value: 'nette_toilette', label: '🤝 Nette Toilette' },
-  { value: 'gastronomy', label: '🍽️ Gastronomie' },
-  { value: 'transport', label: '🚂 Bahnhof / Transit' },
-  { value: 'mall', label: '🏬 Einkaufszentrum' },
-  { value: 'event', label: '🎪 Event' },
-  { value: 'private', label: '🔒 Privat (nur Eingeladene)' },
+  { value: 'public', emoji: '🚽' },
+  { value: 'nette_toilette', emoji: '🤝' },
+  { value: 'gastronomy', emoji: '🍽️' },
+  { value: 'transport', emoji: '🚂' },
+  { value: 'mall', emoji: '🏬' },
+  { value: 'event', emoji: '🎪' },
+  { value: 'private', emoji: '🔒' },
 ];
 
 interface Props {
@@ -107,7 +108,7 @@ export function AddToiletSheet({
         </div>
 
         <div className="px-5 py-2 flex items-center justify-between shrink-0">
-          <h2 className="text-lg font-semibold text-[var(--ink)]">Toilette eintragen</h2>
+          <h2 className="text-lg font-semibold text-[var(--ink)]">{t('contribute.title')}</h2>
           <button
             type="button"
             onClick={onClose}
@@ -126,14 +127,14 @@ export function AddToiletSheet({
               className="block text-sm font-medium text-[var(--ink)] mb-1"
               htmlFor="toilet-name"
             >
-              Name *
+              {t('contribute.name_label')}
             </label>
             <input
               id="toilet-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="z.B. WC Bahnhof Bern Gleis 3"
+              placeholder={t('contribute.name_placeholder')}
               maxLength={120}
               required
               className="w-full rounded-lg px-3 py-2 text-sm border border-[var(--line)] bg-[var(--cream)] text-[var(--ink)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--brand-primary)]"
@@ -142,7 +143,9 @@ export function AddToiletSheet({
 
           {/* Kategorie */}
           <div>
-            <label className="block text-sm font-medium text-[var(--ink)] mb-1">Kategorie</label>
+            <label className="block text-sm font-medium text-[var(--ink)] mb-1">
+              {t('contribute.category_label')}
+            </label>
             <div className="grid grid-cols-2 gap-1.5">
               {CATEGORIES.map((c) => (
                 <button
@@ -164,7 +167,7 @@ export function AddToiletSheet({
                       : {}
                   }
                 >
-                  {c.label}
+                  {c.emoji} {t(`category.${c.value}`)}
                 </button>
               ))}
             </div>
@@ -173,9 +176,7 @@ export function AddToiletSheet({
                 className="mt-2 text-xs rounded-lg px-3 py-2"
                 style={{ background: 'rgba(209,48,72,0.08)', color: 'var(--brand-berry)' }}
               >
-                🔒 Private Toiletten erscheinen <strong>nicht</strong> auf der öffentlichen Karte.
-                Nur eingeladene Personen können sie sehen. Der genaue Standort wird auf ~100 m
-                gerundet gespeichert.
+                🔒 {t('contribute.private_note')}
               </p>
             )}
           </div>
@@ -186,14 +187,14 @@ export function AddToiletSheet({
               className="block text-sm font-medium text-[var(--ink)] mb-1"
               htmlFor="toilet-address"
             >
-              Adresse (optional)
+              {t('contribute.address_label')}
             </label>
             <input
               id="toilet-address"
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              placeholder="Strasse, PLZ Ort"
+              placeholder={t('contribute.address_placeholder')}
               maxLength={300}
               className="w-full rounded-lg px-3 py-2 text-sm border border-[var(--line)] bg-[var(--cream)] text-[var(--ink)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--brand-primary)]"
             />
@@ -201,7 +202,9 @@ export function AddToiletSheet({
 
           {/* Koordinaten */}
           <div>
-            <label className="block text-sm font-medium text-[var(--ink)] mb-1">Standort</label>
+            <label className="block text-sm font-medium text-[var(--ink)] mb-1">
+              {t('contribute.location_label')}
+            </label>
             {pickedFromMap ? (
               <div
                 className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium"
@@ -215,7 +218,7 @@ export function AddToiletSheet({
                 <span>
                   {parseFloat(displayLat).toFixed(5)}°N, {parseFloat(displayLng).toFixed(5)}°E
                 </span>
-                <span className="ml-auto text-xs opacity-70">per Karten-Klick</span>
+                <span className="ml-auto text-xs opacity-70">{t('contribute.from_map_click')}</span>
               </div>
             ) : (
               <div
@@ -227,7 +230,7 @@ export function AddToiletSheet({
                 }}
               >
                 <span>📍</span>
-                <span>Klick auf die Karte um den genauen Standort zu setzen</span>
+                <span>{t('contribute.pick_on_map')}</span>
               </div>
             )}
             {/* Manuelle Eingabe als Fallback */}
@@ -238,7 +241,7 @@ export function AddToiletSheet({
                 step="0.000001"
                 value={displayLng}
                 onChange={(e) => setLng(e.target.value)}
-                placeholder="Längengrad"
+                placeholder={t('contribute.lng')}
                 className="w-full rounded-lg px-3 py-2 text-xs border border-[var(--line)] bg-[var(--cream)] text-[var(--ink)] focus:outline-none focus:border-[var(--brand-primary)]"
               />
               <input
@@ -247,7 +250,7 @@ export function AddToiletSheet({
                 step="0.000001"
                 value={displayLat}
                 onChange={(e) => setLat(e.target.value)}
-                placeholder="Breitengrad"
+                placeholder={t('contribute.lat')}
                 className="w-full rounded-lg px-3 py-2 text-xs border border-[var(--line)] bg-[var(--cream)] text-[var(--ink)] focus:outline-none focus:border-[var(--brand-primary)]"
               />
             </div>
@@ -256,27 +259,37 @@ export function AddToiletSheet({
           {/* Ausstattung & Zugänglichkeit */}
           <div>
             <label className="block text-sm font-medium text-[var(--ink)] mb-2">
-              Ausstattung & Zugänglichkeit
+              {t('accessibility.title')}
             </label>
             <div className="grid grid-cols-2 gap-1.5">
               {[
                 {
                   key: 'wheelchair',
-                  label: '♿ Rollstuhlgerecht',
+                  label: `♿ ${t('accessibility.wheelchair')}`,
                   value: wheelchair,
                   set: setWheelchair,
                 },
-                { key: 'euroKey', label: '🔑 Eurokey', value: euroKey, set: setEuroKey },
-                { key: 'shower', label: '🚿 Dusche', value: shower, set: setShower },
+                {
+                  key: 'euroKey',
+                  label: `🔑 ${t('accessibility.euro_key')}`,
+                  value: euroKey,
+                  set: setEuroKey,
+                },
+                {
+                  key: 'shower',
+                  label: `🚿 ${t('accessibility.shower')}`,
+                  value: shower,
+                  set: setShower,
+                },
                 {
                   key: 'babyChanging',
-                  label: '👶 Wickeltisch',
+                  label: `👶 ${t('accessibility.baby_changing')}`,
                   value: babyChanging,
                   set: setBabyChanging,
                 },
                 {
                   key: 'genderNeutral',
-                  label: '🚻 Unisex',
+                  label: `🚻 ${t('accessibility.gender_neutral')}`,
                   value: genderNeutral,
                   set: setGenderNeutral,
                 },
@@ -305,7 +318,7 @@ export function AddToiletSheet({
               className="block text-sm font-medium text-[var(--ink)] mb-1"
               htmlFor="toilet-fee"
             >
-              Gebühr in CHF (leer = kostenlos)
+              {t('contribute.fee_label')}
             </label>
             <input
               id="toilet-fee"
@@ -314,7 +327,7 @@ export function AddToiletSheet({
               min="0"
               value={fee}
               onChange={(e) => setFee(e.target.value)}
-              placeholder="0.50"
+              placeholder={t('contribute.fee_placeholder')}
               className="w-full rounded-lg px-3 py-2 text-sm border border-[var(--line)] bg-[var(--cream)] text-[var(--ink)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--brand-primary)]"
             />
           </div>
@@ -322,12 +335,20 @@ export function AddToiletSheet({
           {/* Verfügbarkeit */}
           <div>
             <label className="block text-sm font-medium text-[var(--ink)] mb-2">
-              Verfügbarkeit
+              {t('contribute.availability')}
             </label>
             <div style={{ display: 'flex', gap: 8 }}>
               {[
-                { value: true, label: '✅ Verfügbar', desc: 'Toilette ist zugänglich' },
-                { value: false, label: '🚫 Geschlossen', desc: 'Vorübergehend nicht zugänglich' },
+                {
+                  value: true,
+                  label: `✅ ${t('contribute.available')}`,
+                  desc: t('contribute.available_desc'),
+                },
+                {
+                  value: false,
+                  label: `🚫 ${t('contribute.closed')}`,
+                  desc: t('contribute.closed_desc'),
+                },
               ].map((opt) => (
                 <button
                   key={String(opt.value)}
@@ -363,7 +384,7 @@ export function AddToiletSheet({
             className="w-full py-3 rounded-xl font-semibold text-white transition-all active:scale-95 disabled:opacity-50"
             style={{ background: 'var(--brand-primary)' }}
           >
-            {saving ? 'Wird eingetragen…' : '🚽 Toilette eintragen'}
+            {saving ? t('contribute.submitting') : t('contribute.submit')}
           </button>
         </form>
       </aside>

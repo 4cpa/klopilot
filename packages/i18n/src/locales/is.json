@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Kort",
+      "body": "Ýttu á merki til að sjá nánari upplýsingar. Þysjaðu með klípuhreyfingu eða músarhjóli. Staðsetning þín birtist sem blár punktur — staðsetningaraðgangur er valfrjáls."
+    },
+    "search": {
+      "title": "Leit",
+      "body": "Sláðu inn nafn eða heimilisfang. Niðurstöður birtast strax, raðað eftir fjarlægð. Ýttu á Escape til að loka."
+    },
+    "filter": {
+      "title": "Síur",
+      "body": "Flísarnir undir hausnum sía kortið í rauntíma: ókeypis, aðgengilegt eða eftir flokki. Hægt er að sameina margar síur."
+    },
+    "rating": {
+      "title": "Einkunnakerfi",
+      "body": "Gefðu blóm 🌸 (jákvætt, 0–5) eða flugur 🪰 (neikvætt, 0–5) fyrir 10 viðmið. Einkunn = blóm mínus flugur. Því grænna, því betra."
+    },
+    "contribute": {
+      "title": "Bæta við klósetti",
+      "body": "Skráðu þig inn og hnappurinn „+ Bæta við“ birtist efst. Sláðu inn nafn, flokk og staðsetningu. Hægt að breyta hvenær sem er í notandasniði."
+    },
+    "accessibility": {
+      "title": "Aðgengi",
+      "body": "Sían „Aðgengilegt“ sýnir klósett með hjólastólaaðgengi eða þröskuldslausum inngangi. Nánari upplýsingar (Eurokey, skiptiborð, sturta) í upplýsingaspjaldi."
+    },
+    "privacy": {
+      "title": "Persónuvernd",
+      "body": "Engan reikning þarf til að skoða. Myndir eru geymdar án GPS-lýsigagna (EXIF). Einkaklósett sjást á kortinu aðeins fyrir boðna notendur."
+    },
+    "coverage": {
+      "title": "Alþjóðleg þekja",
+      "body": "39 lönd í Evrópu — frá Vestur- og Norður-Evrópu um Mið- og Austur-Evrópu til alls Balkanskaga — auk strandsvæða Miðjarðarhafs. Gögn frá OpenStreetMap og samfélaginu."
+    },
+    "language": {
+      "title": "Velja tungumál",
+      "body": "Fáanlegt á 31 tungumáli, þar á meðal arabísku og hebresku með hægri-til-vinstri framsetningu. Skiptu um í tungumálavalmynd eða beint með tengli, t.d. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Flýtilyklar",
+      "body": "Tab: færa fókus · Enter/bil: virkja · Escape: loka glugga · ←/→: fletta myndum · ↑/↓: þysja kort (þegar kortið er í fókus)."
+    },
+    "contact": {
+      "title": "Tengiliður & ábendingar",
+      "body": "Spurningar, villur eða hugmyndir? Skrifaðu okkur: admin@4cpa.ch — eða stofnaðu issue á GitHub: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Á forsíðu",
     "logo": "klopilot-merki",
@@ -50,7 +96,18 @@
     "submit": "🚽 Bæta við salerni",
     "success_title": "✅ Bætt við!",
     "success_message": "\"{{name}}\" hefur verið bætt við.",
-    "go_to_map": "Á kortið"
+    "go_to_map": "Á kortið",
+    "private_note": "Einkaklósett birtast ekki á opinbera kortinu — aðeins boðnir sjá þau. Staðsetning er námunduð að ~100 m.",
+    "from_map_click": "stillt með smelli á kort",
+    "pick_on_map": "Smelltu á kortið til að stilla nákvæma staðsetningu",
+    "lng": "Lengdargráða",
+    "lat": "Breiddargráða",
+    "availability": "Aðgengi",
+    "available": "Laust",
+    "available_desc": "Klósett er aðgengilegt",
+    "closed": "Lokað",
+    "closed_desc": "Tímabundið ófáanlegt",
+    "submitting": "Sendi…"
   },
   "profile": {
     "title": "Prófíll",

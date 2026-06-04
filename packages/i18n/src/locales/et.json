@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Kaart",
+      "body": "Üksikasjade nägemiseks puudutage markerit. Suumige näpistuseliigutuse või hiirerattaga. Teie asukoht kuvatakse sinise punktina — asukoha juurdepääs on valikuline."
+    },
+    "search": {
+      "title": "Otsing",
+      "body": "Sisestage nimi või aadress. Tulemused ilmuvad kohe, sorteerituna kauguse järgi. Sulgemiseks vajutage Escape."
+    },
+    "filter": {
+      "title": "Filtrid",
+      "body": "Päise all olevad kiibid filtreerivad kaarti reaalajas: tasuta, ligipääsetav või kategooria järgi. Mitut filtrit saab kombineerida."
+    },
+    "rating": {
+      "title": "Hindamissüsteem",
+      "body": "Andke lilli 🌸 (positiivne, 0–5) või kärbseid 🪰 (negatiivne, 0–5) 10 kriteeriumi eest. Skoor = lilled miinus kärbsed. Mida rohelisem, seda parem."
+    },
+    "contribute": {
+      "title": "Lisa tualett",
+      "body": "Logige sisse ja üleval ilmub nupp „+ Lisa“. Sisestage nimi, kategooria ja oma asukoht. Profiilis igal ajal muudetav."
+    },
+    "accessibility": {
+      "title": "Ligipääsetavus",
+      "body": "Filter „Ligipääsetav“ näitab ratastooliga ligipääsetavaid või lävepakuta sissepääsuga tualette. Lisateave (Eurokey, mähkimislaud, dušš) detailipaneelil."
+    },
+    "privacy": {
+      "title": "Privaatsus",
+      "body": "Sirvimiseks pole kontot vaja. Fotod salvestatakse ilma GPS-metaandmeteta (EXIF). Privaatsed tualetid on kaardil nähtavad ainult kutsutud kasutajatele."
+    },
+    "coverage": {
+      "title": "Rahvusvaheline kate",
+      "body": "39 riiki Euroopas — Lääne- ja Põhja-Euroopast läbi Kesk- ja Ida-Euroopa kuni kogu Balkanini — pluss Vahemere rannikualad. Andmed OpenStreetMapist ja kogukonnalt."
+    },
+    "language": {
+      "title": "Vali keel",
+      "body": "Saadaval 31 keeles, sealhulgas araabia ja heebrea keeles paremalt vasakule kuvaga. Vahetage keelemenüüst või otse lingiga, nt klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Kiirklahvid",
+      "body": "Tab: liiguta fookust · Enter/tühik: aktiveeri · Escape: sulge dialoog · ←/→: sirvi fotosid · ↑/↓: suumi kaarti (kui kaart on fookuses)."
+    },
+    "contact": {
+      "title": "Kontakt ja tagasiside",
+      "body": "Küsimused, vead või ideed? Kirjutage meile: admin@4cpa.ch — või avage issue GitHubis: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Avalehele",
     "logo": "klopiloti logo",
@@ -50,7 +96,18 @@
     "submit": "🚽 Lisa tualett",
     "success_title": "✅ Lisatud!",
     "success_message": "\"{{name}}\" on lisatud.",
-    "go_to_map": "Mine kaardile"
+    "go_to_map": "Mine kaardile",
+    "private_note": "Privaatsed tualetid ei ilmu avalikul kaardil — neid näevad ainult kutsutud. Asukoht ümardatakse ~100 m-ni.",
+    "from_map_click": "määratud kaardiklõpsuga",
+    "pick_on_map": "Puuduta kaarti täpse asukoha määramiseks",
+    "lng": "Pikkuskraad",
+    "lat": "Laiuskraad",
+    "availability": "Saadavus",
+    "available": "Saadaval",
+    "available_desc": "Tualett on ligipääsetav",
+    "closed": "Suletud",
+    "closed_desc": "Ajutiselt pole saadaval",
+    "submitting": "Saadan…"
   },
   "profile": {
     "title": "Profiil",

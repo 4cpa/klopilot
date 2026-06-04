@@ -1,4 +1,50 @@
 {
+  "help": {
+    "map": {
+      "title": "Mapa",
+      "body": "Klepnutím na značku zobrazíte podrobnosti. Priblížte gestom zovretia alebo kolieskom myši. Vaša poloha sa zobrazuje ako modrá bodka — prístup k polohe je voliteľný."
+    },
+    "search": {
+      "title": "Hľadanie",
+      "body": "Zadajte názov alebo adresu. Výsledky sa zobrazia okamžite, zoradené podľa vzdialenosti. Zatvorte stlačením Escape."
+    },
+    "filter": {
+      "title": "Filtre",
+      "body": "Štítky pod hlavičkou filtrujú mapu v reálnom čase: zadarmo, bezbariérové alebo podľa kategórie. Viac filtrov možno kombinovať."
+    },
+    "rating": {
+      "title": "Systém hodnotenia",
+      "body": "Udeľujte kvietky 🌸 (kladne, 0–5) alebo muchy 🪰 (záporne, 0–5) v 10 kritériách. Skóre = kvietky mínus muchy. Čím zelenšie, tým lepšie."
+    },
+    "contribute": {
+      "title": "Pridať toaletu",
+      "body": "Prihláste sa a hore sa objaví tlačidlo „+ Pridať“. Zadajte názov, kategóriu a svoju polohu. Kedykoľvek upraviteľné v profile."
+    },
+    "accessibility": {
+      "title": "Bezbariérovosť",
+      "body": "Filter „Bezbariérové“ zobrazuje toalety s prístupom pre vozíčkarov alebo bezbariérovým vstupom. Ďalšie detaily (Eurokey, prebaľovací pult, sprcha) v paneli detailov."
+    },
+    "privacy": {
+      "title": "Súkromie",
+      "body": "Na prehliadanie nie je potrebný účet. Fotky sa ukladajú bez GPS metadát (EXIF). Súkromné toalety sú na mape viditeľné len pre pozvaných používateľov."
+    },
+    "coverage": {
+      "title": "Medzinárodné pokrytie",
+      "body": "39 krajín v Európe — od západnej a severnej Európy cez strednú a východnú Európu po celý Balkán — a tiež pobrežné oblasti Stredomoria. Dáta z OpenStreetMap a od komunity."
+    },
+    "language": {
+      "title": "Vybrať jazyk",
+      "body": "Dostupné v 31 jazykoch vrátane arabčiny a hebrejčiny so zobrazením sprava doľava. Prepnite v jazykovej ponuke alebo priamo odkazom, napr. klopilot.ch/?lang=uk."
+    },
+    "shortcuts": {
+      "title": "Klávesové skratky",
+      "body": "Tab: presun fokusu · Enter/medzerník: aktivovať · Escape: zavrieť dialóg · ←/→: prechádzať fotky · ↑/↓: priblížiť mapu (keď je mapa zameraná)."
+    },
+    "contact": {
+      "title": "Kontakt a spätná väzba",
+      "body": "Otázky, chyby alebo nápady? Napíšte nám: admin@4cpa.ch — alebo založte issue na GitHube: github.com/4cpa/klopilot"
+    }
+  },
   "a11y": {
     "home": "Na úvodnú stránku",
     "logo": "Logo klopilot",
@@ -50,7 +96,18 @@
     "submit": "🚽 Pridať toaletu",
     "success_title": "✅ Pridané!",
     "success_message": "\"{{name}}\" bola pridaná.",
-    "go_to_map": "Prejsť na mapu"
+    "go_to_map": "Prejsť na mapu",
+    "private_note": "Súkromné toalety sa na verejnej mape nezobrazujú — vidia ich len pozvaní. Poloha sa zaokrúhľuje na ~100 m.",
+    "from_map_click": "nastavené kliknutím na mapu",
+    "pick_on_map": "Kliknite na mapu pre nastavenie presnej polohy",
+    "lng": "Zemepisná dĺžka",
+    "lat": "Zemepisná šírka",
+    "availability": "Dostupnosť",
+    "available": "Dostupná",
+    "available_desc": "Toaleta je prístupná",
+    "closed": "Zatvorené",
+    "closed_desc": "Dočasne nedostupné",
+    "submitting": "Odosiela sa…"
   },
   "profile": {
     "title": "Profil",
