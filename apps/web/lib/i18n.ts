@@ -67,12 +67,13 @@ function detectSystemLang(): string {
 }
 
 // Initiale Sprache bestimmen:
-//   1. URL-Param `?lang=` (bzw. `?lng=`) — teilbare Vorschaulinks, wird gemerkt
-//   2. localStorage — explizite Nutzerwahl im Sprachmenü
-//   3. System-/Browsersprache des Geräts (Desktop & Mobile)
-//   4. Default 'de'
-// So bekommt jeder neue Besucher automatisch seine Gerätesprache; eine bewusst
-// gewählte Sprache bleibt erhalten.
+//   1. URL-Param `?lang=` (bzw. `?lng=`) — expliziter Per-Aufruf-Override
+//      (teilbare Vorschaulinks, z. B. klopilot.ch/?lang=el)
+//   2. System-/Browsersprache des Geräts (Desktop & Mobile) — DOMINANT
+//   3. Default 'de'
+// Die Gerätesprache gewinnt bei jedem Aufruf, auch über eine früher im
+// Sprachmenü gewählte Sprache: localStorage wird für die Initialsprache
+// absichtlich NICHT gelesen (eine Menü-Wahl gilt nur für die laufende Sitzung).
 function detectInitialLang(): string {
   if (typeof window === 'undefined') return 'de';
   try {
@@ -82,7 +83,7 @@ function detectInitialLang(): string {
       localStorage.setItem(LANG_KEY, q);
       return q;
     }
-    return localStorage.getItem(LANG_KEY) ?? detectSystemLang();
+    return detectSystemLang();
   } catch {
     return detectSystemLang();
   }
