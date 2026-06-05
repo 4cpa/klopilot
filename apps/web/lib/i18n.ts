@@ -74,7 +74,13 @@ function detectSystemLang(): string {
 // Die Gerätesprache gewinnt bei jedem Aufruf, auch über eine früher im
 // Sprachmenü gewählte Sprache: localStorage wird für die Initialsprache
 // absichtlich NICHT gelesen (eine Menü-Wahl gilt nur für die laufende Sitzung).
-function detectInitialLang(): string {
+//
+// WICHTIG: Diese Funktion liest `window`/`navigator` und liefert daher auf dem
+// Server (SSR) und im Browser unterschiedliche Werte. Sie darf NICHT beim
+// Modul-Load aufgerufen werden, sonst rendert der Server `de`, der Client aber
+// z. B. `uk` → React-Hydration-Mismatch (#418/#423/#425). Stattdessen wird sie
+// erst nach dem Mount im I18nProvider verwendet (siehe dort).
+export function detectInitialLang(): string {
   if (typeof window === 'undefined') return 'de';
   try {
     const params = new URLSearchParams(window.location.search);
@@ -89,10 +95,12 @@ function detectInitialLang(): string {
   }
 }
 
-const initialLang = detectInitialLang();
-
+// Deterministischer Initial-Render: Server UND erster Client-Render starten auf
+// 'de', damit das SSR-HTML exakt zur ersten Client-Ausgabe passt (keine
+// Hydration-Fehler). Die tatsächliche Sprache (?lang= / System) wird unmittelbar
+// nach dem Mount im I18nProvider via changeLanguage() gesetzt.
 i18next.use(initReactI18next).init({
-  lng: initialLang,
+  lng: 'de',
   fallbackLng: 'de',
   resources: {
     de: { translation: de },
@@ -129,8 +137,6 @@ i18next.use(initReactI18next).init({
   },
   interpolation: { escapeValue: false },
 });
-
-applyDir(initialLang);
 
 export function changeLanguage(lang: string) {
   i18next.changeLanguage(lang);
