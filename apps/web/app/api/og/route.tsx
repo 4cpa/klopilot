@@ -1,16 +1,68 @@
 import { ImageResponse } from 'next/og';
+import {
+  LOCALES,
+  SUPPORTED_LOCALES,
+  DEFAULT_LOCALE,
+  RTL_LOCALES,
+  type Locale,
+} from '@klopilot/i18n';
 
 export const runtime = 'edge';
-export const alt = 'klopilot — Toiletten-Guide';
-export const size = { width: 1200, height: 630 };
-export const contentType = 'image/png';
 
-export default function OGImage() {
+const SIZE = { width: 1200, height: 630 };
+
+/** `?lang=` / `?lng=` auf eine unterstützte Locale abbilden (Default 'de'). */
+function resolveLocale(params: URLSearchParams): Locale {
+  const raw = params.get('lang') ?? params.get('lng') ?? '';
+  const code = raw.toLowerCase().slice(0, 2);
+  return (SUPPORTED_LOCALES as string[]).includes(code) ? (code as Locale) : DEFAULT_LOCALE;
+}
+
+/**
+ * Lokalisiertes OpenGraph-Vorschaubild (1200×630). Liest `?lang=` und rendert
+ * Untertitel + Tags in der jeweiligen Sprache aus bereits vorhandenen
+ * Übersetzungs-Keys. Wird von der Landing-Seite via `?lang=` referenziert
+ * (siehe app/page.tsx) — ersetzt die statische Datei-Konvention.
+ *
+ * Ausnahme Arabisch: Die in Next 14 gebündelte @vercel/og-/Satori-Version
+ * crasht beim arabischen Ligatur-Shaping („lookupType: 5 - substFormat: 3 is
+ * not yet supported") — und zwar mit JEDER arabischen Font, da das rlig-Feature
+ * stets verarbeitet wird. Für `ar` gibt es daher ein vorab per Headless-Chromium
+ * gerendertes statisches Bild (public/og/og-ar.png, erzeugt via
+ * scripts/generate-og-ar.mjs), auf das hier umgeleitet wird; die Landing-Seite
+ * referenziert es direkt in generateMetadata.
+ */
+const OG_AR_STATIC = '/og/og-ar.png';
+
+export function GET(req: Request) {
+  const url = new URL(req.url);
+  const locale = resolveLocale(url.searchParams);
+
+  if (locale === 'ar') {
+    // Plain Response statt Response.redirect(): Letzteres erzeugt eine immutable
+    // Response, die der Next-Edge-Handler nicht weiterverarbeiten kann.
+    return new Response(null, {
+      status: 307,
+      headers: { Location: new URL(OG_AR_STATIC, url.origin).toString() },
+    });
+  }
+
+  const t = LOCALES[locale];
+  const rtl = (RTL_LOCALES as string[]).includes(locale);
+
+  const subtitle = t.landing.hero_badge;
+  const tags = [
+    `🌸 ${t.landing.stat_rating}`,
+    `🗺️ ${t.tabs.map}`,
+    `♿ ${t.filter.accessible}`,
+    `🔍 ${t.tabs.search}`,
+  ];
+
   return new ImageResponse(
     <div
       style={{
-        width: 1200,
-        height: 630,
+        width: SIZE.width,
+        height: SIZE.height,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -18,6 +70,7 @@ export default function OGImage() {
         background: '#FFFBF2',
         position: 'relative',
         overflow: 'hidden',
+        direction: rtl ? 'rtl' : 'ltr',
       }}
     >
       {/* Background blobs */}
@@ -84,21 +137,31 @@ export default function OGImage() {
         klopilot
       </div>
 
-      {/* Subtitle */}
+      {/* Subtitle (localized) */}
       <div
         style={{
-          fontSize: 28,
+          fontSize: 30,
           color: '#6B7280',
           fontWeight: 500,
           marginBottom: 40,
+          maxWidth: 1000,
+          textAlign: 'center',
         }}
       >
-        Toiletten-Guide · kostenlos · ohne Werbung
+        {subtitle}
       </div>
 
-      {/* Tags */}
-      <div style={{ display: 'flex', gap: 12 }}>
-        {['🌸 Bewertungen', '🗺️ Karte', '♿ Barrierefrei', '🔍 Suche'].map((tag) => (
+      {/* Tags (localized) */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 12,
+          maxWidth: 1120,
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+        }}
+      >
+        {tags.map((tag) => (
           <div
             key={tag}
             style={{
@@ -130,6 +193,6 @@ export default function OGImage() {
         klopilot.ch
       </div>
     </div>,
-    { ...size },
+    { ...SIZE },
   );
 }
