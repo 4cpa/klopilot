@@ -41,9 +41,12 @@ export function GET(req: Request) {
   if (locale === 'ar') {
     // Plain Response statt Response.redirect(): Letzteres erzeugt eine immutable
     // Response, die der Next-Edge-Handler nicht weiterverarbeiten kann.
+    // RELATIVE Location: Hinter dem Prod-Reverse-Proxy liefert url.origin die
+    // interne Bind-Adresse (0.0.0.0:3102) — ein relativer Pfad wird vom Client
+    // korrekt gegen die öffentliche Request-URL (klopilot.ch) aufgelöst.
     return new Response(null, {
       status: 307,
-      headers: { Location: new URL(OG_AR_STATIC, url.origin).toString() },
+      headers: { Location: OG_AR_STATIC },
     });
   }
 
