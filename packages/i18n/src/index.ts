@@ -85,3 +85,29 @@ export const RTL_LOCALES: Locale[] = ['ar', 'he'];
 export const DEFAULT_LOCALE: Locale = 'de';
 
 export type TranslationKeys = typeof de;
+
+/**
+ * Code → Übersetzungsobjekt. Erlaubt programmatischen (z. B. server-seitigen)
+ * Zugriff auf einzelne Locales, etwa für `generateMetadata` (OpenGraph/SEO),
+ * ohne i18next initialisieren zu müssen.
+ */
+// prettier-ignore
+export const LOCALES: Record<Locale, TranslationKeys> = {
+  de, fr, it, en, es, pt, da, sv, no, fi, nl, is, el,
+  pl, cs, sk, hu, ro, bg, et, lv, lt, uk, mk, sl, hr, sr, bs, sq, ar, he,
+};
+
+/**
+ * OpenGraph-`og:locale`-Werte (`language_TERRITORY`) je Sprache — als Hinweis
+ * für Social-Crawler beim Entfalten geteilter Links. `de` bleibt `de_CH`
+ * (Heimatmarkt klopilot.ch), die übrigen nutzen das jeweils dominante Land.
+ */
+// prettier-ignore
+export const OG_LOCALES: Record<Locale, string> = {
+  de: 'de_CH', fr: 'fr_FR', it: 'it_IT', en: 'en_GB', es: 'es_ES', pt: 'pt_PT',
+  da: 'da_DK', sv: 'sv_SE', no: 'no_NO', fi: 'fi_FI', nl: 'nl_NL', is: 'is_IS',
+  el: 'el_GR', pl: 'pl_PL', cs: 'cs_CZ', sk: 'sk_SK', hu: 'hu_HU', ro: 'ro_RO',
+  bg: 'bg_BG', et: 'et_EE', lv: 'lv_LV', lt: 'lt_LT', uk: 'uk_UA', mk: 'mk_MK',
+  sl: 'sl_SI', hr: 'hr_HR', sr: 'sr_RS', bs: 'bs_BA', sq: 'sq_AL', ar: 'ar_AR',
+  he: 'he_IL',
+};
