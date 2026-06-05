@@ -17,7 +17,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   // metadataBase sorgt dafür dass relative OG-/Twitter-URLs korrekt aufgelöst werden
-  // (z. B. /opengraph-image → https://klopilot.ch/opengraph-image für externe Crawler)
+  // (z. B. /api/og → https://klopilot.ch/api/og für externe Crawler)
   metadataBase: new URL('https://klopilot.ch'),
   title: 'klopilot — Toiletten-Guide',
   description:
@@ -36,9 +36,11 @@ export const metadata: Metadata = {
     locale: 'de_CH',
     type: 'website',
     url: 'https://klopilot.ch',
+    // Default-Vorschaubild (DE) für alle Routen; die Landing-Seite überschreibt
+    // es sprachabhängig (siehe app/page.tsx → app/api/og).
     images: [
       {
-        url: '/opengraph-image',
+        url: '/api/og',
         width: 1200,
         height: 630,
         alt: 'klopilot — Community-Toiletten-Guide',
@@ -49,7 +51,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'klopilot — Toiletten-Guide',
     description: 'Finde öffentliche Toiletten in deiner Nähe. Kostenlos, ohne Werbung.',
-    images: ['/opengraph-image'],
+    images: ['/api/og'],
   },
 };
 
