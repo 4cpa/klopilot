@@ -5,8 +5,9 @@
  *   - OpenStreetMap (openstreetmap.org) — lizenziert unter ODbL
  *   - Overpass API (overpass-api.de) — kostenlos, kein API-Key nötig
  *
- * Regionen: Europa (West/Nord/Süd/Ost inkl. Balkan, Baltikum, Ukraine) sowie
- * küstennahe Mittelmeer-Anrainer (Nordafrika, Levante, Israel). Russland/Belarus
+ * Regionen: Europa (West/Nord/Süd/Ost inkl. Balkan, Baltikum, Ukraine), küstennahe
+ * Mittelmeer-Anrainer (Nordafrika, Levante, Israel) sowie die gesamte Türkei
+ * (inkl. türkisch-kurdisches Gebiet in Südost-Anatolien). Russland/Belarus
  * bleiben ausgeschlossen.
  *
  * Aufruf:
@@ -173,6 +174,12 @@ const REGIONS: Array<{ name: string; bbox: [number, number, number, number] }> =
   },
   { name: 'Libanon', bbox: [33.0, 35.1, 34.7, 36.6] as [number, number, number, number] },
   { name: 'Israel/Palästina', bbox: [29.5, 34.2, 33.3, 35.9] as [number, number, number, number] },
+
+  // ── Türkei (gesamtes Land) inkl. türkisch-kurdisches Gebiet (Südost-Anatolien) ─
+  // West/Ost geteilt wie bei anderen Flächenländern; die West-Bbox überlappt die
+  // Ägäis-/Griechenland-Bboxen, was dank Upsert (osmId) unkritisch ist.
+  { name: 'Türkei-West', bbox: [35.8, 25.6, 42.2, 35.0] as [number, number, number, number] },
+  { name: 'Türkei-Ost', bbox: [35.8, 35.0, 42.2, 44.9] as [number, number, number, number] },
 ];
 
 // Aktive Regionen unter Berücksichtigung von --only (Phasen 1/4/5/6).
@@ -180,20 +187,17 @@ const ACTIVE_REGIONS = REGIONS.filter((r) => regionMatches(r.name));
 
 // ── Ausgeschlossene Gebiete ──────────────────────────────────────────────────
 // Russland (und Belarus) bewusst aussen vor — auch an Bbox-Rändern der östlichen
-// Regionen (Baltikum/Polen/Ukraine). Türkei bleibt aussen vor; die zwei Türkei-
-// Bboxen schützen die griechischen Inseln vor Festland-Spillover.
+// Regionen (Baltikum/Polen/Ukraine). Die Türkei ist seit der Anatolien-Erweiterung
+// Teil des Zielbestands und daher NICHT mehr ausgeschlossen.
 const EXCLUDE_BBOXES: Array<[number, number, number, number]> = [
   // [south, west, north, east]
-  // Türkisches Festland (Ostrand der Griechenland-Süd-Bbox) — griechische Inseln bleiben:
-  [38.0, 26.85, 39.5, 28.5], // Izmir/Manisa — Lesbos/Chios (lng<26.85) bleiben
-  [36.6, 27.2, 38.0, 28.6], // Muğla/Bodrum/Marmaris — Kos/Samos (lng<27.2), Rhodos (lat<36.6) bleiben
   // Russland fernhalten (Russland/Belarus sonst über addr:country, da Land-
   // grenzen mit UA/Baltikum eine saubere Bbox-Trennung verhindern):
   [54.2, 19.5, 55.4, 23.0], // Kaliningrad (RU-Exklave zwischen PL/LT)
 ];
 // ISO-3166-1-alpha-2 ausgeschlossener Länder (via OSM addr:country):
-// Russland, Belarus (Distanz zu Russland) und Türkei (nicht im Zielbestand).
-const NON_EU_COUNTRIES = new Set(['RU', 'BY', 'TR']);
+// Russland und Belarus (Distanz zu Russland). Türkei (TR) ist Teil des Bestands.
+const NON_EU_COUNTRIES = new Set(['RU', 'BY']);
 function isNonEuropeanLocation(lat: number, lng: number, tags: Record<string, string>): boolean {
   const cc = (tags['addr:country'] ?? '').trim().toUpperCase();
   if (cc.length === 2 && NON_EU_COUNTRIES.has(cc)) return true;

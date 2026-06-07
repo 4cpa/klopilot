@@ -40,6 +40,7 @@ export const LANG_OPTIONS = [
   { code: 'sq', label: 'Shqip', flag: '🇦🇱', hint: 'AL · XK' },
   { code: 'ar', label: 'العربية', flag: '🌍', hint: 'MA · DZ · TN · LY · EG · LB' },
   { code: 'he', label: 'עברית', flag: '🇮🇱', hint: 'IL' },
+  { code: 'tr', label: 'Türkçe', flag: '🇹🇷', hint: 'TR' },
 ] as const;
 
 /** Kompaktes Sprach-Dropdown — wiederverwendbar (Navbar + AppBar) */
