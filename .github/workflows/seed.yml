@@ -7,6 +7,10 @@ name: Seed OSM (Prod)
 on:
   workflow_dispatch:
     inputs:
+      seed:
+        description: 'OSM-Import ausführen (deaktivieren für reinen Reindex)'
+        type: boolean
+        default: true
       region:
         description: 'Region-Substring für --only (case-insensitive). z. B. "rkei" für Türkei-West/-Ost. NICHT leer lassen — leer = ganzer Europa-Lauf!'
         required: true
@@ -28,6 +32,7 @@ jobs:
       - name: Seed (und optional Reindex) via SSH
         uses: appleboy/ssh-action@v1
         env:
+          DO_SEED: ${{ inputs.seed }}
           REGION: ${{ inputs.region }}
           REINDEX: ${{ inputs.reindex }}
         with:
@@ -39,15 +44,19 @@ jobs:
           command_timeout: 30m
           # REGION/REINDEX als Env an die Remote-Shell übergeben (kein
           # String-Interpolieren ins Script → keine Command-Injection).
-          envs: REGION,REINDEX
+          envs: DO_SEED,REGION,REINDEX
           script: |
             set -euo pipefail
-            if [ -z "${REGION}" ]; then
-              echo "::error::REGION ist leer — abgebrochen (Schutz vor ungewolltem Europa-Lauf)."
-              exit 1
+            if [ "${DO_SEED}" = "true" ]; then
+              if [ -z "${REGION}" ]; then
+                echo "::error::REGION ist leer — abgebrochen (Schutz vor ungewolltem Europa-Lauf)."
+                exit 1
+              fi
+              echo "Seed-Import: --only=${REGION}"
+              sudo docker exec klopilot-api node apps/api/dist/scripts/seed-osm.js --only="${REGION}"
+            else
+              echo "Seed übersprungen (seed=false) — nur Reindex."
             fi
-            echo "Seed-Import: --only=${REGION}"
-            sudo docker exec klopilot-api node apps/api/dist/scripts/seed-osm.js --only="${REGION}"
             if [ "${REINDEX}" = "true" ]; then
               echo "Meilisearch-Reindex…"
               sudo docker exec klopilot-api node apps/api/dist/scripts/reindex-meili.js
