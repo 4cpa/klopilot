@@ -205,6 +205,7 @@ const LANGS = [
   { code: 'sq', label: 'Shqip', flag: '🇦🇱' },
   { code: 'ar', label: 'العربية', flag: '🌍' },
   { code: 'he', label: 'עברית', flag: '🇮🇱' },
+  { code: 'tr', label: 'Türkçe', flag: '🇹🇷' },
 ];
 
 /* ── Reusable link row ────────────────────────────────────────────────────── */

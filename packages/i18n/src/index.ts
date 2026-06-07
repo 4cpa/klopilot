@@ -30,11 +30,14 @@ import bs from './locales/bs.json';
 import sq from './locales/sq.json';
 import ar from './locales/ar.json';
 import he from './locales/he.json';
+// Erweiterung: Türkei + Anatolien
+import tr from './locales/tr.json';
 
 // prettier-ignore
 export {
   de, fr, it, en, es, pt, da, sv, no, fi, nl, is, el,
   pl, cs, sk, hu, ro, bg, et, lv, lt, uk, mk, sl, hr, sr, bs, sq, ar, he,
+  tr,
 };
 
 export type Locale =
@@ -70,13 +73,14 @@ export type Locale =
   | 'bs'
   | 'sq'
   | 'ar'
-  | 'he';
+  | 'he'
+  | 'tr';
 
 // prettier-ignore
 export const SUPPORTED_LOCALES: Locale[] = [
   'de', 'fr', 'it', 'en', 'es', 'pt', 'da', 'sv', 'no', 'fi', 'nl', 'is', 'el',
   'pl', 'cs', 'sk', 'hu', 'ro', 'bg', 'et', 'lv', 'lt', 'uk', 'mk', 'sl',
-  'hr', 'sr', 'bs', 'sq', 'ar', 'he',
+  'hr', 'sr', 'bs', 'sq', 'ar', 'he', 'tr',
 ];
 
 /** Rechts-nach-links-Sprachen (für das HTML-`dir`-Attribut). */
@@ -94,7 +98,7 @@ export type TranslationKeys = typeof de;
 // prettier-ignore
 export const LOCALES: Record<Locale, TranslationKeys> = {
   de, fr, it, en, es, pt, da, sv, no, fi, nl, is, el,
-  pl, cs, sk, hu, ro, bg, et, lv, lt, uk, mk, sl, hr, sr, bs, sq, ar, he,
+  pl, cs, sk, hu, ro, bg, et, lv, lt, uk, mk, sl, hr, sr, bs, sq, ar, he, tr,
 };
 
 /**
@@ -109,5 +113,5 @@ export const OG_LOCALES: Record<Locale, string> = {
   el: 'el_GR', pl: 'pl_PL', cs: 'cs_CZ', sk: 'sk_SK', hu: 'hu_HU', ro: 'ro_RO',
   bg: 'bg_BG', et: 'et_EE', lv: 'lv_LV', lt: 'lt_LT', uk: 'uk_UA', mk: 'mk_MK',
   sl: 'sl_SI', hr: 'hr_HR', sr: 'sr_RS', bs: 'bs_BA', sq: 'sq_AL', ar: 'ar_AR',
-  he: 'he_IL',
+  he: 'he_IL', tr: 'tr_TR',
 };

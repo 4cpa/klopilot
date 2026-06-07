@@ -34,6 +34,7 @@ import {
   sq,
   ar,
   he,
+  tr,
   SUPPORTED_LOCALES,
   RTL_LOCALES,
 } from '@klopilot/i18n';
@@ -134,6 +135,7 @@ i18next.use(initReactI18next).init({
     sq: { translation: sq },
     ar: { translation: ar },
     he: { translation: he },
+    tr: { translation: tr },
   },
   interpolation: { escapeValue: false },
 });
