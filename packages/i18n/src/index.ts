@@ -32,12 +32,20 @@ import ar from './locales/ar.json';
 import he from './locales/he.json';
 // Erweiterung: Türkei + Anatolien
 import tr from './locales/tr.json';
+// Erweiterung: kurdische Varietäten (Kurmancî/Zazakî Latein; Soranî/Südkurdisch/
+// Goranî arabische Schrift, RTL). Hinweis: zza/sdh/hac sind aktuell von der
+// nächsten verlässlichen Varietät (kmr bzw. ckb) abgeleitet — Native-Review offen.
+import kmr from './locales/kmr.json';
+import ckb from './locales/ckb.json';
+import sdh from './locales/sdh.json';
+import zza from './locales/zza.json';
+import hac from './locales/hac.json';
 
 // prettier-ignore
 export {
   de, fr, it, en, es, pt, da, sv, no, fi, nl, is, el,
   pl, cs, sk, hu, ro, bg, et, lv, lt, uk, mk, sl, hr, sr, bs, sq, ar, he,
-  tr,
+  tr, kmr, ckb, sdh, zza, hac,
 };
 
 export type Locale =
@@ -74,17 +82,24 @@ export type Locale =
   | 'sq'
   | 'ar'
   | 'he'
-  | 'tr';
+  | 'tr'
+  // prettier-ignore
+  | 'kmr'
+  | 'ckb'
+  | 'sdh'
+  | 'zza'
+  | 'hac';
 
 // prettier-ignore
 export const SUPPORTED_LOCALES: Locale[] = [
   'de', 'fr', 'it', 'en', 'es', 'pt', 'da', 'sv', 'no', 'fi', 'nl', 'is', 'el',
   'pl', 'cs', 'sk', 'hu', 'ro', 'bg', 'et', 'lv', 'lt', 'uk', 'mk', 'sl',
   'hr', 'sr', 'bs', 'sq', 'ar', 'he', 'tr',
+  'kmr', 'ckb', 'sdh', 'zza', 'hac',
 ];
 
 /** Rechts-nach-links-Sprachen (für das HTML-`dir`-Attribut). */
-export const RTL_LOCALES: Locale[] = ['ar', 'he'];
+export const RTL_LOCALES: Locale[] = ['ar', 'he', 'ckb', 'sdh', 'hac'];
 
 export const DEFAULT_LOCALE: Locale = 'de';
 
@@ -99,6 +114,7 @@ export type TranslationKeys = typeof de;
 export const LOCALES: Record<Locale, TranslationKeys> = {
   de, fr, it, en, es, pt, da, sv, no, fi, nl, is, el,
   pl, cs, sk, hu, ro, bg, et, lv, lt, uk, mk, sl, hr, sr, bs, sq, ar, he, tr,
+  kmr, ckb, sdh, zza, hac,
 };
 
 /**
@@ -114,4 +130,27 @@ export const OG_LOCALES: Record<Locale, string> = {
   bg: 'bg_BG', et: 'et_EE', lv: 'lv_LV', lt: 'lt_LT', uk: 'uk_UA', mk: 'mk_MK',
   sl: 'sl_SI', hr: 'hr_HR', sr: 'sr_RS', bs: 'bs_BA', sq: 'sq_AL', ar: 'ar_AR',
   he: 'he_IL', tr: 'tr_TR',
+  kmr: 'ku_TR', ckb: 'ckb_IQ', sdh: 'sdh_IR', zza: 'zza_TR', hac: 'hac_IR',
 };
+
+/**
+ * Locales, deren OG-Vorschaubild STATISCH ausgeliefert wird: arabische Schrift,
+ * bei der die in Next gebündelte Satori-Version beim Ligatur-Shaping crasht
+ * (vgl. app/api/og). Diese Codes werden auf ein vorgerendertes PNG umgeleitet.
+ */
+export const OG_STATIC_LOCALES: Locale[] = ['ar', 'ckb', 'sdh', 'hac'];
+
+/**
+ * Beliebigen Sprach-Tag auf eine unterstützte Locale abbilden:
+ *   1. exakte Übereinstimmung (z. B. „kmr", „tr", „de")
+ *   2. 2-Buchstaben-Präfix (z. B. „de-CH" → „de", „ku" → erste passende)
+ *   3. Default ('de')
+ * Ersetzt verstreute `slice(0, 2)`-Logik, die 3-stellige Codes verstümmeln würde.
+ */
+export function normalizeLocale(raw?: string | null): Locale {
+  const v = (raw ?? '').toLowerCase();
+  if ((SUPPORTED_LOCALES as string[]).includes(v)) return v as Locale;
+  const two = v.slice(0, 2);
+  if ((SUPPORTED_LOCALES as string[]).includes(two)) return two as Locale;
+  return DEFAULT_LOCALE;
+}

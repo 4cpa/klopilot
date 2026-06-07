@@ -35,6 +35,11 @@ import {
   ar,
   he,
   tr,
+  kmr,
+  ckb,
+  sdh,
+  zza,
+  hac,
   SUPPORTED_LOCALES,
   RTL_LOCALES,
 } from '@klopilot/i18n';
@@ -136,6 +141,11 @@ i18next.use(initReactI18next).init({
     ar: { translation: ar },
     he: { translation: he },
     tr: { translation: tr },
+    kmr: { translation: kmr },
+    ckb: { translation: ckb },
+    sdh: { translation: sdh },
+    zza: { translation: zza },
+    hac: { translation: hac },
   },
   interpolation: { escapeValue: false },
 });

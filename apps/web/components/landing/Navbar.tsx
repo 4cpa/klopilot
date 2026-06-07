@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Logo } from '@/components/ui/Logo';
 import { ThemeToggle, ThemeToggleMini } from '@/components/ui/ThemeToggle';
 import { changeLanguage } from '@/lib/i18n';
+import { normalizeLocale } from '@klopilot/i18n';
 
 /** Sprach-Optionen: Code → Label, Flagge, Länder-Hinweis */
 export const LANG_OPTIONS = [
@@ -41,6 +42,11 @@ export const LANG_OPTIONS = [
   { code: 'ar', label: 'العربية', flag: '🌍', hint: 'MA · DZ · TN · LY · EG · LB' },
   { code: 'he', label: 'עברית', flag: '🇮🇱', hint: 'IL' },
   { code: 'tr', label: 'Türkçe', flag: '🇹🇷', hint: 'TR' },
+  { code: 'kmr', label: 'Kurmancî', flag: '🌍', hint: 'TR · SY' },
+  { code: 'ckb', label: 'سۆرانی', flag: '🌍', hint: 'IQ · IR' },
+  { code: 'sdh', label: 'کوردیی خواروو', flag: '🌍', hint: 'IR · IQ' },
+  { code: 'zza', label: 'Zazakî', flag: '🌍', hint: 'TR' },
+  { code: 'hac', label: 'هەورامی', flag: '🌍', hint: 'IR · IQ' },
 ] as const;
 
 /** Kompaktes Sprach-Dropdown — wiederverwendbar (Navbar + AppBar) */
@@ -49,7 +55,7 @@ export function LangDropdown({ compact = false }: { compact?: boolean }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const currentCode = i18n.language?.slice(0, 2).toLowerCase() ?? 'de';
+  const currentCode = normalizeLocale(i18n.language);
   const current = LANG_OPTIONS.find((l) => l.code === currentCode) ?? LANG_OPTIONS[0];
 
   useEffect(() => {
@@ -203,7 +209,7 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const currentCode = i18n.language?.slice(0, 2).toLowerCase() ?? 'de';
+  const currentCode = normalizeLocale(i18n.language);
 
   return (
     <nav

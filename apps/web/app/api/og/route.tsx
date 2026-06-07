@@ -1,21 +1,13 @@
 import { ImageResponse } from 'next/og';
-import {
-  LOCALES,
-  SUPPORTED_LOCALES,
-  DEFAULT_LOCALE,
-  RTL_LOCALES,
-  type Locale,
-} from '@klopilot/i18n';
+import { LOCALES, RTL_LOCALES, OG_STATIC_LOCALES, normalizeLocale } from '@klopilot/i18n';
 
 export const runtime = 'edge';
 
 const SIZE = { width: 1200, height: 630 };
 
 /** `?lang=` / `?lng=` auf eine unterstützte Locale abbilden (Default 'de'). */
-function resolveLocale(params: URLSearchParams): Locale {
-  const raw = params.get('lang') ?? params.get('lng') ?? '';
-  const code = raw.toLowerCase().slice(0, 2);
-  return (SUPPORTED_LOCALES as string[]).includes(code) ? (code as Locale) : DEFAULT_LOCALE;
+function resolveLocale(params: URLSearchParams) {
+  return normalizeLocale(params.get('lang') ?? params.get('lng'));
 }
 
 /**
@@ -24,21 +16,19 @@ function resolveLocale(params: URLSearchParams): Locale {
  * Übersetzungs-Keys. Wird von der Landing-Seite via `?lang=` referenziert
  * (siehe app/page.tsx) — ersetzt die statische Datei-Konvention.
  *
- * Ausnahme Arabisch: Die in Next 14 gebündelte @vercel/og-/Satori-Version
- * crasht beim arabischen Ligatur-Shaping („lookupType: 5 - substFormat: 3 is
- * not yet supported") — und zwar mit JEDER arabischen Font, da das rlig-Feature
- * stets verarbeitet wird. Für `ar` gibt es daher ein vorab per Headless-Chromium
- * gerendertes statisches Bild (public/og/og-ar.png, erzeugt via
- * scripts/generate-og-ar.mjs), auf das hier umgeleitet wird; die Landing-Seite
- * referenziert es direkt in generateMetadata.
+ * Ausnahme arabische Schrift (ar, ckb, sdh, hac): Die in Next 14 gebündelte
+ * @vercel/og-/Satori-Version crasht beim arabischen Ligatur-Shaping
+ * („lookupType: 5 - substFormat: 3 is not yet supported") — mit JEDER arabischen
+ * Font, da das rlig-Feature stets verarbeitet wird. Für diese Locales gibt es
+ * vorab per Headless-Chromium gerenderte statische Bilder (public/og/og-<code>.png,
+ * erzeugt via scripts/generate-og-static.mjs), auf die hier umgeleitet wird; die
+ * Landing-Seite referenziert sie direkt in generateMetadata.
  */
-const OG_AR_STATIC = '/og/og-ar.png';
-
 export function GET(req: Request) {
   const url = new URL(req.url);
   const locale = resolveLocale(url.searchParams);
 
-  if (locale === 'ar') {
+  if ((OG_STATIC_LOCALES as string[]).includes(locale)) {
     // Plain Response statt Response.redirect(): Letzteres erzeugt eine immutable
     // Response, die der Next-Edge-Handler nicht weiterverarbeiten kann.
     // RELATIVE Location: Hinter dem Prod-Reverse-Proxy liefert url.origin die
@@ -46,7 +36,7 @@ export function GET(req: Request) {
     // korrekt gegen die öffentliche Request-URL (klopilot.ch) aufgelöst.
     return new Response(null, {
       status: 307,
-      headers: { Location: OG_AR_STATIC },
+      headers: { Location: `/og/og-${locale}.png` },
     });
   }
 
