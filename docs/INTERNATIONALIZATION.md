@@ -16,13 +16,21 @@
 | Default / Fallback  | `de`                                                                   |
 | Persistenz          | `localStorage["klo-language"]`                                         |
 | Deep-Links          | `?lang=<code>` (bzw. `?lng=`) hat Vorrang vor localStorage             |
-| RTL                 | `RTL_LOCALES = ['ar', 'he']` → `<html dir="rtl">`                      |
+| RTL                 | `RTL_LOCALES = ['ar', 'he', 'ckb', 'sdh', 'hac']` → `<html dir="rtl">` |
 
-### Unterstützte Sprachen (31)
+### Unterstützte Sprachen (37)
 
 `de` `fr` `it` `en` `es` `pt` `da` `sv` `no` `fi` `nl` `is` `el`
 `pl` `cs` `sk` `hu` `ro` `bg` `et` `lv` `lt` `uk` `mk` `sl` `hr` `sr` `bs` `sq`
-**`ar`** **`he`** (RTL)
+`tr`
+`kmr` (Kurmancî) `zza` (Zazakî) — Latein/LTR
+**`ar`** **`he`** **`ckb`** (Soranî) **`sdh`** (Südkurdisch) **`hac`** (Goranî) (RTL)
+
+> Hinweis: Codes sind meist 2-stellig (ISO 639-1), die kurdischen Varietäten
+> 3-stellig (ISO 639-3). Das Frontend nutzt dafür `normalizeLocale()` aus
+> `@klopilot/i18n` (voller Code → 2-Buchstaben-Präfix → Default) statt fester
+> `slice(0, 2)`-Logik. `zza`/`sdh`/`hac` sind aktuell von der nächsten
+> verlässlichen Varietät (`kmr` bzw. `ckb`) abgeleitet — Native-Review offen.
 
 Die geografische Abdeckung der importierten Toiletten-Daten reicht von West-/
 Nordeuropa über Mittel-/Osteuropa und den Balkan bis zum Mittelmeerraum
@@ -56,11 +64,18 @@ sonst überschreibt React das `<html>`-Element wieder.
    `de.json` erstellen und alle Werte übersetzen. **Schlüssel und `{{platzhalter}}`
    müssen exakt erhalten bleiben** (z. B. `{{query}}`, `{{langCount}}`).
 2. **In `index.ts` registrieren:** Import + Re-Export ergänzen, den Code zu
-   `Locale`, `SUPPORTED_LOCALES` (und bei RTL zu `RTL_LOCALES`) hinzufügen.
+   `Locale`, `SUPPORTED_LOCALES`, `LOCALES`, `OG_LOCALES` (und bei RTL zu
+   `RTL_LOCALES`) hinzufügen. Bei arabischer Schrift zusätzlich zu
+   `OG_STATIC_LOCALES` (siehe Schritt 5).
 3. **In `apps/web/lib/i18n.ts`** den Import + den `resources`-Eintrag ergänzen.
 4. **Sprach-Picker:** Eintrag in `apps/web/components/landing/Navbar.tsx`
    (`LANG_OPTIONS`) und `Footer.tsx` (`LANGS`) hinzufügen.
-5. **Test ausführen:** `pnpm --filter api test -- src/common/i18n-locales.spec.ts`
+5. **OG-Vorschaubild:** Latein-/Kyrillisch-/Griechisch-/Hebräisch-Schrift rendert
+   dynamisch über `app/api/og` — nichts zu tun. **Arabische Schrift** crasht in
+   Satori; den Code zu `OG_STATIC_LOCALES` hinzufügen und
+   `node apps/web/scripts/generate-og-static.mjs` ausführen (erzeugt
+   `public/og/og-<code>.png`).
+6. **Test ausführen:** `pnpm --filter api test -- src/common/i18n-locales.spec.ts`
    — schlägt fehl, sobald Schlüssel oder Platzhalter abweichen.
 
 > Die Sprachenzahl auf der Landing-Page ist dynamisch (`SUPPORTED_LOCALES.length`)

@@ -1,36 +1,37 @@
-// Erzeugt das statische arabische OpenGraph-Vorschaubild
-// (public/og/og-ar.png, 1200×630) per Headless-Chromium.
+// Erzeugt die statischen OpenGraph-Vorschaubilder für arabisch-schriftige
+// Locales (public/og/og-<code>.png, 1200×630) per Headless-Chromium.
 //
 // Hintergrund: Die in Next 14 gebündelte @vercel/og-/Satori-Version crasht beim
 // arabischen Ligatur-Shaping („lookupType: 5 - substFormat: 3 is not yet
-// supported"), unabhängig von der Font. Für `ar` rendern wir das Karten-Bild
-// daher einmalig im echten Browser (korrektes Arabisch-Shaping) und committen
+// supported"), unabhängig von der Font. Für diese Locales rendern wir das
+// Karten-Bild daher einmalig im echten Browser (korrektes Shaping) und committen
 // das Ergebnis. Alle übrigen Sprachen laufen dynamisch über app/api/og.
 //
-// Neu ausführen, wenn sich die arabischen Strings oder das Karten-Design ändern:
-//   node apps/web/scripts/generate-og-ar.mjs
+// Hält sich an OG_STATIC_LOCALES aus @klopilot/i18n. Neu ausführen, wenn sich die
+// betreffenden Strings oder das Karten-Design ändern:
+//   node apps/web/scripts/generate-og-static.mjs
 import { chromium } from '@playwright/test';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import { mkdirSync, readFileSync } from 'node:fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ar = JSON.parse(
-  readFileSync(resolve(__dirname, '..', '..', '..', 'packages/i18n/src/locales/ar.json'), 'utf8'),
-);
+const localesDir = resolve(__dirname, '..', '..', '..', 'packages/i18n/src/locales');
 const outDir = join(__dirname, '..', 'public', 'og');
 mkdirSync(outDir, { recursive: true });
-const outFile = join(outDir, 'og-ar.png');
 
-const subtitle = ar.landing.hero_badge;
-const tags = [
-  `🌸 ${ar.landing.stat_rating}`,
-  `🗺️ ${ar.tabs.map}`,
-  `♿ ${ar.filter.accessible}`,
-  `🔍 ${ar.tabs.search}`,
-];
+// Synchron zu OG_STATIC_LOCALES (arabische Schrift, RTL).
+const LOCALES = ['ar', 'ckb', 'sdh', 'hac'];
 
-const html = `<!doctype html><html dir="rtl" lang="ar"><head><meta charset="utf-8">
+const cardHtml = (t) => {
+  const subtitle = t.landing.hero_badge;
+  const tags = [
+    `🌸 ${t.landing.stat_rating}`,
+    `🗺️ ${t.tabs.map}`,
+    `♿ ${t.filter.accessible}`,
+    `🔍 ${t.tabs.search}`,
+  ];
+  return `<!doctype html><html dir="rtl" lang="ar"><head><meta charset="utf-8">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { width: 1200px; height: 630px; }
@@ -74,11 +75,17 @@ const html = `<!doctype html><html dir="rtl" lang="ar"><head><meta charset="utf-
   <div class="url">klopilot.ch</div>
 </div>
 </body></html>`;
+};
 
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
-await page.setContent(html, { waitUntil: 'networkidle' });
-await page.waitForTimeout(300);
-await page.screenshot({ path: outFile, clip: { x: 0, y: 0, width: 1200, height: 630 } });
+for (const code of LOCALES) {
+  const t = JSON.parse(readFileSync(join(localesDir, `${code}.json`), 'utf8'));
+  const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
+  await page.setContent(cardHtml(t), { waitUntil: 'networkidle' });
+  await page.waitForTimeout(300);
+  const out = join(outDir, `og-${code}.png`);
+  await page.screenshot({ path: out, clip: { x: 0, y: 0, width: 1200, height: 630 } });
+  await page.close();
+  console.log('OG geschrieben:', out);
+}
 await browser.close();
-console.log('OG (ar) geschrieben:', outFile);

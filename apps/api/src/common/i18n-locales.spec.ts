@@ -22,7 +22,9 @@ const indexSrc = readFileSync(resolve(I18N_SRC, 'index.ts'), 'utf8');
 function parseLocaleArray(name: string): string[] {
   const match = indexSrc.match(new RegExp(`${name}[^=]*=\\s*\\[([^\\]]*)\\]`));
   if (!match) throw new Error(`Konnte ${name} nicht aus index.ts parsen`);
-  return [...match[1].matchAll(/'([a-z]{2})'/g)].map((m) => m[1]);
+  // 2–3 Buchstaben: 2-stellige ISO-639-1-Codes plus 3-stellige (z. B. kurdische
+  // Varietäten kmr/ckb/sdh/zza/hac).
+  return [...match[1].matchAll(/'([a-z]{2,3})'/g)].map((m) => m[1]);
 }
 
 const SUPPORTED_LOCALES = parseLocaleArray('SUPPORTED_LOCALES');

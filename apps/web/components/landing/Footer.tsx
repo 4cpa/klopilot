@@ -206,6 +206,11 @@ const LANGS = [
   { code: 'ar', label: 'العربية', flag: '🌍' },
   { code: 'he', label: 'עברית', flag: '🇮🇱' },
   { code: 'tr', label: 'Türkçe', flag: '🇹🇷' },
+  { code: 'kmr', label: 'Kurmancî', flag: '🌍' },
+  { code: 'ckb', label: 'سۆرانی', flag: '🌍' },
+  { code: 'sdh', label: 'کوردیی خواروو', flag: '🌍' },
+  { code: 'zza', label: 'Zazakî', flag: '🌍' },
+  { code: 'hac', label: 'هەورامی', flag: '🌍' },
 ];
 
 /* ── Reusable link row ────────────────────────────────────────────────────── */
