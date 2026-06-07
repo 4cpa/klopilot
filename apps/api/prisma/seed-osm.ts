@@ -308,6 +308,31 @@ async function queryOverpass(
     }));
 }
 
+/**
+ * Zerlegt eine Bbox in ein Raster mit Kantenlänge ≤ maxDeg (Grad). Kleine Bboxen
+ * (beide Kanten ≤ maxDeg) bleiben unverändert — nur übergrosse Länder-Bboxen
+ * (z. B. Türkei) werden gekachelt, damit die Bereichsabfragen in Phase 5/6 den
+ * Speicher nicht sprengen (Overpass-Antwort + Node-Heap → OOM/Exit 137).
+ */
+function tileBbox(
+  bbox: [number, number, number, number],
+  maxDeg = 3,
+): Array<[number, number, number, number]> {
+  const [s, w, n, e] = bbox;
+  const rows = Math.max(1, Math.ceil((n - s) / maxDeg));
+  const cols = Math.max(1, Math.ceil((e - w) / maxDeg));
+  if (rows === 1 && cols === 1) return [bbox];
+  const dLat = (n - s) / rows;
+  const dLng = (e - w) / cols;
+  const tiles: Array<[number, number, number, number]> = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      tiles.push([s + r * dLat, w + c * dLng, s + (r + 1) * dLat, w + (c + 1) * dLng]);
+    }
+  }
+  return tiles;
+}
+
 // ── Einzelne Toilette upserten ────────────────────────────────────────────────
 async function upsertToilet(
   item: { osmId: string; lat: number; lng: number; tags: Record<string, string> },
@@ -551,6 +576,9 @@ async function main() {
   // ── Phase 5: Bahnhofs-/Flughafen-Toiletten via Bereichsabfrage ───────────────
   // Radius 500m (statt 250m), KEIN BBox-Filter auf den Toiletten-Nodes damit
   // Toiletten an Grenzen nicht verschwinden. Relations (für grosse HBf) einbezogen.
+  // Grosse Länder-Bboxen werden gekachelt (s. tileBbox): die Bereichsabfragen
+  // sammeln erst alle Stationen/Malls und dann Toiletten in deren Umkreis — über
+  // ein ganzes Land sprengt die Overpass-Antwort sonst den Node-Heap (OOM/137).
   console.log('\n── Phase 5: Stationen/Airports (Bereichsabfrage, r=500m) ────');
   const STATION_AREA_QUERY = `
 [out:json][timeout:120];
@@ -569,16 +597,21 @@ async function main() {
 out center body;`.trim();
 
   for (const region of ACTIVE_REGIONS) {
-    console.log(`\n🚉 Station-Bereich: ${region.name}`);
-    try {
-      const items = await queryOverpass(region.bbox, STATION_AREA_QUERY, true);
-      console.log(`  ${items.length} Stationstoiletten (Bereich) gefunden`);
-      for (const item of items) {
-        await upsertToilet(item, systemUserId, counters, 'transport');
+    const tiles = tileBbox(region.bbox);
+    console.log(
+      `\n🚉 Station-Bereich: ${region.name}${tiles.length > 1 ? ` (${tiles.length} Kacheln)` : ''}`,
+    );
+    for (const tile of tiles) {
+      try {
+        const items = await queryOverpass(tile, STATION_AREA_QUERY, true);
+        console.log(`  ${items.length} Stationstoiletten (Bereich) gefunden`);
+        for (const item of items) {
+          await upsertToilet(item, systemUserId, counters, 'transport');
+        }
+        await sleep(3000);
+      } catch (err) {
+        console.error(`  ❌ Fehler bei ${region.name}:`, (err as Error).message);
       }
-      await sleep(3000);
-    } catch (err) {
-      console.error(`  ❌ Fehler bei ${region.name}:`, (err as Error).message);
     }
   }
 
@@ -601,16 +634,21 @@ out center body;`.trim();
 out center body;`.trim();
 
   for (const region of ACTIVE_REGIONS) {
-    console.log(`\n🏬 Mall-Bereich: ${region.name}`);
-    try {
-      const items = await queryOverpass(region.bbox, MALL_AREA_QUERY, true);
-      console.log(`  ${items.length} Mall-Toiletten (Bereich) gefunden`);
-      for (const item of items) {
-        await upsertToilet(item, systemUserId, counters, 'mall');
+    const tiles = tileBbox(region.bbox);
+    console.log(
+      `\n🏬 Mall-Bereich: ${region.name}${tiles.length > 1 ? ` (${tiles.length} Kacheln)` : ''}`,
+    );
+    for (const tile of tiles) {
+      try {
+        const items = await queryOverpass(tile, MALL_AREA_QUERY, true);
+        console.log(`  ${items.length} Mall-Toiletten (Bereich) gefunden`);
+        for (const item of items) {
+          await upsertToilet(item, systemUserId, counters, 'mall');
+        }
+        await sleep(3000);
+      } catch (err) {
+        console.error(`  ❌ Fehler bei ${region.name}:`, (err as Error).message);
       }
-      await sleep(3000);
-    } catch (err) {
-      console.error(`  ❌ Fehler bei ${region.name}:`, (err as Error).message);
     }
   }
 
