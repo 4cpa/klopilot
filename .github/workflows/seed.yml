@@ -1,0 +1,55 @@
+name: Seed OSM (Prod)
+
+# Manueller OSM-Import in die Produktion. Läuft per SSH auf dem Infomaniak-Host
+# (gleiche Secrets wie Deploy) und ruft die im klopilot-api-Container gebauten
+# Skripte auf. Auslösen via GitHub-UI (Run workflow) oder:
+#   gh workflow run seed.yml -f region=rkei -f reindex=true
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        description: 'Region-Substring für --only (case-insensitive). z. B. "rkei" für Türkei-West/-Ost. NICHT leer lassen — leer = ganzer Europa-Lauf!'
+        required: true
+        default: 'rkei'
+      reindex:
+        description: 'Nach dem Import Meilisearch neu aufbauen'
+        type: boolean
+        default: true
+
+# Nur ein Seed-Lauf gleichzeitig.
+concurrency:
+  group: seed-prod
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Seed (und optional Reindex) via SSH
+        uses: appleboy/ssh-action@v1
+        env:
+          REGION: ${{ inputs.region }}
+          REINDEX: ${{ inputs.reindex }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          timeout: 60s
+          command_timeout: 30m
+          # REGION/REINDEX als Env an die Remote-Shell übergeben (kein
+          # String-Interpolieren ins Script → keine Command-Injection).
+          envs: REGION,REINDEX
+          script: |
+            set -euo pipefail
+            if [ -z "${REGION}" ]; then
+              echo "::error::REGION ist leer — abgebrochen (Schutz vor ungewolltem Europa-Lauf)."
+              exit 1
+            fi
+            echo "Seed-Import: --only=${REGION}"
+            sudo docker exec klopilot-api node apps/api/dist/scripts/seed-osm.js --only="${REGION}"
+            if [ "${REINDEX}" = "true" ]; then
+              echo "Meilisearch-Reindex…"
+              sudo docker exec klopilot-api node apps/api/dist/scripts/reindex-meili.js
+            fi
+            echo "Fertig."
