@@ -316,7 +316,10 @@ async function queryOverpass(
  */
 function tileBbox(
   bbox: [number, number, number, number],
-  maxDeg = 3,
+  // 4°: zerlegt grosse Länder-Bboxen, hält die Overpass-Antwort pro Kachel klar
+  // unter der OOM-Schwelle, erzeugt aber halb so viele Calls wie 3° (wichtig wegen
+  // Overpass-Drosselung/429 → sonst Laufzeit > command_timeout).
+  maxDeg = 4,
 ): Array<[number, number, number, number]> {
   const [s, w, n, e] = bbox;
   const rows = Math.max(1, Math.ceil((n - s) / maxDeg));

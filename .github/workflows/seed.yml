@@ -41,7 +41,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           timeout: 60s
-          command_timeout: 30m
+          # Grosse, gekachelte Läufe (z. B. ganze Türkei) brauchen wegen
+          # Overpass-Drosselung deutlich länger als 30 min.
+          command_timeout: 60m
           # REGION/REINDEX als Env an die Remote-Shell übergeben (kein
           # String-Interpolieren ins Script → keine Command-Injection).
           envs: DO_SEED,REGION,REINDEX
