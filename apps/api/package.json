@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "nest build && pnpm build:scripts",
-    "build:scripts": "esbuild prisma/seed-osm.ts prisma/reindex-meili.ts --bundle --platform=node --target=node22 --format=cjs --outdir=dist/scripts --external:@prisma/client --external:meilisearch",
+    "build:scripts": "esbuild prisma/seed-osm.ts prisma/reindex-meili.ts prisma/prune-osm-excluded.ts --bundle --platform=node --target=node22 --format=cjs --outdir=dist/scripts --external:@prisma/client --external:meilisearch",
     "dev": "node_modules/.bin/nest start --watch",
     "start": "node dist/main",
     "lint": "eslint \"{src,test}/**/*.ts\"",
@@ -16,6 +16,7 @@
     "db:seed": "dotenv -e ../../.env -- ts-node prisma/seed.ts",
     "db:seed-osm": "dotenv -e ../../.env -- ts-node prisma/seed-osm.ts",
     "db:reindex": "dotenv -e ../../.env -- ts-node prisma/reindex-meili.ts",
+    "db:prune-osm": "dotenv -e ../../.env -- ts-node prisma/prune-osm-excluded.ts",
     "db:reset": "prisma migrate reset --force && dotenv -e ../../.env -- ts-node prisma/seed.ts"
   },
   "dependencies": {
