@@ -18,6 +18,7 @@
 import { PrismaClient } from '@prisma/client';
 import { type OsmCategory, resolveCategory } from '../src/common/utils/osm-category';
 import { mapFee } from '../src/common/utils/osm-fee';
+import { isExcludedLocation } from '../src/common/utils/osm-region';
 import { reindexMeili } from './reindex-meili';
 
 const prisma = new PrismaClient();
@@ -186,23 +187,12 @@ const REGIONS: Array<{ name: string; bbox: [number, number, number, number] }> =
 const ACTIVE_REGIONS = REGIONS.filter((r) => regionMatches(r.name));
 
 // ── Ausgeschlossene Gebiete ──────────────────────────────────────────────────
-// Russland (und Belarus) bewusst aussen vor — auch an Bbox-Rändern der östlichen
-// Regionen (Baltikum/Polen/Ukraine). Die Türkei ist seit der Anatolien-Erweiterung
-// Teil des Zielbestands und daher NICHT mehr ausgeschlossen.
-const EXCLUDE_BBOXES: Array<[number, number, number, number]> = [
-  // [south, west, north, east]
-  // Russland fernhalten (Russland/Belarus sonst über addr:country, da Land-
-  // grenzen mit UA/Baltikum eine saubere Bbox-Trennung verhindern):
-  [54.2, 19.5, 55.4, 23.0], // Kaliningrad (RU-Exklave zwischen PL/LT)
-];
-// ISO-3166-1-alpha-2 ausgeschlossener Länder (via OSM addr:country):
-// Russland und Belarus (Distanz zu Russland). Türkei (TR) ist Teil des Bestands.
-const NON_EU_COUNTRIES = new Set(['RU', 'BY']);
-function isNonEuropeanLocation(lat: number, lng: number, tags: Record<string, string>): boolean {
-  const cc = (tags['addr:country'] ?? '').trim().toUpperCase();
-  if (cc.length === 2 && NON_EU_COUNTRIES.has(cc)) return true;
-  return EXCLUDE_BBOXES.some(([s, w, n, e]) => lat >= s && lat <= n && lng >= w && lng <= e);
-}
+// Belarus (BY) und Russland (RU) bleiben bewusst aussen vor — auch an den
+// Bbox-Rändern der östlichen Regionen (Baltikum/Polen/Ukraine/Finnland/Nord-
+// Norwegen), die über die Landesgrenzen hinausragen. Der Ausschluss erfolgt
+// geometrisch per Punkt-in-Polygon (s. ../src/common/utils/osm-region.ts), da
+// der OSM-Tag addr:country zu spärlich gesetzt ist und Landesgrenzen diagonal
+// verlaufen. Die Türkei ist seit der Anatolien-Erweiterung Teil des Bestands.
 
 // ── Adresse aus OSM-Tags ──────────────────────────────────────────────────────
 function buildAddress(tags: Record<string, string>): string | undefined {
@@ -351,8 +341,8 @@ async function upsertToilet(
     return;
   }
 
-  // Ausserhalb Europas (Bbox-Ränder ragen in Nachbarländer) → überspringen
-  if (isNonEuropeanLocation(item.lat, item.lng, tags)) {
+  // BY/RU-Gebiet (Bbox-Ränder ragen über die Grenze) → überspringen
+  if (isExcludedLocation(item.lat, item.lng, tags)) {
     counters.skipped++;
     return;
   }
