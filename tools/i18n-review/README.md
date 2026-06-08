@@ -14,7 +14,7 @@ Jeder Eintrag zeigt:
 - den **englischen Text** (EN) als Vergleich,
 - die **zu korrigierende Übersetzung** (korrekt geshaped, RTL für AR/HE,
   Latein-Fallback für eingebettete Markennamen/Ziffern),
-- Ankreuzfelder **✗ falsch** und **~ besser** (in der Zielsprache beschriftet),
+- Ankreuzfelder **✗ falsch** und **\~ besser** (in der Zielsprache beschriftet),
 - ein beschreibbares **Korrektur**-Feld in der Zielsprache.
 
 Die Feldnamen kodieren den Key (`cor##help__DOT__map__DOT__title` …), daher lässt
