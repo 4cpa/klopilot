@@ -1,4 +1,9 @@
-FROM node:22-alpine AS base
+# Base-Image aus dem GHCR-Mirror (s. .github/workflows/mirror-base-images.yml),
+# um Docker Hub (auth.docker.io 504) aus dem Build-Pfad zu nehmen. Override für
+# lokale Builds: --build-arg NODE_IMAGE=node:22-alpine
+ARG NODE_IMAGE=ghcr.io/4cpa/node:22-alpine
+
+FROM ${NODE_IMAGE} AS base
 # openssl + libc6-compat: benötigt von Prisma (libssl-Detection in Alpine/musl)
 RUN apk add --no-cache openssl libc6-compat
 RUN corepack enable && corepack prepare pnpm@9 --activate
@@ -24,7 +29,7 @@ RUN pnpm --filter @klopilot/api exec prisma generate
 RUN pnpm --filter @klopilot/api build
 
 # ── Production image ──────────────────────────────────────────────────────────
-FROM node:22-alpine AS runner
+FROM ${NODE_IMAGE} AS runner
 RUN apk add --no-cache openssl libc6-compat
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
