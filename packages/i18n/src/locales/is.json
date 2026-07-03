@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Hætta við",
     "error": "Villa",
-    "close": "Loka"
+    "close": "Loka",
+    "mvp_banner": "🚧 klopilot er enn í smíðum (MVP) — ný lönd, tungumál og eiginleikar bætast stöðugt við."
   },
   "category": {
     "public": "Opinbert",

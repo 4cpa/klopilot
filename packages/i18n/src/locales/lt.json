@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Atšaukti",
     "error": "Klaida",
-    "close": "Uždaryti"
+    "close": "Uždaryti",
+    "mvp_banner": "🚧 klopilot dar tik kuriamas (MVP) — nuolat prisideda naujų šalių, kalbų ir funkcijų."
   },
   "category": {
     "public": "Viešas",

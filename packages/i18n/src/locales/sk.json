@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Zrušiť",
     "error": "Chyba",
-    "close": "Zavrieť"
+    "close": "Zavrieť",
+    "mvp_banner": "🚧 klopilot je zatiaľ vo výstavbe (MVP) — nové krajiny, jazyky a funkcie pribúdajú priebežne."
   },
   "category": {
     "public": "Verejná",

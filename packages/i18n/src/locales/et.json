@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Tühista",
     "error": "Viga",
-    "close": "Sulge"
+    "close": "Sulge",
+    "mvp_banner": "🚧 klopilot on alles ehitusjärgus (MVP) — uued riigid, keeled ja funktsioonid lisanduvad pidevalt."
   },
   "category": {
     "public": "Avalik",

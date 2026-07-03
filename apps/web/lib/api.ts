@@ -377,6 +377,93 @@ export const moderation = {
     }),
 };
 
+// ── Admin: Benutzerverwaltung ─────────────────────────────────────────────────
+
+export interface AdminUser {
+  id: string;
+  handle: string;
+  email?: string | null;
+  role: string;
+  status: 'active' | 'banned';
+  bannedAt?: string | null;
+  bannedReason?: string | null;
+  deletedAt?: string | null;
+  verifiedAt?: string | null;
+  createdAt: string;
+  _count: { toiletsCreated: number; ratings: number; reports: number };
+}
+
+export const adminUsers = {
+  list: (
+    page = 1,
+    q?: string,
+    role?: string,
+    status?: string,
+  ): Promise<{ items: AdminUser[]; total: number; pages: number }> => {
+    const p = new URLSearchParams({ page: String(page) });
+    if (q) p.set('q', q);
+    if (role) p.set('role', role);
+    if (status) p.set('status', status);
+    return request(`/admin/users?${p}`);
+  },
+
+  updateRole: (id: string, role: string) =>
+    request<{ id: string; role: string }>(`/admin/users/${id}/role`, {
+      method: 'PATCH',
+      body: JSON.stringify({ role }),
+    }),
+
+  ban: (id: string, reason: string) =>
+    request<{ id: string; status: string }>(`/admin/users/${id}/ban`, {
+      method: 'PATCH',
+      body: JSON.stringify({ reason }),
+    }),
+
+  unban: (id: string) =>
+    request<{ id: string; status: string }>(`/admin/users/${id}/unban`, { method: 'PATCH' }),
+
+  anonymize: (id: string) =>
+    request<{ id: string; handle: string; deletedAt: string }>(`/admin/users/${id}`, {
+      method: 'DELETE',
+    }),
+};
+
+// ── Admin: Datenverwaltung ─────────────────────────────────────────────────────
+
+export interface AdminStats {
+  totalToilets: number;
+  totalUsers: number;
+  ratingsCount: number;
+  openReports: number;
+  pendingPhotos: number;
+  toiletsByStatus: { status: string; count: number }[];
+  toiletsByCategory: { category: string; count: number }[];
+  usersByRole: { role: string; count: number }[];
+}
+
+export const adminData = {
+  stats: (): Promise<AdminStats> => request('/admin/data/stats'),
+
+  /** Lädt den CSV-Export authentifiziert (Bearer-Token) und stösst den Browser-Download an. */
+  downloadToiletsCsv: async () => {
+    const t = token();
+    const res = await fetch(`${BASE}/admin/data/export/toilets.csv`, {
+      headers: t ? { Authorization: `Bearer ${t}` } : {},
+      credentials: 'include',
+    });
+    if (!res.ok) throw new Error('Export fehlgeschlagen');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'klopilot-toiletten-export.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  },
+};
+
 // ── Heatmap ───────────────────────────────────────────────────────────────────
 
 export interface HeatmapPoint {

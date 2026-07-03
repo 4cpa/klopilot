@@ -3,13 +3,16 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks';
+import { AdminNav } from '@/components/admin/AdminNav';
+
+const ADMIN_AREA_ROLES = ['moderator', 'admin'];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'admin')) {
+    if (!loading && (!user || !ADMIN_AREA_ROLES.includes(user.role))) {
       router.replace('/');
     }
   }, [user, loading, router]);
@@ -39,7 +42,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  if (!user || user.role !== 'admin') return null;
+  if (!user || !ADMIN_AREA_ROLES.includes(user.role)) return null;
 
-  return <>{children}</>;
+  return (
+    <>
+      <AdminNav role={user.role} />
+      {children}
+    </>
+  );
 }

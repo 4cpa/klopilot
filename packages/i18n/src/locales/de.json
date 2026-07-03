@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Abbrechen",
     "error": "Fehler",
-    "close": "Schliessen"
+    "close": "Schliessen",
+    "mvp_banner": "🚧 klopilot ist im Aufbau (MVP) — neue Länder, Sprachen und Funktionen kommen laufend dazu."
   },
   "category": {
     "public": "Öffentlich",

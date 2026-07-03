@@ -304,7 +304,8 @@
   "common": {
     "cancel": "إلغاء",
     "error": "خطأ",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "mvp_banner": "🚧 klopilot ما زال قيد الإنشاء (MVP) — دول ولغات وميزات جديدة تُضاف باستمرار."
   },
   "category": {
     "public": "عام",

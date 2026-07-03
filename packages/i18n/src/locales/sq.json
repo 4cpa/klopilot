@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Anulo",
     "error": "Gabim",
-    "close": "Mbyll"
+    "close": "Mbyll",
+    "mvp_banner": "🚧 klopilot është ende në ndërtim e sipër (MVP) — vende, gjuhë dhe funksione të reja shtohen vazhdimisht."
   },
   "category": {
     "public": "Publik",

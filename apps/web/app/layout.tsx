@@ -4,6 +4,7 @@ import { ThemeScript } from '@/components/ui/ThemeScript';
 import { I18nProvider } from '@/components/ui/I18nProvider';
 import { AuthProvider } from '@/components/ui/AuthProvider';
 import { SkipLink } from '@/components/ui/SkipLink';
+import { MvpBanner } from '@/components/ui/MvpBanner';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
@@ -66,8 +67,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SkipLink />
         <I18nProvider>
           <AuthProvider>
-            {/* id="main-content" als Sprungziel des Skip-Links */}
-            <div id="main-content">{children}</div>
+            <MvpBanner />
+            {/* id="main-content" als Sprungziel des Skip-Links; paddingTop reserviert
+                den Platz für den fixen MvpBanner (siehe --mvp-banner-h) */}
+            <div id="main-content" style={{ paddingTop: 'var(--mvp-banner-h)' }}>
+              {children}
+            </div>
           </AuthProvider>
         </I18nProvider>
       </body>

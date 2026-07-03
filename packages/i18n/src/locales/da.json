@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Annuller",
     "error": "Fejl",
-    "close": "Luk"
+    "close": "Luk",
+    "mvp_banner": "🚧 klopilot er stadig under opbygning (MVP) — der kommer hele tiden nye lande, sprog og funktioner til."
   },
   "category": {
     "public": "Offentlig",

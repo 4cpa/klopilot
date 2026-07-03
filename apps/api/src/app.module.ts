@@ -16,6 +16,7 @@ import { ApiKeysModule } from './modules/api-keys/api-keys.module';
 import { PublicModule } from './modules/public/public.module';
 import { HeatmapModule } from './modules/heatmap/heatmap.module';
 import { PartnersModule } from './modules/partners/partners.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { PartnersModule } from './modules/partners/partners.module';
     PublicModule,
     HeatmapModule,
     PartnersModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

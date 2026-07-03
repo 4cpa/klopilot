@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Mégse",
     "error": "Hiba",
-    "close": "Bezárás"
+    "close": "Bezárás",
+    "mvp_banner": "🚧 A klopilot még épül (MVP) — folyamatosan jönnek az új országok, nyelvek és funkciók."
   },
   "category": {
     "public": "Nyilvános",

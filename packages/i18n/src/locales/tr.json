@@ -304,7 +304,8 @@
   "common": {
     "cancel": "İptal",
     "error": "Hata",
-    "close": "Kapat"
+    "close": "Kapat",
+    "mvp_banner": "🚧 klopilot henüz yapım aşamasında (MVP) — yeni ülkeler, diller ve özellikler durmadan ekleniyor."
   },
   "category": {
     "public": "Herkese açık",
