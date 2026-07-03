@@ -216,7 +216,8 @@ export function Navbar() {
       aria-label={t('a11y.main_nav')}
       style={{
         position: 'fixed',
-        top: 0,
+        // startet unterhalb des fixen MvpBanner statt bei 0, sonst Überlappung
+        top: 'var(--mvp-banner-h)',
         left: 0,
         right: 0,
         zIndex: 50,
