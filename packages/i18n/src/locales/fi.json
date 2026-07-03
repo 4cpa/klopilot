@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Peruuta",
     "error": "Virhe",
-    "close": "Sulje"
+    "close": "Sulje",
+    "mvp_banner": "🚧 klopilot on vielä rakenteilla (MVP) — uusia maita, kieliä ja ominaisuuksia lisätään jatkuvasti."
   },
   "category": {
     "public": "Julkinen",

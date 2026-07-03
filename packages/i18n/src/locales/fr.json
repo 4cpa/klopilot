@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Annuler",
     "error": "Erreur",
-    "close": "Fermer"
+    "close": "Fermer",
+    "mvp_banner": "🚧 klopilot est encore en chantier (MVP) — on ajoute sans arrêt de nouveaux pays, langues et fonctionnalités."
   },
   "category": {
     "public": "Public",

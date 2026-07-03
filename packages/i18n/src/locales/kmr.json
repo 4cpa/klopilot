@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Betal bike",
     "error": "Çewtî",
-    "close": "Bigire"
+    "close": "Bigire",
+    "mvp_banner": "🚧 klopilot hîn tê avakirin (MVP) — welat, ziman û taybetmendiyên nû berdewam tên zêdekirin."
   },
   "category": {
     "public": "Giştî",

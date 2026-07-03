@@ -269,7 +269,9 @@ function KarteInner() {
   return (
     <main
       className="relative w-screen overflow-hidden"
-      style={{ height: '100dvh' }} // 100dvh schrumpft mit Safari-Toolbar, 100vh nicht
+      // 100dvh schrumpft mit Safari-Toolbar, 100vh nicht; minus MvpBanner-Höhe,
+      // da #main-content bereits per paddingTop um denselben Betrag verschoben ist
+      style={{ height: 'calc(100dvh - var(--mvp-banner-h))' }}
     >
       {/* Cursor-Hinweis im Marker-Drop-Modus */}
       {activeSheet === 'add' && !pendingLocation && (

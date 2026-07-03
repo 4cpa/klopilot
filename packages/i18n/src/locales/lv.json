@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Atcelt",
     "error": "Kļūda",
-    "close": "Aizvērt"
+    "close": "Aizvērt",
+    "mvp_banner": "🚧 klopilot vēl top (MVP) — pastāvīgi pievienojam jaunas valstis, valodas un funkcijas."
   },
   "category": {
     "public": "Publiska",

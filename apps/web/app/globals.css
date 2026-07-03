@@ -31,6 +31,9 @@
   --verified-bg:       #FFF3CD;
   --verified-fg:       #A67C00;
   --verified-border:   #FFD700;
+  /* Höhe des fixen MVP-Hinweisbanners — von Seiten mit eigenem 100dvh-Fullscreen
+     (Karte) abgezogen, siehe app/karte/page.tsx */
+  --mvp-banner-h:      34px;
 }
 
 [data-theme="dark"] {

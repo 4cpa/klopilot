@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Otkaži",
     "error": "Greška",
-    "close": "Zatvori"
+    "close": "Zatvori",
+    "mvp_banner": "🚧 klopilot je još u izgradnji (MVP) — nove zemlje, jezici i funkcije stižu kontinuirano."
   },
   "category": {
     "public": "Javno",

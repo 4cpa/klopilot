@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Prekliči",
     "error": "Napaka",
-    "close": "Zapri"
+    "close": "Zapri",
+    "mvp_banner": "🚧 klopilot je še v gradnji (MVP) — nove države, jeziki in funkcije prihajajo sproti."
   },
   "category": {
     "public": "Javno",

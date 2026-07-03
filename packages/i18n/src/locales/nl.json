@@ -304,7 +304,8 @@
   "common": {
     "cancel": "Annuleren",
     "error": "Fout",
-    "close": "Sluiten"
+    "close": "Sluiten",
+    "mvp_banner": "🚧 klopilot is nog volop in de bouw (MVP) — er komen voortdurend nieuwe landen, talen en functies bij."
   },
   "category": {
     "public": "Openbaar",
