@@ -121,7 +121,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
               fontSize: 11,
               fontWeight: 800,
               letterSpacing: '0.04em',
-              color: 'var(--brand-primary)',
+              color: 'var(--score-primary-text)',
               lineHeight: 1,
             }}
           >
@@ -252,7 +252,7 @@ export function SearchBar({ userLocation, onSelect, trailing }: Props) {
                   {dist && (
                     <span
                       className="text-xs font-medium flex-shrink-0"
-                      style={{ color: 'var(--brand-primary)' }}
+                      style={{ color: 'var(--score-primary-text)' }}
                     >
                       {dist}
                     </span>

@@ -276,7 +276,7 @@ function ColHeader({ emoji, label }: { emoji: string; label: string }) {
         style={{
           fontSize: 11,
           fontWeight: 800,
-          color: 'rgba(255,255,255,0.35)',
+          color: 'rgba(255,255,255,0.6)',
           textTransform: 'uppercase',
           letterSpacing: '0.12em',
         }}
@@ -547,7 +547,7 @@ export function Footer() {
           gap: 12,
         }}
       >
-        <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>
+        <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>
           {t('footer.copyright', { year })}
         </span>
 
@@ -559,13 +559,13 @@ export function Footer() {
             href="https://klopilot.ch"
             style={{
               fontSize: 13,
-              color: 'rgba(255,255,255,0.35)',
+              color: 'rgba(255,255,255,0.6)',
               textDecoration: 'none',
               transition: 'color 0.15s',
             }}
             onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = '#fff')}
             onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.35)')
+              ((e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.6)')
             }
           >
             klopilot.ch
@@ -575,13 +575,13 @@ export function Footer() {
             href="mailto:admin@4cpa.ch"
             style={{
               fontSize: 13,
-              color: 'rgba(255,255,255,0.35)',
+              color: 'rgba(255,255,255,0.6)',
               textDecoration: 'none',
               transition: 'color 0.15s',
             }}
             onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = '#fff')}
             onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.35)')
+              ((e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.6)')
             }
           >
             admin@4cpa.ch

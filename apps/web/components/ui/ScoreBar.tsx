@@ -20,7 +20,11 @@ export function ScoreBar({ score, className = '' }: Props) {
         <span className="text-lg" aria-hidden>
           🌸
         </span>
-        <div className="flex-1 h-2.5 bg-[var(--rate-flower-bg)] rounded-full overflow-hidden">
+        <div
+          className="flex-1 h-2.5 bg-[var(--rate-flower-bg)] rounded-full overflow-hidden"
+          role="img"
+          aria-label={`Blümchen-Bewertung: ${score.flowers.toFixed(1)} von 5`}
+        >
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{ width: `${flowerPct}%`, background: 'var(--rate-flower)' }}
@@ -28,7 +32,8 @@ export function ScoreBar({ score, className = '' }: Props) {
         </div>
         <span
           className="text-sm font-semibold w-6 text-right"
-          style={{ color: 'var(--rate-flower)' }}
+          style={{ color: 'var(--rate-flower-text)' }}
+          aria-hidden
         >
           {score.flowers.toFixed(1)}
         </span>
@@ -37,13 +42,21 @@ export function ScoreBar({ score, className = '' }: Props) {
         <span className="text-lg" aria-hidden>
           🪰
         </span>
-        <div className="flex-1 h-2.5 bg-[var(--rate-fly-bg)] rounded-full overflow-hidden">
+        <div
+          className="flex-1 h-2.5 bg-[var(--rate-fly-bg)] rounded-full overflow-hidden"
+          role="img"
+          aria-label={`Fliegen-Bewertung: ${score.flies.toFixed(1)} von 5`}
+        >
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{ width: `${flyPct}%`, background: 'var(--rate-fly)' }}
           />
         </div>
-        <span className="text-sm font-semibold w-6 text-right" style={{ color: 'var(--rate-fly)' }}>
+        <span
+          className="text-sm font-semibold w-6 text-right"
+          style={{ color: 'var(--rate-fly)' }}
+          aria-hidden
+        >
           {score.flies.toFixed(1)}
         </span>
       </div>

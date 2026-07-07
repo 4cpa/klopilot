@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef, useId } from 'react';
+import { useEffect, useState, useCallback, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   toilets as toiletsApi,
@@ -11,6 +11,7 @@ import {
   type Rating,
 } from '@/lib/api';
 import { useAuth } from '@/lib/hooks';
+import { useFocusTrap } from '@/lib/useFocusTrap';
 
 interface Props {
   toiletId: string | null;
@@ -27,10 +28,19 @@ type Detail = Toilet & {
 
 /* ── Score colour ─────────────────────────────────────────────────────────── */
 function netColor(net: number) {
-  if (net > 1) return 'var(--brand-mint)';
-  if (net > 0) return 'var(--brand-secondary)';
-  if (net > -1) return 'var(--brand-primary)';
-  return 'var(--brand-berry)';
+  if (net > 1) return 'var(--score-mint-text)';
+  if (net > 0) return 'var(--score-secondary-text)';
+  if (net > -1) return 'var(--score-primary-text)';
+  return 'var(--score-berry-text)';
+}
+
+/* Score bubble background (weisser Text darauf) braucht die -solid-Variante,
+   nicht die -text-Variante — siehe netColor() für die Fliesstext-Variante. */
+function netColorSolid(net: number) {
+  if (net > 1) return 'var(--score-mint-solid)';
+  if (net > 0) return 'var(--score-secondary-solid)';
+  if (net > -1) return 'var(--score-primary-solid)';
+  return 'var(--score-berry-solid)';
 }
 
 /* ── Photo lightbox ───────────────────────────────────────────────────────── */
@@ -60,6 +70,9 @@ function PhotoLightbox({
   }, [prev, next, onClose]);
 
   return (
+    // Klick auf den Backdrop schliesst (Maus-Komfort) — Tastatur-Äquivalent ist
+    // Escape (s. useEffect oben) + der fokussierbare Schliessen-Button unten.
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events
     <div
       role="dialog"
       aria-modal="true"
@@ -75,6 +88,8 @@ function PhotoLightbox({
       }}
       onClick={onClose}
     >
+      {/* Reiner Klick-Propagation-Stopper (kein interaktives Element, kein Tastaturpfad nötig) */}
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}
@@ -115,7 +130,7 @@ function PhotoLightbox({
               aria-label={t('a11y.prev_photo')}
               style={{
                 position: 'absolute',
-                left: -44,
+                insetInlineStart: -44,
                 top: '50%',
                 transform: 'translateY(-50%)',
                 background: 'rgba(255,255,255,0.18)',
@@ -139,7 +154,7 @@ function PhotoLightbox({
               aria-label={t('a11y.next_photo')}
               style={{
                 position: 'absolute',
-                right: -44,
+                insetInlineEnd: -44,
                 top: '50%',
                 transform: 'translateY(-50%)',
                 background: 'rgba(255,255,255,0.18)',
@@ -374,8 +389,8 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
   const [reporting, setReporting] = useState(false);
   const [reportDone, setReportDone] = useState(false);
   const [reportErr, setReportErr] = useState<string | null>(null);
-  const sheetRef = useRef<HTMLElement>(null);
   const fileInputId = useId();
+  const sheetRef = useFocusTrap<HTMLElement>(true, onClose);
 
   useEffect(() => {
     if (!toiletId) {
@@ -391,15 +406,6 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
       .catch(() => setDetail(null))
       .finally(() => setLoading(false));
   }, [toiletId]);
-
-  // Close on Escape
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose();
-    }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
 
   const handleShare = useCallback(async () => {
     const url = window.location.origin + `/karte?t=${toiletId}`;
@@ -542,6 +548,7 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
         aria-modal="true"
         aria-labelledby="toilet-sheet-title"
         aria-describedby={detail ? 'toilet-sheet-desc' : undefined}
+        tabIndex={-1}
         className="toilet-sheet"
         style={{ background: 'var(--paper)', zIndex: 40 }}
       >
@@ -598,7 +605,7 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                 gap: 5,
                 padding: '6px 12px',
                 borderRadius: 8,
-                background: copied ? 'var(--brand-mint)' : 'var(--cream)',
+                background: copied ? 'var(--score-mint-solid)' : 'var(--cream)',
                 border: '1px solid var(--line)',
                 fontSize: 12,
                 fontWeight: 600,
@@ -615,8 +622,8 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
             onClick={onClose}
             aria-label={t('common.close')}
             style={{
-              width: 32,
-              height: 32,
+              width: 44,
+              height: 44,
               borderRadius: '50%',
               background: 'var(--cream)',
               border: '1px solid var(--line)',
@@ -657,6 +664,18 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
 
         {!loading && detail && (
           <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px 24px' }}>
+            {/* Für Screenreader: Kurzfassung der wichtigsten Fakten, die sonst nur
+                über Icons/Badges vermittelt werden */}
+            <p id="toilet-sheet-desc" className="sr-only">
+              {t(`category.${detail.category}`) || detail.category}
+              {score && score.count > 0
+                ? `, Bewertung ${net > 0 ? '+' : ''}${net.toFixed(1)} aus ${score.count} Bewertungen`
+                : ', noch keine Bewertungen'}
+              {detail.address ? `, ${detail.address}` : ''}
+              {accBadges.length > 0
+                ? `, Ausstattung: ${accBadges.map((b) => b.label).join(', ')}`
+                : ''}
+            </p>
             {/* ── Title row ── */}
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
               {/* Score bubble */}
@@ -667,12 +686,12 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                     width: 52,
                     height: 52,
                     borderRadius: '50%',
-                    background: netColor(net),
+                    background: netColorSolid(net),
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: `0 4px 14px ${netColor(net)}44`,
+                    boxShadow: `0 4px 14px ${netColorSolid(net)}44`,
                   }}
                 >
                   <span style={{ fontSize: 15, fontWeight: 900, color: '#fff', lineHeight: 1 }}>
@@ -888,20 +907,31 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                       style={{ position: 'relative', flexShrink: 0 }}
                       className="photo-thumb-wrap"
                     >
-                      {/* img statt next/image: Galerie braucht dynamische Dimensionen */}
-                      <img
-                        src={url}
-                        alt={`${detail.name} — Foto ${i + 1} von ${photos.length}`}
+                      <button
+                        type="button"
                         onClick={() => setLightbox({ urls: photoUrls, idx: i })}
                         style={{
-                          height: 96,
-                          width: 96,
-                          objectFit: 'cover',
-                          borderRadius: 10,
+                          padding: 0,
+                          border: 'none',
+                          background: 'none',
                           cursor: 'pointer',
                           display: 'block',
                         }}
-                      />
+                      >
+                        {/* img statt next/image: Galerie braucht dynamische Dimensionen.
+                            alt trägt den Namen des Buttons (Accessible Name from Content). */}
+                        <img
+                          src={url}
+                          alt={`${detail.name} — Foto ${i + 1} von ${photos.length}`}
+                          style={{
+                            height: 96,
+                            width: 96,
+                            objectFit: 'cover',
+                            borderRadius: 10,
+                            display: 'block',
+                          }}
+                        />
+                      </button>
                       {canDelete && (
                         <button
                           type="button"
@@ -1000,7 +1030,7 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                     width: '100%',
                     padding: '13px',
                     borderRadius: 12,
-                    background: 'var(--brand-primary)',
+                    background: 'var(--btn-primary-bg)',
                     color: '#fff',
                     border: 'none',
                     cursor: 'pointer',
@@ -1064,11 +1094,16 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                   capture="environment"
                   onChange={handleUpload}
                   disabled={uploading}
+                  aria-describedby={uploadErr ? 'upload-error' : undefined}
                   style={{ display: 'none' }}
                 />
                 {uploadErr && (
-                  <p style={{ fontSize: 12, color: 'var(--brand-berry)', margin: 0 }}>
-                    ⚠ {uploadErr}
+                  <p
+                    id="upload-error"
+                    role="alert"
+                    style={{ fontSize: 12, color: 'var(--error-text)', margin: 0 }}
+                  >
+                    <span aria-hidden>⚠</span> {uploadErr}
                   </p>
                 )}
 
@@ -1080,25 +1115,36 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                       type="button"
                       disabled={deleting}
                       onClick={handleDeleteToilet}
+                      aria-describedby={deleteErr ? 'delete-error' : undefined}
                       style={{
                         width: '100%',
                         padding: '11px',
                         borderRadius: 12,
                         background: 'transparent',
-                        border: '1.5px solid var(--brand-berry)',
+                        border: '1.5px solid var(--score-berry-text)',
                         fontSize: 13,
                         fontWeight: 700,
-                        color: 'var(--brand-berry)',
+                        color: 'var(--score-berry-text)',
                         cursor: deleting ? 'not-allowed' : 'pointer',
                         opacity: deleting ? 0.6 : 1,
                         marginTop: 4,
                       }}
                     >
-                      {deleting ? '…' : '🗑 Toilette löschen'}
+                      {deleting ? (
+                        '…'
+                      ) : (
+                        <>
+                          <span aria-hidden>🗑</span> Toilette löschen
+                        </>
+                      )}
                     </button>
                     {deleteErr && (
-                      <p style={{ fontSize: 12, color: 'var(--brand-berry)', margin: 0 }}>
-                        ⚠ {deleteErr}
+                      <p
+                        id="delete-error"
+                        role="alert"
+                        style={{ fontSize: 12, color: 'var(--error-text)', margin: 0 }}
+                      >
+                        <span aria-hidden>⚠</span> {deleteErr}
                       </p>
                     )}
                   </>
@@ -1137,6 +1183,7 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                     type="button"
                     onClick={handleReport}
                     disabled={reporting}
+                    aria-describedby={reportErr ? 'report-error' : undefined}
                     style={{
                       width: '100%',
                       padding: '10px',
@@ -1151,11 +1198,21 @@ export function ToiletSheet({ toiletId, onClose, onRate, onDeleted }: Props) {
                       transition: 'all 0.15s',
                     }}
                   >
-                    {reporting ? '…' : '⚠️ Schwerwiegenden Mangel melden'}
+                    {reporting ? (
+                      '…'
+                    ) : (
+                      <>
+                        <span aria-hidden>⚠️</span> Schwerwiegenden Mangel melden
+                      </>
+                    )}
                   </button>
                   {reportErr && (
-                    <p style={{ fontSize: 12, color: 'var(--brand-berry)', margin: '4px 0 0' }}>
-                      ⚠ {reportErr}
+                    <p
+                      id="report-error"
+                      role="alert"
+                      style={{ fontSize: 12, color: 'var(--error-text)', margin: '4px 0 0' }}
+                    >
+                      <span aria-hidden>⚠</span> {reportErr}
                     </p>
                   )}
                 </>

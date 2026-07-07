@@ -66,11 +66,11 @@ function VerifyContent() {
       {status === 'error' && (
         <>
           <div className="text-4xl">❌</div>
-          <p className="text-[var(--brand-berry)] font-medium">{msg}</p>
+          <p className="text-[var(--error-text)] font-medium">{msg}</p>
           <a
             href="/"
             className="px-4 py-2 rounded-lg text-sm font-semibold text-white"
-            style={{ background: 'var(--brand-primary)' }}
+            style={{ background: 'var(--btn-primary-bg)' }}
           >
             Zurück zur Karte
           </a>

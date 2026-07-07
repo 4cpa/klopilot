@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/hooks';
 import { users, type UserStats, type Badge, type Toilet } from '@/lib/api';
+import { useFocusTrap } from '@/lib/useFocusTrap';
 
 /* ── Role colours ────────────────────────────────────────────────────────── */
 const ROLE_COLOR: Record<string, string> = {
@@ -92,7 +93,8 @@ function ToiletRow({ toilet, onSelect }: { toilet: Toilet; onSelect: (id: string
     private: '🔒',
   };
   const net = toilet.score?.net ?? 0;
-  const netColor = net > 0 ? 'var(--brand-mint)' : net < 0 ? 'var(--brand-berry)' : 'var(--muted)';
+  const netColor =
+    net > 0 ? 'var(--score-mint-text)' : net < 0 ? 'var(--score-berry-text)' : 'var(--muted)';
 
   return (
     <button
@@ -185,6 +187,15 @@ export function ProfileSidebar({ open, onClose, onToiletSelect, onLoginClick }: 
     };
   }, [open]);
 
+  const panelRef = useFocusTrap<HTMLElement>(open, onClose);
+
+  // Solange die Sidebar geschlossen (nur per CSS ausgeblendet) ist, darf sie
+  // nicht per Tab erreichbar oder für Screenreader sichtbar sein.
+  useEffect(() => {
+    const el = panelRef.current as (HTMLElement & { inert?: boolean }) | null;
+    if (el) el.inert = !open;
+  }, [open, panelRef]);
+
   const handleLogout = useCallback(async () => {
     await logout();
     onClose();
@@ -221,8 +232,12 @@ export function ProfileSidebar({ open, onClose, onToiletSelect, onLoginClick }: 
 
       {/* Panel */}
       <aside
+        ref={panelRef}
         aria-label={t('a11y.user_profile')}
-        role="complementary"
+        role="dialog"
+        aria-modal={open}
+        aria-hidden={!open}
+        tabIndex={-1}
         style={{
           position: 'fixed',
           top: 0,
@@ -259,8 +274,8 @@ export function ProfileSidebar({ open, onClose, onToiletSelect, onLoginClick }: 
             onClick={onClose}
             aria-label={t('common.close')}
             style={{
-              width: 32,
-              height: 32,
+              width: 44,
+              height: 44,
               borderRadius: 8,
               border: '1px solid var(--line)',
               background: 'var(--cream)',
@@ -295,7 +310,7 @@ export function ProfileSidebar({ open, onClose, onToiletSelect, onLoginClick }: 
                 style={{
                   padding: '12px 32px',
                   borderRadius: 10,
-                  background: 'var(--brand-primary)',
+                  background: 'var(--btn-primary-bg)',
                   color: '#fff',
                   fontSize: 15,
                   fontWeight: 700,
@@ -453,7 +468,7 @@ export function ProfileSidebar({ open, onClose, onToiletSelect, onLoginClick }: 
                           border: 'none',
                           cursor: 'pointer',
                           fontSize: 13,
-                          color: 'var(--brand-primary)',
+                          color: 'var(--score-primary-text)',
                           fontWeight: 600,
                         }}
                       >
@@ -496,8 +511,8 @@ export function ProfileSidebar({ open, onClose, onToiletSelect, onLoginClick }: 
                 transition: 'all 0.15s',
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = 'var(--brand-berry)';
-                (e.currentTarget as HTMLElement).style.color = 'var(--brand-berry)';
+                (e.currentTarget as HTMLElement).style.borderColor = 'var(--score-berry-text)';
+                (e.currentTarget as HTMLElement).style.color = 'var(--score-berry-text)';
               }}
               onMouseLeave={(e) => {
                 (e.currentTarget as HTMLElement).style.borderColor = 'var(--line)';

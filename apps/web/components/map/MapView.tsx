@@ -41,10 +41,15 @@ function buildStyleUrl(style: MapStyleId = 'satellite'): string | maplibregl.Sty
 
 function scoreColor(score?: Toilet['score']) {
   if (!score || score.count === 0) return '#9AA4B2';
-  if (score.net > 1) return '#06D6A0';
-  if (score.net > 0) return '#FFD23F';
-  if (score.net > -1) return '#FF8B5C';
-  return '#EF476F';
+  if (score.net > 1) return 'var(--score-mint-solid)';
+  if (score.net > 0) return 'var(--score-secondary-solid)';
+  if (score.net > -1) return 'var(--score-primary-solid)';
+  return 'var(--score-berry-solid)';
+}
+
+/** Enter UND Leertaste aktivieren role="button"-Marker (ARIA APG Button-Pattern). */
+function isActivationKey(e: KeyboardEvent): boolean {
+  return e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar';
 }
 
 const HEATMAP_SOURCE = 'klo-heatmap';
@@ -119,11 +124,30 @@ function buildClusterElement(count: number, label: string): HTMLDivElement {
   return el;
 }
 
+/** Zusammengesetztes aria-label: Name + Bewertung + Zugänglichkeit — alles, was
+ *  sehende Nutzer:innen aus Score-Farbe/Badges am Marker ablesen, muss auch am
+ *  fokussierten Marker per Screenreader hörbar sein. */
+function toiletAriaLabel(t: Toilet): string {
+  const parts = [t.name];
+  if (t.score && t.score.count > 0) {
+    parts.push(
+      `Bewertung ${t.score.net > 0 ? '+' : ''}${t.score.net.toFixed(1)} aus ${t.score.count} Bewertungen`,
+    );
+  } else {
+    parts.push('noch keine Bewertungen');
+  }
+  if (t.accessibility?.wheelchair) parts.push('rollstuhlgerecht');
+  else if (t.accessibility?.step_free) parts.push('stufenlos zugänglich');
+  if (t.accessibility?.euro_key) parts.push('Eurokey');
+  if (t.category === 'nette_toilette') parts.push('Nette Toilette');
+  return parts.join(', ');
+}
+
 /** Rich-Einzelmarker (Score-Raute bzw. WC-Pin + Badges). */
 function buildMarkerElement(t: Toilet): HTMLDivElement {
   const el = document.createElement('div');
   el.className = 'klo-marker';
-  el.setAttribute('aria-label', t.name);
+  el.setAttribute('aria-label', toiletAriaLabel(t));
   el.setAttribute('role', 'button');
   el.setAttribute('tabindex', '0');
   el.style.position = 'relative';
@@ -140,7 +164,7 @@ function buildMarkerElement(t: Toilet): HTMLDivElement {
   const border = isNetteToilette ? '2.5px solid #2DA84F' : '2px solid rgba(255,255,255,0.9)';
 
   const wheelchairBadge = isAccessible
-    ? `<div title="${t.accessibility?.wheelchair ? 'Rollstuhlgerecht' : 'Stufenlos zugänglich'}" style="
+    ? `<div aria-hidden="true" title="${t.accessibility?.wheelchair ? 'Rollstuhlgerecht' : 'Stufenlos zugänglich'}" style="
          position:absolute;top:-5px;right:-7px;
          background:#1D6FA4;border-radius:50%;
          width:17px;height:17px;
@@ -151,7 +175,7 @@ function buildMarkerElement(t: Toilet): HTMLDivElement {
        ">♿</div>`
     : '';
   const euroKeyBadge = isEuroKey
-    ? `<div title="Eurokey" style="
+    ? `<div aria-hidden="true" title="Eurokey" style="
          position:absolute;top:-5px;left:-7px;
          background:#C97D0E;border-radius:50%;
          width:17px;height:17px;
@@ -262,7 +286,10 @@ function syncMarkers(
         };
         el.addEventListener('click', expand);
         el.addEventListener('keydown', (e) => {
-          if ((e as KeyboardEvent).key === 'Enter') expand();
+          if (isActivationKey(e as KeyboardEvent)) {
+            e.preventDefault();
+            expand();
+          }
         });
         marker = pool[key] = new maplibregl.Marker({ element: el }).setLngLat(coords);
       }
@@ -278,7 +305,10 @@ function syncMarkers(
         const el = buildMarkerElement(toilet);
         el.addEventListener('click', () => onSelectRef.current(id));
         el.addEventListener('keydown', (e) => {
-          if ((e as KeyboardEvent).key === 'Enter') onSelectRef.current(id);
+          if (isActivationKey(e as KeyboardEvent)) {
+            e.preventDefault();
+            onSelectRef.current(id);
+          }
         });
         marker = pool[id] = new maplibregl.Marker({ element: el, anchor: 'bottom' }).setLngLat(
           coords,
@@ -359,7 +389,10 @@ function renderServerClusters(
       map.easeTo({ center: [c.lng, c.lat], zoom: Math.min(map.getZoom() + 3, 20), duration: 500 });
     el.addEventListener('click', zoomIn);
     el.addEventListener('keydown', (e) => {
-      if ((e as KeyboardEvent).key === 'Enter') zoomIn();
+      if (isActivationKey(e as KeyboardEvent)) {
+        e.preventDefault();
+        zoomIn();
+      }
     });
     store.current.push(new maplibregl.Marker({ element: el }).setLngLat([c.lng, c.lat]).addTo(map));
   }

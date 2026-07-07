@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ratings, type RatingInput, type ScoreInput } from '@/lib/api';
 import { RatingSlider } from '@/components/ui/RatingSlider';
+import { useFocusTrap } from '@/lib/useFocusTrap';
 
 const CRITERIA: { key: keyof RatingInput['scores']; label: string }[] = [
   { key: 'cleanliness', label: 'Sauberkeit' },
@@ -32,6 +33,7 @@ export function RatingSheet({ toiletId, onClose, onSaved }: Props) {
   const [comment, setComment] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const dialogRef = useFocusTrap<HTMLElement>(true, onClose);
 
   function handleScore(key: string, flowers: number, flies: number) {
     setScores((prev) => ({ ...prev, [key]: { flowers, flies } }));
@@ -62,9 +64,11 @@ export function RatingSheet({ toiletId, onClose, onSaved }: Props) {
     <>
       <div className="absolute inset-0 z-30" onClick={onClose} aria-hidden />
       <aside
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={t('rating.title')}
+        tabIndex={-1}
         className="absolute bottom-0 left-0 right-0 z-40 rounded-t-2xl max-h-[90vh] flex flex-col"
         style={{ background: 'var(--surface)', boxShadow: '0 -8px 40px rgba(15,23,42,.18)' }}
       >
@@ -78,7 +82,7 @@ export function RatingSheet({ toiletId, onClose, onSaved }: Props) {
             type="button"
             onClick={onClose}
             aria-label={t('common.close')}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--muted)]"
+            className="w-11 h-11 rounded-full flex items-center justify-center text-[var(--muted)]"
             style={{ background: 'var(--cream)' }}
           >
             ✕
@@ -111,13 +115,18 @@ export function RatingSheet({ toiletId, onClose, onSaved }: Props) {
             />
           </div>
 
-          {error && <p className="text-sm text-[var(--brand-berry)]">{error}</p>}
+          {error && (
+            <p id="rating-error" role="alert" className="text-sm text-[var(--error-text)]">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
             disabled={saving}
+            aria-describedby={error ? 'rating-error' : undefined}
             className="w-full py-3 rounded-xl font-semibold text-white transition-all active:scale-95 disabled:opacity-50"
-            style={{ background: 'var(--brand-primary)' }}
+            style={{ background: 'var(--btn-primary-bg)' }}
           >
             {saving ? 'Wird gespeichert…' : '🌸 Bewertung speichern'}
           </button>

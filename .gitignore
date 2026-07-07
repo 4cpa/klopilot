@@ -18,6 +18,11 @@ build/
 # Test coverage
 coverage/
 
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+
 # Environment — NEVER commit real secrets
 .env
 .env.local

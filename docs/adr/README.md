@@ -21,3 +21,4 @@ einen neuen ADR abgelöst.
 | 0001 | i18n: 31 Sprachen mit RTL-Unterstützung | Akzeptiert |
 | 0002 | Produktions-Hosting bei Infomaniak (CH) | Akzeptiert |
 | 0003 | OSM-Seed-Import & Karten-Clustering     | Akzeptiert |
+| 0004 | WCAG-2.1-AA-Überarbeitung (Web)         | Akzeptiert |

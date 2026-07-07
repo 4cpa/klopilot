@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth as authApi } from '@/lib/api';
 import { authStore } from '@/lib/auth-store';
+import { useFocusTrap } from '@/lib/useFocusTrap';
 
 interface Props {
   onClose: () => void;
@@ -18,6 +19,7 @@ export function LoginModal({ onClose }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const dialogRef = useFocusTrap<HTMLDivElement>(true, onClose);
 
   // Polling-Intervall aufräumen wenn Modal geschlossen oder gemountet wird
   useEffect(() => {
@@ -75,9 +77,11 @@ export function LoginModal({ onClose }: Props) {
         aria-hidden
       />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={t('profile.login_title')}
+        tabIndex={-1}
         className="absolute left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm rounded-2xl p-6 shadow-xl"
         style={{ background: 'var(--surface)' }}
       >
@@ -93,77 +97,96 @@ export function LoginModal({ onClose }: Props) {
             type="button"
             onClick={onClose}
             aria-label={t('common.close')}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--muted)]"
+            className="w-11 h-11 rounded-full flex items-center justify-center text-[var(--muted)]"
             style={{ background: 'var(--cream)' }}
           >
             ✕
           </button>
         </div>
 
-        {step === 'email' && (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <p className="text-sm text-[var(--muted)]">{t('profile.login_subtitle')}</p>
-            <div>
-              <label
-                className="block text-sm font-medium text-[var(--ink)] mb-1"
-                htmlFor="login-email"
+        <div aria-live="polite">
+          {step === 'email' && (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <p className="text-sm text-[var(--muted)]">{t('profile.login_subtitle')}</p>
+              <div>
+                <label
+                  className="block text-sm font-medium text-[var(--ink)] mb-1"
+                  htmlFor="login-email"
+                >
+                  {t('profile.email_label')}
+                </label>
+                <input
+                  id="login-email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t('profile.email_placeholder')}
+                  aria-invalid={error ? true : undefined}
+                  aria-describedby={error ? 'login-error' : undefined}
+                  className="w-full rounded-lg px-3 py-2.5 text-sm border border-[var(--line)] bg-[var(--cream)] text-[var(--ink)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--brand-primary)]"
+                />
+              </div>
+              {error && (
+                <p
+                  id="login-error"
+                  role="alert"
+                  className="text-sm"
+                  style={{ color: 'var(--error-text)' }}
+                >
+                  {error}
+                </p>
+              )}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 rounded-xl font-semibold text-white transition-all active:scale-95 disabled:opacity-50"
+                style={{ background: 'var(--btn-primary-bg)' }}
               >
-                {t('profile.email_label')}
-              </label>
-              <input
-                id="login-email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t('profile.email_placeholder')}
-                className="w-full rounded-lg px-3 py-2.5 text-sm border border-[var(--line)] bg-[var(--cream)] text-[var(--ink)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--brand-primary)]"
-              />
-            </div>
-            {error && <p className="text-sm text-[var(--brand-berry)]">{error}</p>}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 rounded-xl font-semibold text-white transition-all active:scale-95 disabled:opacity-50"
-              style={{ background: 'var(--brand-primary)' }}
-            >
-              {loading ? t('profile.sending') : t('profile.send_magic_link')}
-            </button>
-          </form>
-        )}
+                {loading ? t('profile.sending') : t('profile.send_magic_link')}
+              </button>
+            </form>
+          )}
 
-        {step === 'sent' && (
-          <div className="space-y-4 text-center">
-            <div className="text-5xl">📬</div>
-            <p className="text-sm text-[var(--muted)] whitespace-pre-line">
-              {t('profile.sent_text', { email })}
-            </p>
-            <p className="text-sm text-[var(--muted)]">{t('profile.sent_hint')}</p>
-            {/* Animierter Pulse zeigt dass aktiv gepollt wird */}
-            <div className="flex items-center justify-center gap-2 text-xs text-[var(--muted)]">
-              <span
-                className="inline-block w-2 h-2 rounded-full animate-pulse"
-                style={{ background: 'var(--brand-primary)' }}
-              />
-              {t('profile.waiting_confirm')}
+          {step === 'sent' && (
+            <div className="space-y-4 text-center">
+              <div className="text-5xl" aria-hidden>
+                📬
+              </div>
+              <p className="text-sm text-[var(--muted)] whitespace-pre-line">
+                {t('profile.sent_text', { email })}
+              </p>
+              <p className="text-sm text-[var(--muted)]">{t('profile.sent_hint')}</p>
+              {/* Animierter Pulse zeigt dass aktiv gepollt wird — rein dekorativ,
+                  Status wird stattdessen über den Text daneben angekündigt */}
+              <div className="flex items-center justify-center gap-2 text-xs text-[var(--muted)]">
+                <span
+                  className="inline-block w-2 h-2 rounded-full animate-pulse"
+                  style={{ background: 'var(--btn-primary-bg)' }}
+                  aria-hidden
+                />
+                {t('profile.waiting_confirm')}
+              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                className="text-sm text-[var(--muted)] hover:text-[var(--ink)]"
+              >
+                {t('common.close')}
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-sm text-[var(--muted)] hover:text-[var(--ink)]"
-            >
-              {t('common.close')}
-            </button>
-          </div>
-        )}
+          )}
 
-        {step === 'loggedIn' && (
-          <div className="space-y-4 text-center">
-            <div className="text-5xl">✅</div>
-            <p className="text-sm font-medium text-[var(--ink)]">{t('profile.logged_in_msg')}</p>
-          </div>
-        )}
+          {step === 'loggedIn' && (
+            <div className="space-y-4 text-center">
+              <div className="text-5xl" aria-hidden>
+                ✅
+              </div>
+              <p className="text-sm font-medium text-[var(--ink)]">{t('profile.logged_in_msg')}</p>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

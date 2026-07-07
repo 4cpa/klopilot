@@ -110,7 +110,7 @@ export function LegalPage({ title, children }: Props) {
           color: var(--ink);
         }
         .legal-content a {
-          color: var(--brand-primary);
+          color: var(--score-primary-text);
           text-decoration: underline;
           text-decoration-thickness: 1px;
           text-underline-offset: 2px;

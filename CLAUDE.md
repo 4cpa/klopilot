@@ -240,6 +240,10 @@ Privat­toiletten · Public API
 - OSM-Seed / Reindex: `apps/api/prisma/seed-osm.ts`, `apps/api/prisma/reindex-meili.ts`
 - Statistik-Report-Generator: `apps/web/scripts/generate-report.mjs`
 - ADRs (Architecture Decision Records): `docs/adr/`
+- Barrierefreiheit: Fokus-Falle `apps/web/lib/useFocusTrap.ts`, Listenansicht
+  `apps/web/components/map/ToiletListPanel.tsx`, axe-Test `apps/web/e2e/a11y.spec.ts`,
+  Kontrast-/Score-Tokens in `apps/web/app/globals.css`; Hintergrund/Konventionen:
+  `docs/DESIGN.md` §9, `docs/adr/0004-wcag-accessibility-ueberarbeitung.md`
 
 ## 13. Externe Services
 

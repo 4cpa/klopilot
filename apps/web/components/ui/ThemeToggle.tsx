@@ -110,7 +110,7 @@ export function ThemeToggle() {
               border: 'none',
               cursor: 'pointer',
               transition: 'background 0.15s, color 0.15s',
-              background: active ? 'var(--brand-primary)' : 'transparent',
+              background: active ? 'var(--btn-primary-bg)' : 'transparent',
               color: active ? '#fff' : 'var(--muted)',
               borderRight: value !== 'dark' ? '1px solid var(--line)' : 'none',
             }}

@@ -38,7 +38,7 @@ export function AdminNav({ role }: { role: string }) {
               textDecoration: 'none',
               whiteSpace: 'nowrap',
               color: active ? '#fff' : 'var(--muted)',
-              background: active ? 'var(--brand-primary)' : 'transparent',
+              background: active ? 'var(--btn-primary-bg)' : 'transparent',
             }}
           >
             {l.label}

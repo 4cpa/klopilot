@@ -15,7 +15,7 @@
   --cream:           #FFF3DC;
   --surface:         #FFFBF2;
   --ink:             #0B132B;
-  --muted:           #6B7280;
+  --muted:           #5B6472;
   --line:            #E7E0CF;
   --rate-flower:     #E91E63;
   --rate-flower-bg:  #FFE4EE;
@@ -29,8 +29,28 @@
   --search-glass-open: rgba(255, 255, 255, 0.92);
   /* „Verifiziert"-Gold-Akzent (Badge in ToiletSheet + Admin) */
   --verified-bg:       #FFF3CD;
-  --verified-fg:       #A67C00;
+  --verified-fg:       #7A5D00;
   --verified-border:   #FFD700;
+
+  /* ── Kontrastsichere Score-/Button-Tokens (WCAG 1.4.3, ≥4.5:1) ────────────
+     -solid: Volltonfarbe für Flächen mit weisser Schrift (Buttons, Marker,
+       Badges) — bewusst themenunabhängig, da weiss-auf-Farbe kontrastseitig
+       nicht vom Papierton abhängt.
+     -text: dieselbe Farbfamilie, abgestimmt für freistehenden Fliesstext auf
+       `--paper`/`--surface` je Theme. */
+  --rate-flower-text:      #AD1457;
+  --score-primary-solid:   #C1440E;
+  --score-secondary-solid: #8A6D00;
+  --score-mint-solid:      #046C52;
+  --score-berry-solid:     #B8264F;
+  --score-sky-solid:       #0B5E76;
+  --score-primary-text:    #C1440E;
+  --score-secondary-text:  #8A6D00;
+  --score-mint-text:       #046C52;
+  --score-berry-text:      #B8264F;
+  --score-sky-text:        #0B5E76;
+  --btn-primary-bg:        #C1440E;
+  --error-text:            #B8264F;
   /* Höhe des fixen MVP-Hinweisbanners — von Seiten mit eigenem 100dvh-Fullscreen
      (Karte) abgezogen, siehe app/karte/page.tsx */
   --mvp-banner-h:      34px;
@@ -59,6 +79,17 @@
   --verified-bg:       rgba(255, 215, 0, 0.15);
   --verified-fg:       #FFD86B;
   --verified-border:   rgba(255, 215, 0, 0.45);
+
+  /* Freistehender Text im Dark Mode ist bereits mit den aufgehellten
+     Marken-/Bewertungsfarben kontraststark — -solid bleibt gleich (siehe
+     oben), nur die -text-Variante zeigt hier die aufgehellten Töne. */
+  --rate-flower-text:      #FF7AB3;
+  --score-primary-text:    #FF8B5C;
+  --score-secondary-text:  #FFE066;
+  --score-mint-text:       #3FE8B7;
+  --score-berry-text:      #FF6B8A;
+  --score-sky-text:        #4FC3E8;
+  --error-text:            #FF6B8A;
 }
 
 /* ── Base ──────────────────────────────────────────────────────────────────── */
@@ -84,7 +115,7 @@ body.map-page, body.map-page #__next {
   z-index: 9999;
   padding: 10px 20px;
   border-radius: 0 0 10px 10px;
-  background: var(--brand-primary);
+  background: var(--btn-primary-bg);
   color: #fff;
   font-weight: 700;
   font-size: 14px;
@@ -97,17 +128,19 @@ body.map-page, body.map-page #__next {
   outline-offset: 2px;
 }
 
-/* ── Focus ─────────────────────────────────────────────────────────────────── */
+/* ── Focus (WCAG 1.4.11 Non-text Contrast: Fokus-Ring braucht ≥3:1 zur
+   Umgebung — --brand-primary allein erreicht das auf --paper nicht, darum
+   hier bewusst --btn-primary-bg statt der Marken-Akzentfarbe) ─────────────── */
 :focus-visible {
-  outline: 2px solid var(--brand-primary);
+  outline: 2px solid var(--btn-primary-bg);
   outline-offset: 2px;
   border-radius: 4px;
 }
 /* Buttons / Links: zusätzlicher Focus-Ring */
 button:focus-visible, a:focus-visible, [role="option"]:focus-visible {
-  outline: 2px solid var(--brand-primary);
+  outline: 2px solid var(--btn-primary-bg);
   outline-offset: 3px;
-  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.18);
+  box-shadow: 0 0 0 4px rgba(193, 68, 14, 0.22);
 }
 
 /* ── Reduced Motion (WCAG 2.3.3) ──────────────────────────────────────────── */
