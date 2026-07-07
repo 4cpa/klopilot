@@ -2,6 +2,7 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
 
 export default tseslint.config(
   js.configs.recommended,
@@ -45,6 +46,15 @@ export default tseslint.config(
     files: ['apps/web/**'],
     rules: {
       '@next/next/no-img-element': 'off',
+    },
+  },
+  {
+    // Barrierefreiheit (WCAG 2.1 AA): jsx-a11y warnt bei fehlenden alt-Texten,
+    // Labels, ARIA-Missbrauch etc. — verhindert Regressionen bei künftigen PRs.
+    files: ['apps/web/**/*.{ts,tsx}'],
+    plugins: { 'jsx-a11y': jsxA11y },
+    rules: {
+      ...jsxA11y.flatConfigs.recommended.rules,
     },
   },
   {

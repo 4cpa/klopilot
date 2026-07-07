@@ -1,15 +1,15 @@
 import type { Viewport } from 'next';
 
 /**
- * Karte-spezifisches Viewport: maximum-scale=1 verhindert, dass iOS-Safari
- * das Pinch-Zoom auf den Browser-Zoom statt auf die MapLibre-Karte anwendet.
- * Nur für /karte gesetzt — andere Seiten behalten normales Zoom-Verhalten.
+ * Pinch-Zoom bleibt erlaubt (WCAG 1.4.4/1.4.10) — MapLibre setzt selbst
+ * `touch-action: none` auf den Canvas-Container (maplibre-gl.css), sodass der
+ * Browser die Geste dort ohnehin nicht abgreift. Der frühere
+ * maximumScale/userScalable-Hack war unnötig und blockierte sehbeeinträchtigten
+ * Nutzer:innen jedes Vergrössern der restlichen UI (AppBar, Sheets, …).
  */
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: 'cover',
 };
 

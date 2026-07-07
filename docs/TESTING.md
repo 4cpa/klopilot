@@ -259,7 +259,29 @@ test('Toilette per Karten-Klick hinzufügen', async ({ page }) => {
 });
 ```
 
-### 5.3 E2E-Umgebung
+### 5.3 Barrierefreiheits-Tests (axe)
+
+**Datei:** `apps/web/e2e/a11y.spec.ts`
+
+Automatisierter WCAG-Smoke-Test mit `@axe-core/playwright`: prüft `/` und
+`/karte` gegen die Tag-Sets `wcag2a`/`wcag2aa`/`wcag21a`/`wcag21aa` und lässt
+den Test fehlschlagen, sobald ein `critical`- oder `serious`-Verstoss
+auftaucht (leichtere `moderate`/`minor`-Befunde werden bewusst nicht
+erzwungen, um Flakiness zu vermeiden). Deckt nur die mechanisch prüfbare
+Teilmenge ab (Kontrast, fehlende Labels/Namen, ARIA-Missbrauch,
+Landmark-Struktur) — ersetzt keine manuelle Prüfung mit Screenreader/Tastatur.
+
+```bash
+pnpm --filter web exec playwright test e2e/a11y.spec.ts
+```
+
+Ergänzend läuft `eslint-plugin-jsx-a11y` (`recommended`-Regelsatz, Scope
+`apps/web/**/*.{ts,tsx}`) als Teil von `pnpm lint` und fängt strukturelle
+Probleme (fehlende `alt`, Klick-Handler ohne Tastaturpfad, ungültige
+ARIA-Rollen-Kombinationen) schon vor dem Commit ab. Hintergrund/Entscheide:
+`docs/adr/0004-wcag-accessibility-ueberarbeitung.md`.
+
+### 5.4 E2E-Umgebung
 
 ```bash
 # Lokal für E2E:
@@ -269,7 +291,7 @@ pnpm dev &
 pnpm test:e2e
 ```
 
-### 5.4 CI-Konfiguration
+### 5.5 CI-Konfiguration
 
 E2E läuft in GitHub Actions nur auf `main`-Push (nicht bei PRs, zu langsam):
 
@@ -426,4 +448,4 @@ Bevor ein Feature als fertig gilt:
 
 ---
 
-— Stand: v0.6.0 · 2026-06-01 · © 2026 Transivroom Division
+— Stand: v0.7.0 · 2026-07-07 · © 2026 Transivroom Division

@@ -70,7 +70,7 @@ export function AppBar({
               type="button"
               onClick={onAddClick}
               className="px-3 py-1.5 rounded-lg text-sm font-semibold text-white transition-colors hidden sm:block"
-              style={{ background: 'var(--brand-primary)' }}
+              style={{ background: 'var(--btn-primary-bg)' }}
             >
               + {t('tabs.contribute')}
             </button>
@@ -157,7 +157,7 @@ export function AppBar({
             type="button"
             onClick={onLoginClick}
             className="px-3 py-1.5 rounded-lg text-sm font-semibold text-white transition-colors"
-            style={{ background: 'var(--brand-primary)' }}
+            style={{ background: 'var(--btn-primary-bg)' }}
           >
             {t('profile.login_title')}
           </button>

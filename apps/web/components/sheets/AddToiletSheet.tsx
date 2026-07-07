@@ -1,7 +1,8 @@
 'use client';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toilets } from '@/lib/api';
+import { useFocusTrap } from '@/lib/useFocusTrap';
 
 // Emoji + Kategorie-Wert; das Label kommt aus dem übersetzten `category.*`-Namespace
 const CATEGORIES = [
@@ -49,6 +50,10 @@ export function AddToiletSheet({
   const [genderNeutral, setGenderNeutral] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const dialogRef = useFocusTrap<HTMLElement>(true, onClose);
+  const categoryRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const availabilityRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   // Wenn ein neuer Karten-Klick kommt, Felder aktualisieren
   const displayLng = lngValue ?? lng;
@@ -57,9 +62,10 @@ export function AddToiletSheet({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) {
-      setError('Name ist Pflichtfeld');
+      setNameError('Name ist Pflichtfeld');
       return;
     }
+    setNameError(null);
     setSaving(true);
     setError(null);
     try {
@@ -97,9 +103,11 @@ export function AddToiletSheet({
     <>
       <div className="absolute inset-0 z-30" onClick={onClose} aria-hidden />
       <aside
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={t('contribute.title')}
+        tabIndex={-1}
         className="absolute bottom-0 left-0 right-0 z-40 rounded-t-2xl max-h-[90vh] flex flex-col"
         style={{ background: 'var(--surface)', boxShadow: '0 -8px 40px rgba(15,23,42,.18)' }}
       >
@@ -113,7 +121,7 @@ export function AddToiletSheet({
             type="button"
             onClick={onClose}
             aria-label={t('common.close')}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--muted)]"
+            className="w-11 h-11 rounded-full flex items-center justify-center text-[var(--muted)]"
             style={{ background: 'var(--cream)' }}
           >
             ✕
@@ -133,26 +141,60 @@ export function AddToiletSheet({
               id="toilet-name"
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (nameError) setNameError(null);
+              }}
               placeholder={t('contribute.name_placeholder')}
               maxLength={120}
               required
+              aria-required="true"
+              aria-invalid={nameError ? true : undefined}
+              aria-describedby={nameError ? 'toilet-name-error' : undefined}
               className="w-full rounded-lg px-3 py-2 text-sm border border-[var(--line)] bg-[var(--cream)] text-[var(--ink)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--brand-primary)]"
             />
+            {nameError && (
+              <p
+                id="toilet-name-error"
+                role="alert"
+                className="mt-1 text-sm text-[var(--error-text)]"
+              >
+                {nameError}
+              </p>
+            )}
           </div>
 
           {/* Kategorie */}
           <div>
-            <label className="block text-sm font-medium text-[var(--ink)] mb-1">
+            <span className="block text-sm font-medium text-[var(--ink)] mb-1" id="category-label">
               {t('contribute.category_label')}
-            </label>
-            <div className="grid grid-cols-2 gap-1.5">
-              {CATEGORIES.map((c) => (
+            </span>
+            <div
+              role="radiogroup"
+              aria-labelledby="category-label"
+              className="grid grid-cols-2 gap-1.5"
+            >
+              {CATEGORIES.map((c, i) => (
                 <button
                   key={c.value}
+                  ref={(el) => {
+                    categoryRefs.current[i] = el;
+                  }}
                   type="button"
+                  role="radio"
+                  aria-checked={category === c.value}
+                  tabIndex={category === c.value ? 0 : -1}
                   onClick={() => setCategory(c.value)}
-                  aria-pressed={category === c.value}
+                  onKeyDown={(e) => {
+                    const forward = e.key === 'ArrowRight' || e.key === 'ArrowDown';
+                    const backward = e.key === 'ArrowLeft' || e.key === 'ArrowUp';
+                    if (!forward && !backward) return;
+                    e.preventDefault();
+                    const n = CATEGORIES.length;
+                    const next = forward ? (i + 1) % n : (i - 1 + n) % n;
+                    setCategory(CATEGORIES[next].value);
+                    categoryRefs.current[next]?.focus();
+                  }}
                   className={`text-sm py-2 px-3 rounded-lg text-left transition-all ${
                     category === c.value
                       ? 'text-white'
@@ -162,21 +204,23 @@ export function AddToiletSheet({
                     category === c.value
                       ? {
                           background:
-                            c.value === 'private' ? 'var(--brand-berry)' : 'var(--brand-primary)',
+                            c.value === 'private'
+                              ? 'var(--score-berry-solid)'
+                              : 'var(--btn-primary-bg)',
                         }
                       : {}
                   }
                 >
-                  {c.emoji} {t(`category.${c.value}`)}
+                  <span aria-hidden>{c.emoji}</span> {t(`category.${c.value}`)}
                 </button>
               ))}
             </div>
             {category === 'private' && (
               <p
                 className="mt-2 text-xs rounded-lg px-3 py-2"
-                style={{ background: 'rgba(209,48,72,0.08)', color: 'var(--brand-berry)' }}
+                style={{ background: 'rgba(209,48,72,0.08)', color: 'var(--score-berry-text)' }}
               >
-                🔒 {t('contribute.private_note')}
+                <span aria-hidden>🔒</span> {t('contribute.private_note')}
               </p>
             )}
           </div>
@@ -258,38 +302,47 @@ export function AddToiletSheet({
 
           {/* Ausstattung & Zugänglichkeit */}
           <div>
-            <label className="block text-sm font-medium text-[var(--ink)] mb-2">
+            <span className="block text-sm font-medium text-[var(--ink)] mb-2" id="amenities-label">
               {t('accessibility.title')}
-            </label>
-            <div className="grid grid-cols-2 gap-1.5">
+            </span>
+            <div
+              role="group"
+              aria-labelledby="amenities-label"
+              className="grid grid-cols-2 gap-1.5"
+            >
               {[
                 {
                   key: 'wheelchair',
-                  label: `♿ ${t('accessibility.wheelchair')}`,
+                  emoji: '♿',
+                  label: t('accessibility.wheelchair'),
                   value: wheelchair,
                   set: setWheelchair,
                 },
                 {
                   key: 'euroKey',
-                  label: `🔑 ${t('accessibility.euro_key')}`,
+                  emoji: '🔑',
+                  label: t('accessibility.euro_key'),
                   value: euroKey,
                   set: setEuroKey,
                 },
                 {
                   key: 'shower',
-                  label: `🚿 ${t('accessibility.shower')}`,
+                  emoji: '🚿',
+                  label: t('accessibility.shower'),
                   value: shower,
                   set: setShower,
                 },
                 {
                   key: 'babyChanging',
-                  label: `👶 ${t('accessibility.baby_changing')}`,
+                  emoji: '👶',
+                  label: t('accessibility.baby_changing'),
                   value: babyChanging,
                   set: setBabyChanging,
                 },
                 {
                   key: 'genderNeutral',
-                  label: `🚻 ${t('accessibility.gender_neutral')}`,
+                  emoji: '🚻',
+                  label: t('accessibility.gender_neutral'),
                   value: genderNeutral,
                   set: setGenderNeutral,
                 },
@@ -304,9 +357,9 @@ export function AddToiletSheet({
                       ? 'text-white'
                       : 'bg-[var(--cream)] text-[var(--ink)] hover:bg-[var(--line)]'
                   }`}
-                  style={opt.value ? { background: 'var(--brand-mint)' } : {}}
+                  style={opt.value ? { background: 'var(--score-mint-solid)' } : {}}
                 >
-                  {opt.label}
+                  <span aria-hidden>{opt.emoji}</span> {opt.label}
                 </button>
               ))}
             </div>
@@ -334,34 +387,56 @@ export function AddToiletSheet({
 
           {/* Verfügbarkeit */}
           <div>
-            <label className="block text-sm font-medium text-[var(--ink)] mb-2">
+            <span
+              className="block text-sm font-medium text-[var(--ink)] mb-2"
+              id="availability-label"
+            >
               {t('contribute.availability')}
-            </label>
-            <div style={{ display: 'flex', gap: 8 }}>
+            </span>
+            <div
+              role="radiogroup"
+              aria-labelledby="availability-label"
+              style={{ display: 'flex', gap: 8 }}
+            >
               {[
                 {
                   value: true,
-                  label: `✅ ${t('contribute.available')}`,
+                  emoji: '✅',
+                  label: t('contribute.available'),
                   desc: t('contribute.available_desc'),
                 },
                 {
                   value: false,
-                  label: `🚫 ${t('contribute.closed')}`,
+                  emoji: '🚫',
+                  label: t('contribute.closed'),
                   desc: t('contribute.closed_desc'),
                 },
-              ].map((opt) => (
+              ].map((opt, i) => (
                 <button
                   key={String(opt.value)}
+                  ref={(el) => {
+                    availabilityRefs.current[i] = el;
+                  }}
                   type="button"
+                  role="radio"
+                  aria-checked={isAvailable === opt.value}
+                  tabIndex={isAvailable === opt.value ? 0 : -1}
                   onClick={() => setIsAvailable(opt.value)}
+                  onKeyDown={(e) => {
+                    if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key))
+                      return;
+                    e.preventDefault();
+                    const next = !isAvailable;
+                    setIsAvailable(next);
+                    availabilityRefs.current[next ? 0 : 1]?.focus();
+                  }}
                   style={{
                     flex: 1,
                     padding: '9px 10px',
                     borderRadius: 10,
-                    border: `1.5px solid ${isAvailable === opt.value ? 'var(--brand-primary)' : 'var(--line)'}`,
-                    background:
-                      isAvailable === opt.value ? 'rgba(255,107,53,0.08)' : 'var(--cream)',
-                    color: isAvailable === opt.value ? 'var(--brand-primary)' : 'var(--muted)',
+                    border: `1.5px solid ${isAvailable === opt.value ? 'var(--btn-primary-bg)' : 'var(--line)'}`,
+                    background: isAvailable === opt.value ? 'rgba(193,68,14,0.08)' : 'var(--cream)',
+                    color: isAvailable === opt.value ? 'var(--score-primary-text)' : 'var(--muted)',
                     fontSize: 12,
                     fontWeight: isAvailable === opt.value ? 700 : 400,
                     cursor: 'pointer',
@@ -369,20 +444,27 @@ export function AddToiletSheet({
                     transition: 'all 0.15s',
                   }}
                 >
-                  <div style={{ fontWeight: 600, marginBottom: 1 }}>{opt.label}</div>
+                  <div style={{ fontWeight: 600, marginBottom: 1 }}>
+                    <span aria-hidden>{opt.emoji}</span> {opt.label}
+                  </div>
                   <div style={{ fontSize: 10, opacity: 0.7 }}>{opt.desc}</div>
                 </button>
               ))}
             </div>
           </div>
 
-          {error && <p className="text-sm text-[var(--brand-berry)]">{error}</p>}
+          {error && (
+            <p id="toilet-error" role="alert" className="text-sm text-[var(--error-text)]">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
             disabled={saving}
+            aria-describedby={error ? 'toilet-error' : undefined}
             className="w-full py-3 rounded-xl font-semibold text-white transition-all active:scale-95 disabled:opacity-50"
-            style={{ background: 'var(--brand-primary)' }}
+            style={{ background: 'var(--btn-primary-bg)' }}
           >
             {saving ? t('contribute.submitting') : t('contribute.submit')}
           </button>

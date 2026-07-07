@@ -106,7 +106,7 @@ export function Hero() {
             transition: 'color 0.15s',
           }}
           onMouseEnter={(e) =>
-            ((e.currentTarget as HTMLElement).style.color = 'var(--brand-primary)')
+            ((e.currentTarget as HTMLElement).style.color = 'var(--score-primary-text)')
           }
           onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--ink)')}
         >
@@ -126,7 +126,7 @@ export function Hero() {
           border: '1px solid var(--line)',
           fontSize: 13,
           fontWeight: 600,
-          color: 'var(--brand-primary)',
+          color: 'var(--score-primary-text)',
           marginBottom: 32,
         }}
       >
@@ -151,7 +151,7 @@ export function Hero() {
           .split('\n')
           .map((line, i, arr) =>
             i === arr.length - 1 ? (
-              <span key={i} style={{ color: 'var(--brand-primary)' }}>
+              <span key={i} style={{ color: 'var(--score-primary-text)' }}>
                 {line}
               </span>
             ) : (
@@ -187,7 +187,7 @@ export function Hero() {
             fontWeight: 700,
             color: '#fff',
             textDecoration: 'none',
-            background: 'var(--brand-primary)',
+            background: 'var(--btn-primary-bg)',
             boxShadow: '0 4px 20px rgba(255,107,53,0.35)',
             transition: 'transform 0.15s, box-shadow 0.15s',
           }}

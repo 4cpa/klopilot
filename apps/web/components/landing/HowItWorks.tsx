@@ -62,7 +62,7 @@ export function HowItWorks() {
                   width: 52,
                   height: 52,
                   borderRadius: '50%',
-                  background: 'var(--brand-primary)',
+                  background: 'var(--btn-primary-bg)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',

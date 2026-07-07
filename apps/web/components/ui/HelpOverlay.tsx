@@ -179,8 +179,8 @@ export function HelpButton() {
                 onClick={() => setOpen(false)}
                 aria-label={t('common.close')}
                 style={{
-                  width: 32,
-                  height: 32,
+                  width: 44,
+                  height: 44,
                   borderRadius: '50%',
                   background: 'var(--cream)',
                   border: '1px solid var(--line)',
@@ -260,7 +260,7 @@ export function HelpButton() {
                   href="https://github.com/4cpa/klopilot"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: 'var(--brand-primary)' }}
+                  style={{ color: 'var(--score-primary-text)' }}
                 >
                   Open Source
                 </a>

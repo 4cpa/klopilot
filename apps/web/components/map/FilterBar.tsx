@@ -58,8 +58,8 @@ function Chip({
         gap: 5,
         padding: '5px 12px',
         borderRadius: 999,
-        border: active ? '1.5px solid var(--brand-primary)' : '1.5px solid var(--line)',
-        background: active ? 'var(--brand-primary)' : 'var(--paper)',
+        border: active ? '1.5px solid var(--btn-primary-bg)' : '1.5px solid var(--line)',
+        background: active ? 'var(--btn-primary-bg)' : 'var(--paper)',
         color: active ? '#fff' : 'var(--ink)',
         fontSize: 13,
         fontWeight: active ? 700 : 500,
@@ -149,6 +149,21 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
     onChange(DEFAULT_FILTERS);
   }
 
+  // ARIA APG Toolbar-Pattern: Pfeiltasten bewegen den Fokus zwischen den Chips
+  // (statt jeden einzelnen per Tab anzusteuern).
+  function handleToolbarKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const buttons = Array.from(e.currentTarget.querySelectorAll('button'));
+    const idx = buttons.indexOf(document.activeElement as HTMLButtonElement);
+    if (idx === -1) return;
+    e.preventDefault();
+    const next =
+      e.key === 'ArrowRight'
+        ? (idx + 1) % buttons.length
+        : (idx - 1 + buttons.length) % buttons.length;
+    buttons[next].focus();
+  }
+
   const active = hasActiveFilters(filters);
 
   return (
@@ -156,6 +171,7 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
       ref={barRef}
       role="toolbar"
       aria-label={t('a11y.filters')}
+      onKeyDown={handleToolbarKeyDown}
       style={{
         position: 'absolute',
         top: 64,
@@ -175,17 +191,18 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
     >
       {/* Quick-toggle filters */}
       <Chip active={filters.free} onClick={toggleFree}>
-        💸 {t('filter.free')}
+        <span aria-hidden>💸</span> {t('filter.free')}
       </Chip>
       <Chip active={filters.accessible} onClick={toggleAccessible}>
-        ♿ {t('filter.accessible')}
+        <span aria-hidden>♿</span> {t('filter.accessible')}
       </Chip>
       <Chip active={filters.shower} onClick={toggleShower}>
-        🚿 {t('filter.shower')}
+        <span aria-hidden>🚿</span> {t('filter.shower')}
       </Chip>
 
       {/* Divider dot */}
       <span
+        aria-hidden
         style={{ color: 'var(--muted)', opacity: 0.4, flexShrink: 0, fontSize: 18, lineHeight: 1 }}
       >
         ·
@@ -194,7 +211,7 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
       {/* Category chips */}
       {CATEGORIES.map(({ key, emoji, i18nKey }) => (
         <Chip key={key} active={filters.categories.has(key)} onClick={() => toggleCategory(key)}>
-          {emoji} {t(i18nKey)}
+          <span aria-hidden>{emoji}</span> {t(i18nKey)}
         </Chip>
       ))}
 
@@ -202,6 +219,7 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
       {active && (
         <>
           <span
+            aria-hidden
             style={{
               color: 'var(--muted)',
               opacity: 0.4,
@@ -222,9 +240,9 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
               gap: 4,
               padding: '5px 12px',
               borderRadius: 999,
-              border: '1.5px solid var(--brand-berry)',
+              border: '1.5px solid var(--score-berry-text)',
               background: 'var(--paper)',
-              color: 'var(--brand-berry)',
+              color: 'var(--score-berry-text)',
               fontSize: 13,
               fontWeight: 600,
               cursor: 'pointer',
@@ -233,15 +251,15 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
               transition: 'all 0.15s',
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.background = 'var(--brand-berry)';
+              (e.currentTarget as HTMLElement).style.background = 'var(--score-berry-solid)';
               (e.currentTarget as HTMLElement).style.color = '#fff';
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.background = 'var(--paper)';
-              (e.currentTarget as HTMLElement).style.color = 'var(--brand-berry)';
+              (e.currentTarget as HTMLElement).style.color = 'var(--score-berry-text)';
             }}
           >
-            ✕ Reset
+            <span aria-hidden>✕</span> Reset
           </button>
         </>
       )}
@@ -256,7 +274,7 @@ export function FilterBar({ filters, onChange, totalCount, visibleCount }: Props
             borderRadius: 999,
             fontSize: 12,
             fontWeight: 700,
-            background: visibleCount === 0 ? 'var(--brand-berry)' : 'var(--brand-mint)',
+            background: visibleCount === 0 ? 'var(--score-berry-solid)' : 'var(--score-mint-solid)',
             color: '#fff',
             flexShrink: 0,
             letterSpacing: '0.01em',

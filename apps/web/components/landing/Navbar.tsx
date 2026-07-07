@@ -172,7 +172,7 @@ export function LangDropdown({ compact = false }: { compact?: boolean }) {
                     style={{
                       fontSize: 13,
                       fontWeight: isActive ? 700 : 500,
-                      color: isActive ? 'var(--brand-primary)' : 'var(--ink)',
+                      color: isActive ? 'var(--score-primary-text)' : 'var(--ink)',
                       lineHeight: 1.25,
                     }}
                   >
@@ -185,7 +185,7 @@ export function LangDropdown({ compact = false }: { compact?: boolean }) {
                   )}
                 </div>
                 {isActive && (
-                  <span style={{ color: 'var(--brand-primary)', fontSize: 12, flexShrink: 0 }}>
+                  <span style={{ color: 'var(--score-primary-text)', fontSize: 12, flexShrink: 0 }}>
                     ✓
                   </span>
                 )}
@@ -269,11 +269,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Nav Links */}
-        <div
-          role="list"
-          style={{ display: 'flex', gap: 4, marginLeft: 32, flex: 1 }}
-          className="hidden-mobile"
-        >
+        <div style={{ display: 'flex', gap: 4, marginLeft: 32, flex: 1 }} className="hidden-mobile">
           {[
             { href: '#features', label: t('nav.features') },
             { href: '#how', label: t('nav.how_it_works') },
@@ -324,7 +320,7 @@ export function Navbar() {
               fontWeight: 700,
               color: '#fff',
               textDecoration: 'none',
-              background: 'var(--brand-primary)',
+              background: 'var(--btn-primary-bg)',
               whiteSpace: 'nowrap',
               transition: 'opacity 0.15s',
             }}
@@ -443,7 +439,7 @@ export function Navbar() {
                         style={{
                           fontSize: 13,
                           fontWeight: 700,
-                          color: isActive ? 'var(--brand-primary)' : 'var(--ink)',
+                          color: isActive ? 'var(--score-primary-text)' : 'var(--ink)',
                           lineHeight: 1.2,
                         }}
                       >

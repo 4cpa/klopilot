@@ -125,7 +125,7 @@ function UserRow({
 
       <td style={{ padding: '10px 8px', verticalAlign: 'middle' }}>
         {err && (
-          <p style={{ margin: '0 0 6px', fontSize: 11, color: 'var(--brand-berry)' }}>⚠ {err}</p>
+          <p style={{ margin: '0 0 6px', fontSize: 11, color: 'var(--error-text)' }}>⚠ {err}</p>
         )}
         <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
           {!isSelf && !deleted && u.status === 'active' && (
@@ -183,9 +183,9 @@ function UserRow({
               style={{
                 padding: '4px 9px',
                 borderRadius: 7,
-                border: '1px solid var(--brand-berry)',
+                border: '1px solid var(--score-berry-text)',
                 background: 'transparent',
-                color: 'var(--brand-berry)',
+                color: 'var(--score-berry-text)',
                 fontSize: 11,
                 fontWeight: 700,
                 cursor: busy ? 'not-allowed' : 'pointer',
@@ -406,7 +406,7 @@ function AdminUsersPageContent() {
         )}
 
         {error && (
-          <p style={{ textAlign: 'center', color: 'var(--brand-berry)', padding: '24px 0' }}>
+          <p style={{ textAlign: 'center', color: 'var(--error-text)', padding: '24px 0' }}>
             ⚠ {error}
           </p>
         )}

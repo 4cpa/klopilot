@@ -19,6 +19,7 @@ import { ToiletSheet } from '@/components/sheets/ToiletSheet';
 import { RatingSheet } from '@/components/sheets/RatingSheet';
 import { AddToiletSheet } from '@/components/sheets/AddToiletSheet';
 import { LoginModal } from '@/components/auth/LoginModal';
+import { ToiletListPanel } from '@/components/map/ToiletListPanel';
 import type { MapStyleId, MapBounds } from '@/components/map/MapView';
 
 const MapView = dynamic(() => import('@/components/map/MapView'), {
@@ -53,6 +54,7 @@ function KarteInner() {
   const filtersRef = useRef(filters);
   filtersRef.current = filters;
   const [profileOpen, setProfileOpen] = useState(false);
+  const [listViewOpen, setListViewOpen] = useState(false);
   // Deep-Link: ?t=<toiletId> direkt beim Init auflösen
   const deepLinkId = searchParams.get('t');
   const [activeSheet, setActiveSheet] = useState<Sheet>(deepLinkId ? 'detail' : 'none');
@@ -71,6 +73,16 @@ function KarteInner() {
 
   const mapCenter = useMemo<[number, number]>(() => pos ?? [DEFAULT_LNG, DEFAULT_LAT], [pos]);
   const initialized = useRef(false);
+  const backgroundRef = useRef<HTMLDivElement>(null);
+
+  // Karte + Chrome für Tastatur/Screenreader inert schalten, solange ein
+  // modales Sheet offen ist (verhindert Tab-Durchwandern durch Hunderte
+  // Marker im Hintergrund, siehe MapView-Marker-Fokusbarkeit).
+  const anySheetOpen = activeSheet !== 'none' || profileOpen || listViewOpen;
+  useEffect(() => {
+    const el = backgroundRef.current as (HTMLDivElement & { inert?: boolean }) | null;
+    if (el) el.inert = anySheetOpen;
+  }, [anySheetOpen]);
 
   // ── Erstes Laden beim Init ────────────────────────────────────────────────
   useEffect(() => {
@@ -184,6 +196,14 @@ function KarteInner() {
     setActiveSheet('detail');
   }, []);
 
+  const handleListSelect = useCallback(
+    (id: string) => {
+      setListViewOpen(false);
+      handleSelect(id);
+    },
+    [handleSelect],
+  );
+
   const handleClose = useCallback(() => {
     setActiveSheet('none');
     setSelectedId(null);
@@ -273,233 +293,272 @@ function KarteInner() {
       // da #main-content bereits per paddingTop um denselben Betrag verschoben ist
       style={{ height: 'calc(100dvh - var(--mvp-banner-h))' }}
     >
-      {/* Cursor-Hinweis im Marker-Drop-Modus */}
-      {activeSheet === 'add' && !pendingLocation && (
+      <div ref={backgroundRef}>
+        {/* Cursor-Hinweis im Marker-Drop-Modus */}
+        {activeSheet === 'add' && !pendingLocation && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 'max(72px, calc(env(safe-area-inset-top, 0px) + 72px))',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 30,
+              background: 'var(--brand-secondary)',
+              color: 'var(--brand-deep)',
+              padding: '8px 16px',
+              borderRadius: 999,
+              fontSize: 13,
+              fontWeight: 700,
+              boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+              pointerEvents: 'none',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            📍 {t('contribute.pick_on_map')}
+          </div>
+        )}
+
+        <MapView
+          toilets={visibleToilets}
+          serverClusters={serverClusters}
+          center={pos ?? undefined}
+          flyTarget={flyTarget}
+          zoom={DEFAULT_ZOOM}
+          onSelect={handleSelect}
+          onMoveEnd={handleMoveEnd}
+          onMapClick={handleMapClick}
+          showHeatmap={showHeatmap}
+          heatmapPoints={heatmapPoints}
+          mapStyle={mapStyle}
+          compassEnabled={compassEnabled}
+          onBearingChange={handleBearingChange}
+        />
+
+        <AppBar
+          onLoginClick={() => setActiveSheet('login')}
+          onAddClick={handleAddClick}
+          onProfileClick={() => setProfileOpen(true)}
+          onSearchSelect={handleSearchSelect}
+          userLocation={pos ?? undefined}
+        />
+
+        <FilterBar
+          filters={filters}
+          onChange={setFilters}
+          totalCount={toiletList.length}
+          visibleCount={visibleToilets.length}
+        />
+
+        {/* Kartenstil-Wechsler + Heatmap + Kompass — gemeinsamer Container unten-links.
+          zIndex 10: unter AppBar (20) damit HelpOverlay davor liegt. */}
         <div
           style={{
             position: 'absolute',
-            top: 'max(72px, calc(env(safe-area-inset-top, 0px) + 72px))',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 30,
-            background: 'var(--brand-secondary)',
-            color: 'var(--brand-deep)',
-            padding: '8px 16px',
-            borderRadius: 999,
-            fontSize: 13,
-            fontWeight: 700,
-            boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
-            pointerEvents: 'none',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          📍 {t('contribute.pick_on_map')}
-        </div>
-      )}
-
-      <MapView
-        toilets={visibleToilets}
-        serverClusters={serverClusters}
-        center={pos ?? undefined}
-        flyTarget={flyTarget}
-        zoom={DEFAULT_ZOOM}
-        onSelect={handleSelect}
-        onMoveEnd={handleMoveEnd}
-        onMapClick={handleMapClick}
-        showHeatmap={showHeatmap}
-        heatmapPoints={heatmapPoints}
-        mapStyle={mapStyle}
-        compassEnabled={compassEnabled}
-        onBearingChange={handleBearingChange}
-      />
-
-      <AppBar
-        onLoginClick={() => setActiveSheet('login')}
-        onAddClick={handleAddClick}
-        onProfileClick={() => setProfileOpen(true)}
-        onSearchSelect={handleSearchSelect}
-        userLocation={pos ?? undefined}
-      />
-
-      <FilterBar
-        filters={filters}
-        onChange={setFilters}
-        totalCount={toiletList.length}
-        visibleCount={visibleToilets.length}
-      />
-
-      {/* Kartenstil-Wechsler + Heatmap + Kompass — gemeinsamer Container unten-links.
-          zIndex 10: unter AppBar (20) damit HelpOverlay davor liegt. */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 'max(56px, calc(env(safe-area-inset-bottom, 0px) + 48px))',
-          left: 12,
-          zIndex: 10,
-          display: 'flex',
-          gap: 8,
-          alignItems: 'center',
-        }}
-      >
-        {/* Kartenstil-Wechsler */}
-        <div
-          style={{
+            bottom: 'max(56px, calc(env(safe-area-inset-bottom, 0px) + 48px))',
+            insetInlineStart: 12,
+            zIndex: 10,
             display: 'flex',
-            borderRadius: 12,
-            overflow: 'hidden',
-            border: '1.5px solid var(--line)',
-            boxShadow: '0 2px 12px rgba(15,23,42,0.12)',
-          }}
-        >
-          {(
-            [
-              { id: 'satellite', label: 'Satellit', icon: '🛰️' },
-              { id: 'streets', label: 'Strassen', icon: '🗺️' },
-              { id: 'outdoor', label: 'Outdoor', icon: '🌿' },
-            ] as { id: MapStyleId; label: string; icon: string }[]
-          ).map(({ id, label, icon }) => (
-            <button
-              key={id}
-              type="button"
-              title={label}
-              aria-pressed={mapStyle === id}
-              onClick={() => setMapStyle(id)}
-              style={{
-                padding: '7px 10px',
-                background: mapStyle === id ? 'var(--brand-primary)' : 'var(--paper)',
-                color: mapStyle === id ? '#fff' : 'var(--muted)',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 13,
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-                transition: 'all 0.15s',
-                borderRight: id !== 'outdoor' ? '1px solid var(--line)' : 'none',
-              }}
-            >
-              <span style={{ fontSize: 15 }}>{icon}</span>
-              <span className="hidden sm:inline" style={{ fontSize: 12 }}>
-                {label}
-              </span>
-            </button>
-          ))}
-        </div>
-
-        {/* Heatmap toggle */}
-        <button
-          type="button"
-          onClick={handleHeatmapToggle}
-          title={showHeatmap ? 'Heatmap ausblenden' : 'Heatmap einblenden'}
-          style={{
-            display: 'flex',
+            gap: 8,
             alignItems: 'center',
-            gap: 5,
-            padding: '8px 12px',
-            borderRadius: 12,
-            border: showHeatmap ? '1.5px solid var(--brand-primary)' : '1.5px solid var(--line)',
-            background: showHeatmap ? 'var(--brand-primary)' : 'var(--paper)',
-            color: showHeatmap ? '#fff' : 'var(--ink)',
-            fontSize: 13,
-            fontWeight: 700,
-            cursor: 'pointer',
-            boxShadow: '0 2px 12px rgba(15,23,42,0.12)',
-            transition: 'all 0.18s',
-            opacity: heatmapLoading ? 0.7 : 1,
-            whiteSpace: 'nowrap',
           }}
         >
-          {heatmapLoading ? (
+          {/* Listenansicht — Alternative zur Karte für Screenreader-/Tastatur-Nutzer:innen:
+            Kartenmarker sind räumlich, nicht linear navigierbar; die Liste macht dieselben
+            Toiletten als gewöhnliche Tab-Reihenfolge durchsuchbar. */}
+          <button
+            type="button"
+            onClick={() => setListViewOpen(true)}
+            aria-label="Toiletten als Liste anzeigen (Alternative zur Karte)"
+            title="Listenansicht"
+            style={{
+              width: 42,
+              height: 42,
+              borderRadius: 12,
+              border: '1.5px solid var(--line)',
+              background: 'var(--paper)',
+              color: 'var(--muted)',
+              cursor: 'pointer',
+              fontSize: 18,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 2px 12px rgba(15,23,42,0.12)',
+              flexShrink: 0,
+            }}
+          >
+            <span aria-hidden>📋</span>
+          </button>
+
+          {/* Kartenstil-Wechsler */}
+          <div
+            style={{
+              display: 'flex',
+              borderRadius: 12,
+              overflow: 'hidden',
+              border: '1.5px solid var(--line)',
+              boxShadow: '0 2px 12px rgba(15,23,42,0.12)',
+            }}
+          >
+            {(
+              [
+                { id: 'satellite', label: 'Satellit', icon: '🛰️' },
+                { id: 'streets', label: 'Strassen', icon: '🗺️' },
+                { id: 'outdoor', label: 'Outdoor', icon: '🌿' },
+              ] as { id: MapStyleId; label: string; icon: string }[]
+            ).map(({ id, label, icon }) => (
+              <button
+                key={id}
+                type="button"
+                title={label}
+                aria-pressed={mapStyle === id}
+                onClick={() => setMapStyle(id)}
+                style={{
+                  padding: '7px 10px',
+                  background: mapStyle === id ? 'var(--btn-primary-bg)' : 'var(--paper)',
+                  color: mapStyle === id ? '#fff' : 'var(--muted)',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  transition: 'all 0.15s',
+                  borderRight: id !== 'outdoor' ? '1px solid var(--line)' : 'none',
+                }}
+              >
+                <span style={{ fontSize: 15 }}>{icon}</span>
+                <span className="hidden sm:inline" style={{ fontSize: 12 }}>
+                  {label}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* Heatmap toggle */}
+          <button
+            type="button"
+            onClick={handleHeatmapToggle}
+            title={showHeatmap ? 'Heatmap ausblenden' : 'Heatmap einblenden'}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5,
+              padding: '8px 12px',
+              borderRadius: 12,
+              border: showHeatmap ? '1.5px solid var(--btn-primary-bg)' : '1.5px solid var(--line)',
+              background: showHeatmap ? 'var(--btn-primary-bg)' : 'var(--paper)',
+              color: showHeatmap ? '#fff' : 'var(--ink)',
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 2px 12px rgba(15,23,42,0.12)',
+              transition: 'all 0.18s',
+              opacity: heatmapLoading ? 0.7 : 1,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {heatmapLoading ? (
+              <span
+                style={{
+                  display: 'inline-block',
+                  width: 16,
+                  height: 16,
+                  borderRadius: '50%',
+                  border: '2px solid currentColor',
+                  borderTopColor: 'transparent',
+                  animation: 'spin 0.7s linear infinite',
+                }}
+              />
+            ) : (
+              '🔥'
+            )}
+            Heatmap
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          </button>
+
+          {/* Kompass-Toggle */}
+          <button
+            type="button"
+            onClick={handleCompassToggle}
+            title={
+              compassEnabled
+                ? `Kompass deaktivieren (Bearing: ${Math.round(mapBearing)}°)`
+                : 'Kompass aktivieren — Karte rotieren'
+            }
+            aria-pressed={compassEnabled}
+            style={{
+              width: 42,
+              height: 42,
+              borderRadius: 12,
+              border: compassEnabled
+                ? '1.5px solid var(--brand-primary)'
+                : '1.5px solid var(--line)',
+              background: compassEnabled ? 'var(--paper)' : 'var(--paper)',
+              color: compassEnabled ? 'var(--score-primary-text)' : 'var(--muted)',
+              cursor: 'pointer',
+              boxShadow: compassEnabled
+                ? '0 2px 12px rgba(255,107,53,0.22)'
+                : '0 2px 12px rgba(15,23,42,0.12)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1,
+              transition: 'all 0.18s',
+              padding: 0,
+              flexShrink: 0,
+            }}
+          >
+            {/* SVG-Kompassnadel — dreht sich mit dem Bearing */}
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 22 22"
+              style={{
+                transform: `rotate(${-mapBearing}deg)`,
+                transition: 'transform 0.1s linear',
+                display: 'block',
+              }}
+              aria-hidden
+            >
+              {/* Nord-Pfeilspitze (rot wenn aktiv, grau wenn inaktiv) */}
+              <polygon
+                points="11,2 13.5,11 11,9 8.5,11"
+                fill={compassEnabled ? '#EF476F' : '#9AA4B2'}
+              />
+              {/* Süd-Pfeilspitze */}
+              <polygon
+                points="11,20 13.5,11 11,13 8.5,11"
+                fill={compassEnabled ? '#9AA4B2' : '#C8CDD5'}
+              />
+              {/* Mittelpunkt */}
+              <circle cx="11" cy="11" r="2" fill={compassEnabled ? 'var(--ink)' : '#9AA4B2'} />
+            </svg>
+            {/* N-Label */}
             <span
               style={{
-                display: 'inline-block',
-                width: 16,
-                height: 16,
-                borderRadius: '50%',
-                border: '2px solid currentColor',
-                borderTopColor: 'transparent',
-                animation: 'spin 0.7s linear infinite',
+                fontSize: 9,
+                fontWeight: 800,
+                lineHeight: 1,
+                letterSpacing: '0.03em',
+                color: compassEnabled ? '#EF476F' : '#9AA4B2',
+                fontFamily: 'Inter, sans-serif',
               }}
-            />
-          ) : (
-            '🔥'
-          )}
-          Heatmap
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        </button>
-
-        {/* Kompass-Toggle */}
-        <button
-          type="button"
-          onClick={handleCompassToggle}
-          title={
-            compassEnabled
-              ? `Kompass deaktivieren (Bearing: ${Math.round(mapBearing)}°)`
-              : 'Kompass aktivieren — Karte rotieren'
-          }
-          aria-pressed={compassEnabled}
-          style={{
-            width: 42,
-            height: 42,
-            borderRadius: 12,
-            border: compassEnabled ? '1.5px solid var(--brand-primary)' : '1.5px solid var(--line)',
-            background: compassEnabled ? 'var(--paper)' : 'var(--paper)',
-            color: compassEnabled ? 'var(--brand-primary)' : 'var(--muted)',
-            cursor: 'pointer',
-            boxShadow: compassEnabled
-              ? '0 2px 12px rgba(255,107,53,0.22)'
-              : '0 2px 12px rgba(15,23,42,0.12)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 1,
-            transition: 'all 0.18s',
-            padding: 0,
-            flexShrink: 0,
-          }}
-        >
-          {/* SVG-Kompassnadel — dreht sich mit dem Bearing */}
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 22 22"
-            style={{
-              transform: `rotate(${-mapBearing}deg)`,
-              transition: 'transform 0.1s linear',
-              display: 'block',
-            }}
-            aria-hidden
-          >
-            {/* Nord-Pfeilspitze (rot wenn aktiv, grau wenn inaktiv) */}
-            <polygon
-              points="11,2 13.5,11 11,9 8.5,11"
-              fill={compassEnabled ? '#EF476F' : '#9AA4B2'}
-            />
-            {/* Süd-Pfeilspitze */}
-            <polygon
-              points="11,20 13.5,11 11,13 8.5,11"
-              fill={compassEnabled ? '#9AA4B2' : '#C8CDD5'}
-            />
-            {/* Mittelpunkt */}
-            <circle cx="11" cy="11" r="2" fill={compassEnabled ? 'var(--ink)' : '#9AA4B2'} />
-          </svg>
-          {/* N-Label */}
-          <span
-            style={{
-              fontSize: 9,
-              fontWeight: 800,
-              lineHeight: 1,
-              letterSpacing: '0.03em',
-              color: compassEnabled ? '#EF476F' : '#9AA4B2',
-              fontFamily: 'Inter, sans-serif',
-            }}
-          >
-            N
-          </span>
-        </button>
+            >
+              N
+            </span>
+          </button>
+        </div>
       </div>
+
+      {listViewOpen && (
+        <ToiletListPanel
+          toilets={visibleToilets}
+          onSelect={handleListSelect}
+          onClose={() => setListViewOpen(false)}
+        />
+      )}
 
       {/* Sheets */}
       {activeSheet === 'detail' && (

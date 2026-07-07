@@ -167,7 +167,7 @@ function AdminDataPageContent() {
             padding: '8px 14px',
             borderRadius: 8,
             border: 'none',
-            background: 'var(--brand-primary)',
+            background: 'var(--btn-primary-bg)',
             color: '#fff',
             fontWeight: 700,
             fontSize: 13,
@@ -181,7 +181,7 @@ function AdminDataPageContent() {
 
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px' }}>
         {exportError && (
-          <p style={{ textAlign: 'center', color: 'var(--brand-berry)', marginBottom: 16 }}>
+          <p style={{ textAlign: 'center', color: 'var(--error-text)', marginBottom: 16 }}>
             ⚠ {exportError}
           </p>
         )}
@@ -203,7 +203,7 @@ function AdminDataPageContent() {
         )}
 
         {error && (
-          <p style={{ textAlign: 'center', color: 'var(--brand-berry)', padding: '24px 0' }}>
+          <p style={{ textAlign: 'center', color: 'var(--error-text)', padding: '24px 0' }}>
             ⚠ {error}
           </p>
         )}

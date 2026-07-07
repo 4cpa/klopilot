@@ -75,7 +75,7 @@ function PhotoCard({
 
       {/* Fehler */}
       {err && (
-        <p style={{ margin: '0 12px 6px', fontSize: 11, color: 'var(--brand-berry)' }}>⚠ {err}</p>
+        <p style={{ margin: '0 12px 6px', fontSize: 11, color: 'var(--error-text)' }}>⚠ {err}</p>
       )}
 
       {/* Aktionen */}
@@ -89,7 +89,7 @@ function PhotoCard({
             padding: '9px 0',
             borderRadius: 8,
             border: 'none',
-            background: 'var(--brand-mint)',
+            background: 'var(--score-mint-solid)',
             color: '#fff',
             fontWeight: 700,
             fontSize: 13,
@@ -108,7 +108,7 @@ function PhotoCard({
             padding: '9px 0',
             borderRadius: 8,
             border: 'none',
-            background: 'var(--brand-berry)',
+            background: 'var(--score-berry-solid)',
             color: '#fff',
             fontWeight: 700,
             fontSize: 13,
@@ -223,7 +223,7 @@ function ReportRow({
           {report.reporter.email ? ` (${report.reporter.email})` : ''}
         </p>
         {err && (
-          <p style={{ margin: '6px 0 0', fontSize: 11, color: 'var(--brand-berry)' }}>⚠ {err}</p>
+          <p style={{ margin: '6px 0 0', fontSize: 11, color: 'var(--error-text)' }}>⚠ {err}</p>
         )}
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flexShrink: 0 }}>
@@ -235,7 +235,7 @@ function ReportRow({
             padding: '6px 12px',
             borderRadius: 7,
             border: 'none',
-            background: 'var(--brand-mint)',
+            background: 'var(--score-mint-solid)',
             color: '#fff',
             fontWeight: 700,
             fontSize: 12,
@@ -413,7 +413,7 @@ export default function AdminPage() {
               cursor: 'pointer',
               fontSize: 13,
               fontWeight: tab === key ? 700 : 500,
-              color: tab === key ? 'var(--brand-primary)' : 'var(--muted)',
+              color: tab === key ? 'var(--score-primary-text)' : 'var(--muted)',
               display: 'flex',
               alignItems: 'center',
               gap: 6,
@@ -423,7 +423,7 @@ export default function AdminPage() {
             {count > 0 && (
               <span
                 style={{
-                  background: 'var(--brand-berry)',
+                  background: 'var(--score-berry-solid)',
                   color: '#fff',
                   borderRadius: 999,
                   fontSize: 10,
@@ -459,7 +459,7 @@ export default function AdminPage() {
         )}
 
         {error && (
-          <p style={{ textAlign: 'center', color: 'var(--brand-berry)', padding: '24px 0' }}>
+          <p style={{ textAlign: 'center', color: 'var(--error-text)', padding: '24px 0' }}>
             ⚠ {error}
           </p>
         )}
