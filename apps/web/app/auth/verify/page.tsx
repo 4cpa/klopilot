@@ -39,7 +39,7 @@ function VerifyContent() {
 
   return (
     <main
-      className="min-h-screen flex flex-col items-center justify-center gap-6 p-8"
+      className="min-h-[calc(100vh-var(--mvp-banner-h))] flex flex-col items-center justify-center gap-6 p-8"
       style={{ background: 'var(--paper)' }}
     >
       <span className="text-5xl" aria-hidden>
