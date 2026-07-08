@@ -289,9 +289,8 @@ function KarteInner() {
   return (
     <main
       className="relative w-screen overflow-hidden"
-      // 100dvh schrumpft mit Safari-Toolbar, 100vh nicht; minus MvpBanner-Höhe,
-      // da #main-content bereits per paddingTop um denselben Betrag verschoben ist
-      style={{ height: 'calc(100dvh - var(--mvp-banner-h))' }}
+      // füllt den KarteLayout-Wrapper, der bereits um --mvp-banner-h reduziert ist
+      style={{ height: '100%' }}
     >
       <div ref={backgroundRef}>
         {/* Cursor-Hinweis im Marker-Drop-Modus */}

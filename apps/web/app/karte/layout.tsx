@@ -14,5 +14,13 @@ export const viewport: Viewport = {
 };
 
 export default function KarteLayout({ children }: { children: React.ReactNode }) {
-  return <div style={{ height: '100dvh', overflow: 'hidden' }}>{children}</div>;
+  // Höhe minus MvpBanner, da #main-content (layout.tsx) bereits per paddingTop
+  // um --mvp-banner-h verschoben ist — sonst wird das Dokument insgesamt um
+  // die Banner-Höhe zu hoch und die Seite lässt sich minimal scrollen, wodurch
+  // der fixe Banner die AppBar der Karte überlappt.
+  return (
+    <div style={{ height: 'calc(100dvh - var(--mvp-banner-h))', overflow: 'hidden' }}>
+      {children}
+    </div>
+  );
 }
